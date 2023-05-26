@@ -1,7 +1,6 @@
 {
   "name": "@uniswap/interface",
   "description": "Uniswap Interface",
-  "homepage": ".",
   "private": true,
   "devDependencies": {
     "@ethersproject/experimental": "^5.0.1",
@@ -122,6 +121,12 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@uniswap/default-token-list": "^2.0.0"
+    "@openzeppelin/contracts": "^4.9.0",
+    "@openzeppelin/wizard": "^0.2.3",
+    "@uniswap/default-token-list": "^2.0.0",
+    "highlight.js": "^11.8.0",
+    "highlightjs-solidity": "^2.0.6",
+    "solc": "^0.8.20",
+    "solc-browserify": "^1.2.11"
   }
 }

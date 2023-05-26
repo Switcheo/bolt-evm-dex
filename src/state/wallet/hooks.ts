@@ -7,7 +7,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useMulticallContract } from '../../hooks/useContract'
 import { isAddress } from '../../utils'
 import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
-import { useUserUnclaimedAmount } from '../claim/hooks'
+// import { useUserUnclaimedAmount } from '../claim/hooks'
 import { useTotalUniEarned } from '../stake/hooks'
 
 /**
@@ -141,15 +141,22 @@ export function useAggregateUniBalance(): TokenAmount | undefined {
   const uni = chainId ? UNI[chainId] : undefined
 
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
-  const uniUnclaimed: TokenAmount | undefined = useUserUnclaimedAmount(account)
+  // const uniUnclaimed: TokenAmount | undefined = useUserUnclaimedAmount(account)
   const uniUnHarvested: TokenAmount | undefined = useTotalUniEarned()
 
   if (!uni) return undefined
 
+  // return new TokenAmount(
+  //   uni,
+  //   JSBI.add(
+  //     JSBI.add(uniBalance?.raw ?? JSBI.BigInt(0), uniUnclaimed?.raw ?? JSBI.BigInt(0)),
+  //     uniUnHarvested?.raw ?? JSBI.BigInt(0)
+  //   )
+  // )
   return new TokenAmount(
     uni,
     JSBI.add(
-      JSBI.add(uniBalance?.raw ?? JSBI.BigInt(0), uniUnclaimed?.raw ?? JSBI.BigInt(0)),
+      JSBI.add(uniBalance?.raw ?? JSBI.BigInt(0), JSBI.BigInt(0)),
       uniUnHarvested?.raw ?? JSBI.BigInt(0)
     )
   )
