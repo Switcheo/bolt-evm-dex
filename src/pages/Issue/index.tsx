@@ -255,6 +255,7 @@ const ERC20AccessControl = [
 // ]
 
 const COMPILED_LIBRARIES: { [key: string]: { content: string } } = COMPILED_LIB.sources
+const LIBRARIES_MAPPING: { [key: string]: string } = LIBS_MAPPING
 
 export default function Issue() {
   const { library } = useActiveWeb3React()
@@ -285,29 +286,52 @@ export default function Issue() {
     setHighlightedCode(hljs.highlight(code, { language: 'solidity' }).value)
   }, [code])
 
-  function findImports(filepath: string) {
+  let processedFiles = new Set<string>()
+
+  const findNestedImports = (filepath: string) => {
+    const fileName = filepath.split('/').pop() ?? filepath;
+    const modifiedFilePath = LIBRARIES_MAPPING[fileName]
+
     // Check if the file exists in the compiled libraries
-    if (!COMPILED_LIBRARIES[filepath]) {
+    if (!COMPILED_LIBRARIES[modifiedFilePath]) {
       return []
     }
+
+    // If the file is already processed, then return an empty array to avoid infinite recursion
+    if (processedFiles.has(modifiedFilePath)) {
+      return [];
+  }
+
+    // Mark the file as processed
+    processedFiles.add(modifiedFilePath);
+
     // Read file content
-    const fileContent = COMPILED_LIBRARIES[filepath].content
+    const fileContent = COMPILED_LIBRARIES[modifiedFilePath].content;
 
     // Regex pattern to extract all import statements
     const regex = /import\s*["']([^"']*)["'];/g
 
-    let matches
-    let imports: string[] = []
+    let matches;
+    let imports: string[] = [];
 
     while ((matches = regex.exec(fileContent)) !== null) {
-      // Only add the match if it isn't already in the array
-      if (!imports.includes(matches[1])) {
-        const fileName = matches[1].split('/').pop() ?? matches[1]
-        imports.push(fileName)
-      }
+        // Only add the match if it isn't already in the array
+        if (!imports.includes(matches[1])) {
+            const fileName = matches[1].split('/').pop() ?? matches[1];
+            imports.push(fileName);
+        }
     }
 
-    return imports
+    // Now, for each import, check its imports recursively
+    imports.forEach(importFile => {
+        const subImports = findNestedImports(importFile);
+        imports = imports.concat(subImports);
+    });
+
+    // Remove duplicates
+    imports = [...new Set(imports)];
+
+    return imports;
   }
 
   const getCompilerInput = (code: string) => {
@@ -325,9 +349,9 @@ export default function Issue() {
       }
     }
 
-    // Get sub imports
+    // Get sub imports for each import
     for (let i = 0; i < imports.length; i++) {
-      const subImports = findImports(imports[i])
+      const subImports = findNestedImports(imports[i])
       imports = imports.concat(subImports)
     }
 
@@ -339,8 +363,7 @@ export default function Issue() {
     for (let i = 0; i < imports.length; i++) {
       const importPath = imports[i]
       if (!importPath.includes('@openzeppelin/contracts')) {
-        // @ts-ignore
-        const libPath = LIBS_MAPPING[importPath]
+        const libPath = LIBRARIES_MAPPING[importPath]
         if (libPath) {
           imports[i] = libPath
         }
@@ -350,8 +373,9 @@ export default function Issue() {
     // Now create the compiler input
     const contractsInput: { [key: string]: { content: string } } = {}
 
+    const tokenName = opts.name
     // add main contract
-    contractsInput['Main_Contract'] = { content: code }
+    contractsInput[tokenName] = { content: code }
 
     for (let i = 0; i < imports.length; i++) {
       const importPath = imports[i]
@@ -393,7 +417,7 @@ export default function Issue() {
     } = await compiler.compile(input)
 
     const contractName = opts.name
-    const compiledContractOutput = output.contracts['Main_Contract'][contractName]
+    const compiledContractOutput = output.contracts[contractName][contractName]
 
     const bytecode = compiledContractOutput.evm.bytecode.object
     const abi = compiledContractOutput.abi
@@ -410,7 +434,6 @@ export default function Issue() {
       // setHash(newContract.deployTransaction.hash)
 
       await newContract.deployed()
-
     } catch (error) {
       console.error(error)
     } finally {
@@ -517,7 +540,7 @@ export default function Issue() {
                     })}
                   </ControlSection>
 
-                  <ControlSection>
+                  {/* <ControlSection>
                     <ControlSectionHeading>
                       <ControlSectionHeadingLabel>
                         <span>Access Control</span>
@@ -541,7 +564,7 @@ export default function Issue() {
                         </CheckboxGroup>
                       )
                     })}
-                  </ControlSection>
+                  </ControlSection> */}
 
                   {/* <ControlSection>
                     <ControlSectionHeading>
