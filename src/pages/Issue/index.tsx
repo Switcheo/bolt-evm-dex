@@ -126,16 +126,6 @@ const ControlSectionHeading = styled.h2`
   font-weight: 600;
 `
 
-const ControlSectionHeadingLabel = styled.label`
-  display: flex;
-  align-items: center;
-  padding-right: 0.5rem;
-
-  & > span {
-    margin-right: 0.25rem;
-  }
-`
-
 const TokenDetailsSection = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -232,16 +222,16 @@ const ERC20Features: ERC20Feature[] = [
   }
 ]
 
-const ERC20AccessControl = [
-  {
-    id: 'ownable',
-    label: 'Ownable'
-  },
-  {
-    id: 'roles',
-    label: 'Roles'
-  }
-]
+// const ERC20AccessControl = [
+//   {
+//     id: 'ownable',
+//     label: 'Ownable'
+//   },
+//   {
+//     id: 'roles',
+//     label: 'Roles'
+//   }
+// ]
 
 // const ERC20Upgradeability = [
 //   {
@@ -270,7 +260,7 @@ export default function Issue() {
   const [code, setCode] = useState('')
   const [highlightedCode, setHighlightedCode] = useState<string | null>(null)
 
-  const [requireAccessControl, setRequireAccessControl] = useState(erc20.isAccessControlRequired(opts))
+  // const [requireAccessControl, setRequireAccessControl] = useState(erc20.isAccessControlRequired(opts))
 
   const [compiling, setCompiling] = useState<boolean>(false)
 
@@ -278,7 +268,7 @@ export default function Issue() {
   // const [hash, setHash] = useState<string | undefined>()
 
   useEffect(() => {
-    setRequireAccessControl(erc20.isAccessControlRequired(opts))
+    // setRequireAccessControl(erc20.isAccessControlRequired(opts))
     setCode(printERC20(opts))
   }, [opts])
 

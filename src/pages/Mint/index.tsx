@@ -1,38 +1,27 @@
 import React, { useState } from 'react'
 import { AutoColumn } from 'components/Column'
 import { SwapPoolTabs } from 'components/NavigationTabs'
-// import styled from 'styled-components'
 import AppBody from 'pages/AppBody'
 import { Wrapper } from './styleds'
 import AddressInputPanel from 'components/AddressInputPanel'
-import { ButtonError, ButtonPrimary } from 'components/Button'
+import { ButtonError } from 'components/Button'
 import { isAddress } from 'ethers/lib/utils'
 import { ColumnCenter } from 'components/Column'
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket'
-import { useActiveWeb3React } from 'hooks'
 import { TYPE } from 'theme'
 import useTheme from 'hooks/useTheme'
 
-// const PageWrapper = styled(AutoColumn)`
-//   max-width: 640px;
-//   width: 100%;
-// `
+import { WSS_FAUCET_URL } from '../../constants'
+
 
 export default function Mint() {
-  const [socketUrl, setSocketUrl] = useState('wss://faucet.bolt.switcheo.network/faucet-smart/api')
-  const { account } = useActiveWeb3React()
-  // state for smart contract input
   const [typed, setTyped] = useState('')
-  // used for UI loading states
-  // const [attempting, setAttempting] = useState<boolean>(false)
-  // const [hash, setHash] = useState<string | undefined>()
-
   const [loading, setLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [error, setError] = useState(null)
   const theme = useTheme()
 
-  const { sendJsonMessage, getWebSocket, readyState } = useWebSocket(socketUrl, {
+  const { sendJsonMessage, readyState } = useWebSocket(WSS_FAUCET_URL, {
     onOpen: () => console.log('WebSocket connection opened.'),
     onClose: () => console.log('WebSocket connection closed.'),
     shouldReconnect: closeEvent => true,
@@ -46,7 +35,6 @@ export default function Mint() {
   const processMessages = (event: { data: string }) => {
     const response = JSON.parse(event.data)
 
-    console.log(response)
     if (response?.error) {
       setError(response.error)
       setSuccessMessage(null)
@@ -76,7 +64,6 @@ export default function Mint() {
 
   return (
     <>
-      {/* <PageWrapper> */}
       <SwapPoolTabs active={'mint'} />
       <AppBody>
         <Wrapper id="mint-page">
@@ -94,14 +81,14 @@ export default function Mint() {
                 {error ?? 'Send Me ETH'}
               </ButtonError>
               {successMessage && (
-                <TYPE.body color={theme.green1} fontWeight={500} fontSize={14} mt="0.75rem">{successMessage}</TYPE.body>
+                <TYPE.body color={theme.green1} fontWeight={500} fontSize={14} mt="0.75rem">
+                  {successMessage}
+                </TYPE.body>
               )}
-              
             </ColumnCenter>
           </AutoColumn>
         </Wrapper>
       </AppBody>
-      {/* </PageWrapper> */}
     </>
   )
 }
