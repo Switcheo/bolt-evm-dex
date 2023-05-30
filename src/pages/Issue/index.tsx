@@ -416,8 +416,9 @@ export default function Issue() {
       }
     } = await compiler.compile(input)
 
-    const contractName = opts.name
-    const compiledContractOutput = output.contracts[contractName][contractName]
+    // Contract name is opts.name. if theres' space, remove it
+    const contractName = opts.name.replace(/\s/g, '')
+    const compiledContractOutput = output.contracts[opts.name][contractName]
 
     const bytecode = compiledContractOutput.evm.bytecode.object
     const abi = compiledContractOutput.abi

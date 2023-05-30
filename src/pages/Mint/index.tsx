@@ -5,9 +5,13 @@ import { SwapPoolTabs } from 'components/NavigationTabs'
 import AppBody from 'pages/AppBody'
 import { Wrapper } from './styleds'
 import AddressInputPanel from 'components/AddressInputPanel'
-import { ButtonPrimary } from 'components/Button'
+import { ButtonError, ButtonPrimary } from 'components/Button'
 import { isAddress } from 'ethers/lib/utils'
 import { ColumnCenter } from 'components/Column'
+import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket'
+import { useActiveWeb3React } from 'hooks'
+import { TYPE } from 'theme'
+import useTheme from 'hooks/useTheme'
 
 // const PageWrapper = styled(AutoColumn)`
 //   max-width: 640px;
@@ -15,27 +19,59 @@ import { ColumnCenter } from 'components/Column'
 // `
 
 export default function Mint() {
+  const [socketUrl, setSocketUrl] = useState('wss://faucet.bolt.switcheo.network/faucet-smart/api')
+  const { account } = useActiveWeb3React()
   // state for smart contract input
   const [typed, setTyped] = useState('')
   // used for UI loading states
   // const [attempting, setAttempting] = useState<boolean>(false)
   // const [hash, setHash] = useState<string | undefined>()
 
-  function handleRecipientType(val: string) {
-    setTyped(val)
+  const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [error, setError] = useState(null)
+  const theme = useTheme()
+
+  const { sendJsonMessage, getWebSocket, readyState } = useWebSocket(socketUrl, {
+    onOpen: () => console.log('WebSocket connection opened.'),
+    onClose: () => console.log('WebSocket connection closed.'),
+    shouldReconnect: closeEvent => true,
+    onMessage: (event: WebSocketEventMap['message']) => processMessages(event),
+    onError: (event: WebSocketEventMap['error']) => {
+      console.log('WebSocket error occurred.', event)
+      setLoading(false)
+    }
+  })
+
+  const processMessages = (event: { data: string }) => {
+    const response = JSON.parse(event.data)
+
+    console.log(response)
+    if (response?.error) {
+      setError(response.error)
+      setSuccessMessage(null)
+    }
+
+    if (response?.success) {
+      setError(null)
+      setSuccessMessage(`10 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`)
+    }
+
+    setLoading(false)
   }
 
-  function onClaim() {
-    // setAttempting(true)
-    // claimCallback()
-    //   .then(hash => {
-    //     setHash(hash)
-    //   })
-    //   // reset modal and log error
-    //   .catch(error => {
-    //     setAttempting(false)
-    //     console.log(error)
-    //   })
+  function handleRecipientType(val: string) {
+    setTyped(val)
+    if (error) setError(null)
+  }
+
+  const onClaim = () => {
+    setLoading(true)
+    sendJsonMessage({
+      url: typed,
+      tier: 0,
+      symbol: 'NativeToken'
+    })
   }
 
   return (
@@ -47,16 +83,20 @@ export default function Mint() {
           <AutoColumn>
             <ColumnCenter>
               <AddressInputPanel value={typed} onChange={handleRecipientType} />
-              <ButtonPrimary
-                disabled={!isAddress(typed ?? '')}
+              <ButtonError
                 padding="16px 16px"
                 width="100%"
-                borderRadius="12px"
                 mt="1rem"
+                disabled={!!error || !isAddress(typed ?? '') || readyState !== 1 || loading}
+                error={!!error}
                 onClick={onClaim}
               >
-                Mint Tokens
-              </ButtonPrimary>
+                {error ?? 'Send Me ETH'}
+              </ButtonError>
+              {successMessage && (
+                <TYPE.body color={theme.green1} fontWeight={500} fontSize={14} mt="0.75rem">{successMessage}</TYPE.body>
+              )}
+              
             </ColumnCenter>
           </AutoColumn>
         </Wrapper>

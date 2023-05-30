@@ -24,6 +24,7 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   SEPOLIA = 11155111,
+  BOLTCHAIN = 42069,
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
@@ -33,6 +34,7 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   5: 'goerli.',
   42: 'kovan.',
   11155111: 'sepolia',
+  42069: 'boltchain'
 }
 
 export function getEtherscanLink(
@@ -40,7 +42,9 @@ export function getEtherscanLink(
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
-  const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
+
+
+  const prefix = chainId === ChainId.BOLTCHAIN ? 'https://blockscout.bolt.switcheo.network' : `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
 
   switch (type) {
     case 'transaction': {
