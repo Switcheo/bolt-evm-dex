@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { SwapPoolTabs } from 'components/NavigationTabs'
 import { Wrapper } from './styleds'
 import { AutoColumn } from 'components/Column'
 import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
-import { KindedOptions, erc20, infoDefaults } from '@openzeppelin/wizard'
 import { ERC20Options, premintPattern, printERC20 } from '@openzeppelin/wizard/dist/erc20'
 
 import hljs from './highlightjs'
@@ -12,12 +11,13 @@ import 'highlight.js/styles/github-dark.css'
 import { ButtonPrimary } from 'components/Button'
 import { AutoRow } from 'components/Row'
 
-import COMPILED_LIB from '../../constants/compiled_libs.json'
-import LIBS_MAPPING from '../../constants/libs_mapping.json'
 import { Solc } from 'utils/solidity-compiler/wrapper'
 import { useActiveWeb3React } from 'hooks'
 import { ethers } from 'ethers'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { codeSet, compilingSet, highlightedCodeSet, optsSet, selectCode, selectCompiling, selectHighlightedCode, selectOpts } from 'state/issue/issueSlice'
+import { useAppDispatch, useAppSelector } from 'state/issue/hooks'
+import { getCompilerInput } from 'utils/issueUtils'
 
 const IssueBody = styled.div`
   position: relative;
@@ -222,193 +222,66 @@ const ERC20Features: ERC20Feature[] = [
   }
 ]
 
-// const ERC20AccessControl = [
-//   {
-//     id: 'ownable',
-//     label: 'Ownable'
-//   },
-//   {
-//     id: 'roles',
-//     label: 'Roles'
-//   }
-// ]
-
-// const ERC20Upgradeability = [
-//   {
-//     id: 'transparent',
-//     label: 'Transparent'
-//   },
-//   {
-//     id: 'uups',
-//     label: 'UUPS'
-//   }
-// ]
-
-const COMPILED_LIBRARIES: { [key: string]: { content: string } } = COMPILED_LIB.sources
-const LIBRARIES_MAPPING: { [key: string]: string } = LIBS_MAPPING
+interface CompilerOutput {
+  errors?: string[];
+  contracts?: {
+    [fullContractName: string]: {
+      [contractName: string]: {
+        abi: any[],
+        evm: {
+          bytecode: {
+            object: string
+          }
+        }
+      }
+    }
+  };
+  sources?: {
+    [fileName: string]: {
+      id: number
+    }
+  }
+}
 
 export default function Issue() {
   const { library } = useActiveWeb3React()
 
-  const [opts, setOpts] = useState<Required<KindedOptions['ERC20']>>({
-    kind: 'ERC20',
-    ...erc20.defaults,
-    premint: '',
-    info: { ...infoDefaults }
-  })
-
-  const [code, setCode] = useState('')
-  const [highlightedCode, setHighlightedCode] = useState<string | null>(null)
-
-  // const [requireAccessControl, setRequireAccessControl] = useState(erc20.isAccessControlRequired(opts))
-
-  const [compiling, setCompiling] = useState<boolean>(false)
+  const opts = useAppSelector(selectOpts);
+  const code = useAppSelector(selectCode);
+  const highlightedCode = useAppSelector(selectHighlightedCode);
+  const compiling = useAppSelector(selectCompiling);
+  const dispatch = useAppDispatch();
 
   const addTransaction = useTransactionAdder()
-  // const [hash, setHash] = useState<string | undefined>()
+
+  /*
+  The dispatch function reference will be stable as long as the same store instance is being passed to the <Provider>. Normally, that store instance never changes in an application.
+  However, the React hooks lint rules do not know that dispatch should be stable, and will warn that the dispatch variable should be added to dependency arrays for useEffect and useCallback.
+  */
+  useEffect(() => {
+    dispatch(codeSet(printERC20(opts)));
+  }, [opts, dispatch])
 
   useEffect(() => {
-    // setRequireAccessControl(erc20.isAccessControlRequired(opts))
-    setCode(printERC20(opts))
-  }, [opts])
-
-  useEffect(() => {
-    setHighlightedCode(hljs.highlight(code, { language: 'solidity' }).value)
-  }, [code])
-
-  let processedFiles = new Set<string>()
-
-  const findNestedImports = (filepath: string) => {
-    const fileName = filepath.split('/').pop() ?? filepath;
-    const modifiedFilePath = LIBRARIES_MAPPING[fileName]
-
-    // Check if the file exists in the compiled libraries
-    if (!COMPILED_LIBRARIES[modifiedFilePath]) {
-      return []
-    }
-
-    // If the file is already processed, then return an empty array to avoid infinite recursion
-    if (processedFiles.has(modifiedFilePath)) {
-      return [];
-  }
-
-    // Mark the file as processed
-    processedFiles.add(modifiedFilePath);
-
-    // Read file content
-    const fileContent = COMPILED_LIBRARIES[modifiedFilePath].content;
-
-    // Regex pattern to extract all import statements
-    const regex = /import\s*["']([^"']*)["'];/g
-
-    let matches;
-    let imports: string[] = [];
-
-    while ((matches = regex.exec(fileContent)) !== null) {
-        // Only add the match if it isn't already in the array
-        if (!imports.includes(matches[1])) {
-            const fileName = matches[1].split('/').pop() ?? matches[1];
-            imports.push(fileName);
-        }
-    }
-
-    // Now, for each import, check its imports recursively
-    imports.forEach(importFile => {
-        const subImports = findNestedImports(importFile);
-        imports = imports.concat(subImports);
-    });
-
-    // Remove duplicates
-    imports = [...new Set(imports)];
-
-    return imports;
-  }
-
-  const getCompilerInput = (code: string) => {
-    // Regex pattern to extract all import statements
-    const regex = /import\s*["']([^"']*)["'];/g
-
-    let matches
-    let imports: string[] = []
-
-    // Get root imports
-    while ((matches = regex.exec(code)) !== null) {
-      // Only add the match if it isn't already in the array
-      if (!imports.includes(matches[1])) {
-        imports.push(matches[1])
-      }
-    }
-
-    // Get sub imports for each import
-    for (let i = 0; i < imports.length; i++) {
-      const subImports = findNestedImports(imports[i])
-      imports = imports.concat(subImports)
-    }
-
-    // Remove duplicates
-    imports = [...new Set(imports)]
-
-    // for each import, if it doesn't have "@openzeppelin/contracts", use libs_mapping.json to get the absolute path
-
-    for (let i = 0; i < imports.length; i++) {
-      const importPath = imports[i]
-      if (!importPath.includes('@openzeppelin/contracts')) {
-        const libPath = LIBRARIES_MAPPING[importPath]
-        if (libPath) {
-          imports[i] = libPath
-        }
-      }
-    }
-
-    // Now create the compiler input
-    const contractsInput: { [key: string]: { content: string } } = {}
-
-    const tokenName = opts.name
-    // add main contract
-    contractsInput[tokenName] = { content: code }
-
-    for (let i = 0; i < imports.length; i++) {
-      const importPath = imports[i]
-
-      contractsInput[importPath] = { content: COMPILED_LIBRARIES[importPath].content }
-    }
-
-    return contractsInput
-  }
+    dispatch(highlightedCodeSet(hljs.highlight(code, { language: 'solidity' }).value));
+  }, [code, dispatch])
 
   const handleDeployment = async () => {
-    setCompiling(true)
+    dispatch(compilingSet(true))
     const compiler = new Solc()
-    const input = getCompilerInput(code)
+    const input = getCompilerInput(code, opts.name)
 
-    const output: {
-      contracts: {
-        [key: string]: {
-          [key: string]: {
-            abi: any[]
-            devdoc: {}
-            evm: {
-              bytecode: {
-                object: string
-              }
-            }
-            ewasm: {}
-            metadata: string
-            storageLayout: {}
-            userdoc: {}
-          }
-        }
-      }
-      sources: {
-        [key: string]: {
-          id: number
-        }
-      }
-    } = await compiler.compile(input)
+    const output: CompilerOutput = await compiler.compile(input)
 
     // Contract name is opts.name. if theres' space, remove it
     const contractName = opts.name.replace(/\s/g, '')
-    const compiledContractOutput = output.contracts[opts.name][contractName]
+    const compiledContractOutput = output.contracts?.[opts.name]?.[contractName]
+
+    if (!compiledContractOutput || output.errors) {
+      console.error(output.errors ?? 'No compiled contract output')
+      dispatch(compilingSet(false))
+      return
+    }
 
     const bytecode = compiledContractOutput.evm.bytecode.object
     const abi = compiledContractOutput.abi
@@ -422,26 +295,25 @@ export default function Issue() {
       addTransaction(newContract.deployTransaction, {
         summary: `Deploy ${contractName}`
       })
-      // setHash(newContract.deployTransaction.hash)
 
       await newContract.deployed()
     } catch (error) {
       console.error(error)
     } finally {
-      setCompiling(false)
+      dispatch(compilingSet(false))
     }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
 
-    setOpts(prev => ({ ...prev, [name]: value }))
+    dispatch(optsSet({ ...opts, [name]: value }))
   }
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target
 
-    setOpts(prev => ({ ...prev, [name]: checked }))
+    dispatch(optsSet({ ...opts, [name]: checked }))
   }
 
   return (
@@ -482,7 +354,6 @@ export default function Issue() {
                           name="name"
                           value={opts.name}
                         />
-                        {/* <input type="text" name="name" onChange={handleInputChange} /> */}
                       </LabeledInput>
                       <LabeledInput>
                         <span>Symbol</span>
@@ -497,7 +368,6 @@ export default function Issue() {
                           name="symbol"
                           value={opts.symbol}
                         />
-                        {/* <input type="text" name="symbol" onChange={handleInputChange} /> */}
                       </LabeledInput>
                     </TokenDetailsSection>
                     <LabeledInput>
@@ -530,59 +400,6 @@ export default function Issue() {
                       )
                     })}
                   </ControlSection>
-
-                  {/* <ControlSection>
-                    <ControlSectionHeading>
-                      <ControlSectionHeadingLabel>
-                        <span>Access Control</span>
-                        <span>
-                          <input
-                            type="checkbox"
-                            name="access"
-                            disabled={requireAccessControl}
-                            onChange={handleCheckboxChange}
-                          />
-                        </span>
-                      </ControlSectionHeadingLabel>
-                    </ControlSectionHeading>
-                    {ERC20AccessControl.map(feature => {
-                      return (
-                        <CheckboxGroup key={`access-control-${feature.id}`}>
-                          <label>
-                            <input type="radio" name="access" value={feature.id} onChange={handleCheckboxChange} />
-                            {feature.label}
-                          </label>
-                        </CheckboxGroup>
-                      )
-                    })}
-                  </ControlSection> */}
-
-                  {/* <ControlSection>
-                    <ControlSectionHeading>
-                      <ControlSectionHeadingLabel>
-                        <span>Upgradeability</span>
-                        <span>
-                          <input type="checkbox" name="upgradeable" onChange={handleRadioChange} defaultValue="transparent" />
-                        </span>
-                      </ControlSectionHeadingLabel>
-                    </ControlSectionHeading>
-                    {ERC20Upgradeability.map(feature => {
-                      return (
-                        <CheckboxGroup key={`upgradeability-${feature.id}`}>
-                          <label>
-                            <input
-                              type="radio"
-                              name="upgradeable"
-                              value={feature.id}
-                              // checked={UpgradeableType === feature.id}
-                              onChange={handleRadioChange}
-                            />
-                            {feature.label}
-                          </label>
-                        </CheckboxGroup>
-                      )
-                    })}
-                  </ControlSection> */}
                 </div>
               </SettingsSection>
 

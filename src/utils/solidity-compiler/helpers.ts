@@ -9,7 +9,10 @@ export class CompilerHelpers {
         ...options,
         outputSelection: {
           '*': {
-            '*': ['*'],
+            '*': [
+              'abi',
+              'evm.bytecode.object',
+            ]
           },
         },
       },
