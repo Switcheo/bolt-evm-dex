@@ -121,7 +121,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.0",
+    "@openzeppelin/contracts": "^4.9.1",
     "@openzeppelin/wizard": "^0.3.0",
     "@uniswap/default-token-list": "^2.0.0",
     "highlight.js": "^11.8.0",
