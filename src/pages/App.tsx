@@ -33,6 +33,7 @@ import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 // import VotePage from './Vote/VotePage'
 import Mint from './Mint'
 import Issue from './Issue'
+import Bridge from './Bridge'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -100,6 +101,8 @@ export default function App() {
               <Route exact strict path="/pool" component={Pool} />
               <Route exact strict path="/mint" component={Mint} />
               <Route exact strict path="/issue" component={Issue} />
+              <Route exact strict path="/bridge" component={Bridge} />
+              <Route exact strict path="/bridge-history" component={Bridge} />
               {/* <Route exact strict path="/uni" component={Earn} /> */}
               {/* <Route exact strict path="/vote" component={Vote} /> */}
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />

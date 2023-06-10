@@ -1,8 +1,13 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
+import boltchainLogo from "assets/svg/bolt-logo.svg"
+import ethereumLogo from "assets/images/ethereum-logo.png"
+import bscLogo from "assets/images/bridge-assets-list/bsc-logo.svg"
+
 import { injected } from '../connectors'
-// import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+
+export const TOKENS_LIST_URL = 'https://api.carbon.network/carbon/coin/v1/tokens?pagination.limit=5000'
 
 export const WSS_FAUCET_URL = 'wss://faucet.bolt.switcheo.network/faucet-smart/api'
 
@@ -39,13 +44,13 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
 const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 export const UNI: { [chainId in ChainId]: Token } = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-}
+         [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+         [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+         [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+         [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+         [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+         [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
+       }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   [UNI_ADDRESS]: 'UNI',
@@ -64,7 +69,7 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
-  [ChainId.BOLTCHAIN]: [WETH[ChainId.BOLTCHAIN]],
+  [ChainId.BOLTCHAIN]: [WETH[ChainId.BOLTCHAIN]]
 }
 
 // used to construct intermediary pairs for trading
@@ -234,3 +239,38 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008',
   '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C'
 ]
+
+interface ChainInfo {
+  readonly label: string
+  readonly logoUrl: string
+  readonly chain: string
+}
+
+type ChainInfoMap = {
+  readonly [chainId: number]: ChainInfo
+}
+
+export const CHAIN_INFO: ChainInfoMap = {
+         [ChainId.MAINNET]: {
+           // networkType: NetworkType.L1,
+           // docs: 'https://docs.uniswap.org/',
+           // explorer: 'https://etherscan.io/',
+           // infoLink: 'https://info.uniswap.org/#/',
+           label: 'Ethereum',
+           logoUrl: ethereumLogo,
+           chain: 'ETH'
+           // nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+           // color: darkTheme.chain_1
+         },
+         // @ts-ignore
+         [ChainId.BOLTCHAIN]: {
+           label: 'BoltChain',
+           logoUrl: boltchainLogo,
+           chain: 'BOLT'
+         },
+         [56]: {
+           label: 'BNB',
+           logoUrl: bscLogo,
+           chain: 'BNB'
+         }
+       }

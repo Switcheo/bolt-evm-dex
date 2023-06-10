@@ -21,7 +21,7 @@ import { Moon, Sun } from 'react-feather'
 
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
-import { ChainId } from 'utils'
+import { ChainId } from '@uniswap/sdk'
 // import ClaimModal from '../claim/ClaimModal'
 // import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 // import { useUserHasAvailableClaim } from '../../state/claim/hooks'
@@ -292,7 +292,6 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
-  [ChainId.SEPOLIA]: 'Sepolia',
   [ChainId.BOLTCHAIN]: 'BoltChain',
 }
 
@@ -362,6 +361,22 @@ export default function Header() {
             isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/issue')}
           >
             {t('issue')}
+          </StyledNavLink>
+
+          <StyledNavLink
+            id={`bridge-nav-link`}
+            to={'/bridge'}
+            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/bridge')}
+          >
+            {t('bridge')}
+          </StyledNavLink>
+
+          <StyledNavLink
+            id={`bridge-history-nav-link`}
+            to={'/bridge-history'}
+            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/bridge-history')}
+          >
+            {t('bridge-history')}
           </StyledNavLink>
 
           {/* Not necessary */}

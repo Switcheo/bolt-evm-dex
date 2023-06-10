@@ -20,6 +20,7 @@ import AccountDetails from '../AccountDetails'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
+import { ButtonPrimary } from 'components/Button'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -110,6 +111,11 @@ const HoverText = styled.div`
   }
 `
 
+const ChangeNetworkButton = styled(ButtonPrimary)`
+  margin-top: 1rem;
+`
+
+
 const WALLET_VIEWS = {
   OPTIONS: 'options',
   OPTIONS_SECONDARY: 'options_secondary',
@@ -127,7 +133,7 @@ export default function WalletModal({
   ENSName?: string
 }) {
   // important that these are destructed from the account-specific web3-react context
-  const { active, account, connector, activate, error } = useWeb3React()
+  const { library, active, account, connector, activate, error } = useWeb3React()
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 
@@ -139,6 +145,24 @@ export default function WalletModal({
   const toggleWalletModal = useWalletModalToggle()
 
   const previousAccount = usePrevious(account)
+
+  // Temp function
+  const toHex = (num: string) => {
+  const val = Number(num);
+  return "0x" + val.toString(16);
+};
+
+const networkParams = {
+  "0xA455": {
+    chainId: "0xA455",
+    rpcUrls: ["https://rpc.bolt.switcheo.network"],
+    chainName: "Boltchain",
+    nativeCurrency: { name: "Ethereum", decimals: 18, symbol: "ETH" },
+    blockExplorerUrls: ["https://blockscout.bolt.switcheo.network/"],
+    iconUrls: ["https://harmonynews.one/wp-content/uploads/2019/11/slfdjs.png"]
+  },
+};
+
 
   // close on connection, when logged out before
   useEffect(() => {
@@ -163,6 +187,27 @@ export default function WalletModal({
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
   }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
+
+  const handleNetworkOnClick = async () => {
+    try {
+      await library.provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: toHex("42069") }]
+      });
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        try {
+          await library.provider.request({
+            method: "wallet_addEthereumChain",
+            // @ts-ignore
+            params: [networkParams[toHex("42069")]]
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  }
 
   const tryActivation = async (connector: AbstractConnector | undefined) => {
     let name = ''
@@ -299,7 +344,10 @@ export default function WalletModal({
           <HeaderRow>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}</HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
-              <h5>Please connect to the appropriate Ethereum network.</h5>
+              <>
+              <h5>Please connect to the appropriate Boltchain network.</h5>
+              <ChangeNetworkButton onClick={handleNetworkOnClick}>Change Network</ChangeNetworkButton>
+              </>
             ) : (
               'Error connecting. Try refreshing the page.'
             )}

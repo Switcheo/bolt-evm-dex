@@ -11,6 +11,8 @@ import lists from './lists/reducer'
 import burn from './burn/reducer'
 import multicall from './multicall/reducer'
 import issue from './issue/issueSlice'
+import bridge from './bridge/reducer'
+
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -24,10 +26,12 @@ const store = configureStore({
     burn,
     multicall,
     lists,
-    issue
+    issue,
+    bridge
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  preloadedState: load({ states: PERSISTED_KEYS }),
+  devTools: process.env.NODE_ENV !== 'production',
 })
 
 store.dispatch(updateVersion())

@@ -18,6 +18,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { codeSet, compilingSet, highlightedCodeSet, optsSet, selectCode, selectCompiling, selectHighlightedCode, selectOpts } from 'state/issue/issueSlice'
 import { useAppDispatch, useAppSelector } from 'state/issue/hooks'
 import { getCompilerInput } from 'utils/issueUtils'
+import LoadingSpinner from 'components/LoadingSpinner'
 
 const IssueBody = styled.div`
   position: relative;
@@ -29,6 +30,7 @@ const IssueBody = styled.div`
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
   /* padding: 1rem; */
+  margin-top: -50px;
 `
 
 const IssueRow = styled(RowBetween)`
@@ -332,7 +334,7 @@ export default function Issue() {
                 }}
                 disabled={compiling}
               >
-                {compiling ? 'Deploying...' : 'Deploy ERC20'}
+                {compiling ? <LoadingSpinner /> : 'Deploy ERC20'}
               </ButtonPrimary>
             </AutoRow>
             <IssueRow minWidth="32rem">

@@ -65,6 +65,27 @@ const Input = styled.input<{ error?: boolean }>`
   }
 `
 
+const StyledLink = styled.a`
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: ${({ theme }) => theme.primary1};
+  font-weight: 500;
+
+  :hover {
+    text-decoration: underline;
+  }
+
+  :focus {
+    outline: none;
+    text-decoration: underline;
+  }
+
+  :active {
+    text-decoration: none;
+  }
+`
+
 export default function AddressInputPanel({
   id,
   value,
@@ -76,7 +97,7 @@ export default function AddressInputPanel({
   // triggers whenever the typed value changes
   onChange: (value: string) => void
 }) {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   const { address, loading, name } = useENS(value)
@@ -103,8 +124,13 @@ export default function AddressInputPanel({
               </TYPE.black>
               {address && chainId && (
                 <ExternalLink href={getEtherscanLink(chainId, name ?? address, 'address')} style={{ fontSize: '14px' }}>
-                  (View on Etherscan)
+                  View on Etherscan
                 </ExternalLink>
+              )}
+              {!address && chainId && (
+                <StyledLink onClick={() => {
+                  handleInput({ target: { value: account } })
+                }}>Fill with current wallet</StyledLink>
               )}
             </RowBetween>
             <Input
