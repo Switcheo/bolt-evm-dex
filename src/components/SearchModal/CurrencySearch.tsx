@@ -152,7 +152,7 @@ export function CurrencySearch({
 
   // menu ui
   const [open, toggle] = useToggle(false)
-  const node = useRef<HTMLDivElement>()
+  const node = useRef<HTMLDivElement | null>(null)
   useOnClickOutside(node, open ? toggle : undefined)
 
   // if no results on main list, show option to expand into inactive

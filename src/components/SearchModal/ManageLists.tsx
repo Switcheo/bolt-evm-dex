@@ -102,7 +102,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   const isActive = useIsListActive(listUrl)
 
   const [open, toggle] = useToggle(false)
-  const node = useRef<HTMLDivElement>()
+  const node = useRef<HTMLDivElement | null>(null)
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement>()
   const [popperElement, setPopperElement] = useState<HTMLDivElement>()
 

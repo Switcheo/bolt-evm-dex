@@ -121,7 +121,7 @@ const ModalContentWrapper = styled.div`
 `
 
 export default function SettingsTab() {
-  const node = useRef<HTMLDivElement>()
+  const node = useRef<HTMLDivElement | null>(null)
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
 

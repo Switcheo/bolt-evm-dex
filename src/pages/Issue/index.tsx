@@ -18,7 +18,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { codeSet, compilingSet, highlightedCodeSet, optsSet, selectCode, selectCompiling, selectHighlightedCode, selectOpts } from 'state/issue/issueSlice'
 import { useAppDispatch, useAppSelector } from 'state/issue/hooks'
 import { getCompilerInput } from 'utils/issueUtils'
-import LoadingSpinner from 'components/LoadingSpinner'
+import Loader from 'components/Loader'
 
 const IssueBody = styled.div`
   position: relative;
@@ -186,6 +186,13 @@ const Input = styled.input<{ error?: boolean }>`
   }
 `
 
+const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`
+
 type ERC20OptionKeys = Exclude<keyof ERC20Options, 'name' | 'symbol' | 'access' | 'upgradeable' | 'info'>
 
 interface ERC20Feature {
@@ -334,7 +341,12 @@ export default function Issue() {
                 }}
                 disabled={compiling}
               >
-                {compiling ? <LoadingSpinner /> : 'Deploy ERC20'}
+                {
+                  compiling ? <SpinnerContainer>
+                    <Loader />
+                    <span>Deploying ERC20...</span>
+                  </SpinnerContainer> : 'Deploy ERC20'
+                }
               </ButtonPrimary>
             </AutoRow>
             <IssueRow minWidth="32rem">

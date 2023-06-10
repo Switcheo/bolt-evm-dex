@@ -1,9 +1,8 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import boltchainLogo from "assets/svg/bolt-logo.svg"
-import ethereumLogo from "assets/images/ethereum-logo.png"
-import bscLogo from "assets/images/bridge-assets-list/bsc-logo.svg"
+import boltchainLogo from 'assets/svg/bolt-logo.svg'
+import ethereumLogo from 'assets/images/ethereum-logo.png'
 
 import { injected } from '../connectors'
 
@@ -14,8 +13,6 @@ export const WSS_FAUCET_URL = 'wss://faucet.bolt.switcheo.network/faucet-smart/a
 export const ROUTER_ADDRESS = '0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-export { PRELOADED_PROPOSALS } from './proposals'
 
 // a list of tokens by chain
 type ChainTokenList = {
@@ -44,13 +41,13 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
 const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 export const UNI: { [chainId in ChainId]: Token } = {
-         [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-         [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-         [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-         [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-         [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-         [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
-       }
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
+}
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   [UNI_ADDRESS]: 'UNI',
@@ -179,7 +176,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     color: '#315CF5',
     mobile: true,
     mobileOnly: true
-  },
+  }
   // FORTMATIC: {
   //   connector: fortmatic,
   //   name: 'Fortmatic',
@@ -251,26 +248,20 @@ type ChainInfoMap = {
 }
 
 export const CHAIN_INFO: ChainInfoMap = {
-         [ChainId.MAINNET]: {
-           // networkType: NetworkType.L1,
-           // docs: 'https://docs.uniswap.org/',
-           // explorer: 'https://etherscan.io/',
-           // infoLink: 'https://info.uniswap.org/#/',
-           label: 'Ethereum',
-           logoUrl: ethereumLogo,
-           chain: 'ETH'
-           // nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-           // color: darkTheme.chain_1
-         },
-         // @ts-ignore
-         [ChainId.BOLTCHAIN]: {
-           label: 'BoltChain',
-           logoUrl: boltchainLogo,
-           chain: 'BOLT'
-         },
-         [56]: {
-           label: 'BNB',
-           logoUrl: bscLogo,
-           chain: 'BNB'
-         }
-       }
+  [ChainId.MAINNET]: {
+    // networkType: NetworkType.L1,
+    // docs: 'https://docs.uniswap.org/',
+    // explorer: 'https://etherscan.io/',
+    // infoLink: 'https://info.uniswap.org/#/',
+    label: 'Ethereum',
+    logoUrl: ethereumLogo,
+    chain: 'ETH'
+    // nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    // color: darkTheme.chain_1
+  },
+  [ChainId.BOLTCHAIN]: {
+    label: 'BoltChain',
+    logoUrl: boltchainLogo,
+    chain: 'BOLT'
+  }
+}
