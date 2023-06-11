@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import { Currency } from "@uniswap/sdk";
+import { Currency } from "@bolt-dex/sdk";
 
 export enum BridgeMenu {
     NETWORK_A,

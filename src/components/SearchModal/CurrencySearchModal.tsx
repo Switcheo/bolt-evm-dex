@@ -1,4 +1,4 @@
-import { Currency, Token } from '@uniswap/sdk'
+import { Currency, Token } from '@bolt-dex/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import useLast from '../../hooks/useLast'
 import Modal from '../Modal'

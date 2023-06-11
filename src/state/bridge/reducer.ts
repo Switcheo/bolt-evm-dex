@@ -9,7 +9,7 @@ import {
   switchNetworkSrcDest,
   updateInputValue
 } from './actions'
-import { Currency } from '@uniswap/sdk'
+import { Currency } from '@bolt-dex/sdk'
 
 export interface BridgeState {
   readonly networkAMenu: BridgeMenu | null

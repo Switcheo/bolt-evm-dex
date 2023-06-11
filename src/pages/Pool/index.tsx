@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-// import { Pair, JSBI } from '@uniswap/sdk'
-import { Pair } from '@uniswap/sdk'
+// import { Pair, JSBI } from '@bolt-dex/sdk'
+import { Pair } from '@bolt-dex/sdk'
 import { Link } from 'react-router-dom'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 

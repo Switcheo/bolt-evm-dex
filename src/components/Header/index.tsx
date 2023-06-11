@@ -17,7 +17,7 @@ import { Moon, Sun } from 'react-feather'
 
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
-import { ChainId } from '@uniswap/sdk'
+import { ChainId } from '@bolt-dex/sdk'
 
 const HeaderFrame = styled.div`
   display: grid;

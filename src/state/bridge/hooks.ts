@@ -11,7 +11,7 @@ import {
 } from './actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { useCallback } from 'react'
-import { Currency } from '@uniswap/sdk'
+import { Currency } from '@bolt-dex/sdk'
 
 export const useBridgeState = () => {
   return useSelector<AppState, AppState['bridge']>(state => state.bridge)
