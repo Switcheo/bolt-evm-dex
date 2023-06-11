@@ -281,7 +281,7 @@ export default function Header() {
           <StyledNavLink
             id={`bridge-nav-link`}
             to={'/bridge'}
-            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/bridge')}
+            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/bridge/')}
           >
             {t('bridge')}
           </StyledNavLink>

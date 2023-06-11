@@ -26,6 +26,7 @@ import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import Mint from './Mint'
 import Issue from './Issue'
 import Bridge from './Bridge'
+import BridgeHistory from './BridgeHistory'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -92,7 +93,7 @@ export default function App() {
               <Route exact strict path="/mint" component={Mint} />
               <Route exact strict path="/issue" component={Issue} />
               <Route exact strict path="/bridge" component={Bridge} />
-              <Route exact strict path="/bridge-history" component={Bridge} />
+              <Route exact strict path="/bridge-history" component={BridgeHistory} />
               <Route exact path="/add" component={AddLiquidity} />
               <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
               <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
