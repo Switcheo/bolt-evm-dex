@@ -17,13 +17,12 @@ export function isAddress(value: any): string | false {
   }
 }
 
-const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
+const ETHERSCAN_PREFIXES: Partial<{ [chainId in ChainId]: string }> = {
   1: '',
   3: 'ropsten.',
   4: 'rinkeby.',
   5: 'goerli.',
   42: 'kovan.',
-  42069: 'boltchain'
 }
 
 export function getEtherscanLink(
@@ -32,7 +31,6 @@ export function getEtherscanLink(
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
 
-  // @ts-ignore
   const prefix = chainId === ChainId.BOLTCHAIN ? 'https://blockscout.bolt.switcheo.network' : `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
 
   switch (type) {

@@ -3,7 +3,7 @@ import React from 'react'
 import { ReactComponent as EthereumLogo } from '../../assets/images/bridge-assets-list/ethereum-logo.svg'
 import { ReactComponent as ZilliqaLogo } from '../../assets/images/bridge-assets-list/zilliqa-logo.svg'
 import { ReactComponent as BSCLogo } from '../../assets/images/bridge-assets-list/bsc-logo.svg'
-import { ReactComponent as BoltchainLogo } from '../../assets/svg/bolt-logo.svg'
+import { ReactComponent as BoltchainLogo } from '../../assets/images/bridge-assets-list/bolt-logo.svg'
 
 interface Props {
   chain: any

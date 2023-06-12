@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from '../../assets/svg/bolt-logo.svg'
-import LogoDark from '../../assets/svg/bolt-logo.svg'
+import Logo from '../../assets/svg/boltchain-horizontal-logo.svg'
+import LogoDark from '../../assets/svg/boltchain-horizontal-logo.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances } from '../../state/wallet/hooks'

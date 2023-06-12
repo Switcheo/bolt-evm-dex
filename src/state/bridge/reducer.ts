@@ -1,6 +1,8 @@
-import { createReducer } from '@reduxjs/toolkit'
+import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import {
   BridgeMenu,
+  Token,
+  fetchBridgeableTokens,
   selectTokenCurrency,
   setNetworkA,
   setNetworkAMenu,
@@ -9,7 +11,6 @@ import {
   switchNetworkSrcDest,
   updateInputValue
 } from './actions'
-import { Currency } from '@bolt-dex/sdk'
 
 export interface BridgeState {
   readonly networkAMenu: BridgeMenu | null
@@ -21,7 +22,11 @@ export interface BridgeState {
     readonly networkId: string | undefined
   }
   readonly typedInputValue: string
-  readonly selectedCurrency: Currency | undefined
+  readonly selectedCurrency: Token | undefined
+  /* TokenList */
+  readonly bridgeableTokens: Token[]
+  readonly error: string | null
+  readonly isLoading: boolean
 }
 
 const initialState: BridgeState = {
@@ -34,7 +39,10 @@ const initialState: BridgeState = {
     networkId: 'BNB'
   },
   typedInputValue: '',
-  selectedCurrency: undefined
+  selectedCurrency: undefined,
+  isLoading: false,
+  error: null,
+  bridgeableTokens: []
 }
 
 export default createReducer(initialState, builder =>
@@ -62,4 +70,29 @@ export default createReducer(initialState, builder =>
     .addCase(setNetworkB, (state, action) => {
       state.networkB.networkId = action.payload
     })
+    // TokenList
+    .addCase(fetchBridgeableTokens.pending, state => {
+      state.isLoading = true
+      state.error = null
+    })
+    .addCase(
+      fetchBridgeableTokens.fulfilled,
+      (
+        state,
+        action: PayloadAction<{ tokensUrl: string; bridgesUrl: string; tokenList: Token[]; requestId: string }>
+      ) => {
+        state.isLoading = false
+        state.bridgeableTokens = action.payload.tokenList
+      }
+    )
+    .addCase(
+      fetchBridgeableTokens.rejected,
+      (
+        state,
+        action: PayloadAction<{ tokensUrl: string; bridgesUrl: string; errorMessage: string; requestId: string }>
+      ) => {
+        state.isLoading = false
+        state.error = action.payload.errorMessage
+      }
+    )
 )

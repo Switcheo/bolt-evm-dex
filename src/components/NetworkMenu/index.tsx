@@ -6,8 +6,15 @@ import { ButtonDropdownLight } from '../Button'
 import useTheme from 'hooks/useTheme'
 import { ChainId } from '@bolt-dex/sdk'
 import { CHAIN_INFO } from '../../constants/'
-import { useBridgeActionHandlers, useNetworkAMenuOpen, useNetworkBMenuOpen, useNetworkToggleAMenu, useNetworkToggleBMenu } from 'state/bridge/hooks'
+import {
+  useBridgeActionHandlers,
+  useNetworkAMenuOpen,
+  useNetworkBMenuOpen,
+  useNetworkToggleAMenu,
+  useNetworkToggleBMenu
+} from 'state/bridge/hooks'
 import { BridgeMenu } from 'state/bridge/actions'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 
 const StyledMenu = styled.div`
   display: flex;
@@ -61,7 +68,7 @@ const Logo = styled.img`
   margin-right: 12px;
 `
 
-const NETWORK_SELECTOR_CHAINS = [ChainId.MAINNET, 42069, 56]
+const NETWORK_SELECTOR_CHAINS = [ChainId.MAINNET, ChainId.BOLTCHAIN, ChainId.BNB, ChainId.POLYGON]
 
 interface NetworkMenuProps {
   selectedInput?: string
@@ -77,19 +84,17 @@ const NetworkMenu = forwardRef<HTMLDivElement, NetworkMenuProps>((props, ref) =>
   const openB = useNetworkBMenuOpen(BridgeMenu.NETWORK_B)
   const toggleB = useNetworkToggleBMenu(BridgeMenu.NETWORK_B)
 
-  const { onNetworkASelection, onNetworkBSelection } = useBridgeActionHandlers();
+  const { onNetworkASelection, onNetworkBSelection } = useBridgeActionHandlers()
 
-  
-  // useOnClickOutside(ref && ref.current ? ref : null
-  //   , open ? toggle : undefined)
+  if (typeof ref !== 'function' && ref) {
+    if (props?.selectedInput) { useOnClickOutside(ref, open ? toggle : undefined) }
+    else if (props?.selectedOutput) { useOnClickOutside(ref, openB ? toggleB : undefined) }
+  }
 
   const handleNetworkSelection = (chainId: string) => {
     if (props?.selectedInput) {
-      console.log('input', chainId)
-
       onNetworkASelection(chainId)
     } else if (props?.selectedOutput) {
-      console.log('selectedOutput', chainId)
       onNetworkBSelection(chainId)
     }
   }
@@ -98,11 +103,15 @@ const NetworkMenu = forwardRef<HTMLDivElement, NetworkMenuProps>((props, ref) =>
     return NETWORK_SELECTOR_CHAINS.map(chainId => {
       const chainInfo = CHAIN_INFO[chainId]
       return (
-        <MenuItem key={chainId} style={{ display: 'flex', alignItems: 'center' }} onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          handleNetworkSelection(chainInfo.chain)
-        }}>
+        <MenuItem
+          key={chainId}
+          style={{ display: 'flex', alignItems: 'center' }}
+          onClick={e => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleNetworkSelection(chainInfo.chain)
+          }}
+        >
           <Logo src={chainInfo.logoUrl} alt={`${chainInfo.label}-logo`} />
           {chainInfo.label}
         </MenuItem>

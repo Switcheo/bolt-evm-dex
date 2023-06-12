@@ -1,17 +1,21 @@
 import { AppDispatch, AppState } from 'state'
 import {
   BridgeMenu,
+  TokenList,
+  fetchBridgeableTokens,
   selectTokenCurrency,
   setNetworkA,
   setNetworkAMenu,
   setNetworkB,
   setNetworkBMenu,
   switchNetworkSrcDest,
-  updateInputValue
+  updateInputValue,
+  BridgesListResponse,
+  Token
 } from './actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { useCallback } from 'react'
-import { Currency } from '@bolt-dex/sdk'
+import { nanoid } from '@reduxjs/toolkit'
 
 export const useBridgeState = () => {
   return useSelector<AppState, AppState['bridge']>(state => state.bridge)
@@ -28,7 +32,7 @@ export const useBridgeActionHandlers = () => {
   )
 
   const onCurrencySelection = useCallback(
-    (currency: Currency) => {
+    (currency: Token) => {
       dispatch(selectTokenCurrency(currency))
     },
     [dispatch]
@@ -85,4 +89,50 @@ export const useSwitchNetworkSrcDest = () => {
   return useCallback(() => {
     dispatch(switchNetworkSrcDest())
   }, [dispatch])
+}
+
+export const useFetchBridgeableTokens = (tokensUrl: string, bridgesUrl: string) => {
+  const dispatch = useDispatch<AppDispatch>()
+
+  return useCallback(async () => {
+    const requestId = nanoid()
+    dispatch(fetchBridgeableTokens.pending({ tokensUrl, bridgesUrl, requestId }))
+
+    try {
+      // Fetch both and await both
+      const [tokensResponse, bridgesResponse] = await Promise.all([fetch(tokensUrl), fetch(bridgesUrl)])
+
+      const tokensJson: TokenList = await tokensResponse.json()
+      const bridgesJson: BridgesListResponse = await bridgesResponse.json()
+
+      const filteredBridges = bridgesJson.bridges.filter(
+        bridge =>
+          bridge.bridge_name === 'Polynetwork' &&
+          (bridge.chain_name === 'Binance Smart Chain' ||
+            bridge.chain_name === 'Ethereum' ||
+            bridge.chain_name === 'Polygon') &&
+          bridge.enabled
+      ) // chain_id === 17, 2, 6
+      
+      // Filter to check if token is active and if the bridge id of the token is in the filteredBridges
+      const bridgeableTokens = tokensJson.tokens.filter(token =>
+        token.is_active && token.bridge_id === "1" && filteredBridges.some(bridge => bridge.chain_id === token.chain_id)
+      )
+
+      dispatch(
+        fetchBridgeableTokens.fulfilled({
+          tokenList: bridgeableTokens,
+          requestId,
+          tokensUrl,
+          bridgesUrl
+        })
+      )
+    } catch (error) {
+      let errorMessage = ''
+      if (error instanceof Error) {
+        errorMessage = error.message
+      }
+      dispatch(fetchBridgeableTokens.rejected({ errorMessage, requestId, tokensUrl, bridgesUrl }))
+    }
+  }, [dispatch, tokensUrl, bridgesUrl])
 }

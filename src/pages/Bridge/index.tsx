@@ -1,11 +1,11 @@
 import React, { useCallback, useRef } from 'react'
-// import { Link as HistoryLink } from 'react-router-dom'
+
 import styled from 'styled-components'
 
 import { SwapPoolTabs } from 'components/NavigationTabs'
 import { Wrapper } from './styleds'
 import { AutoColumn } from 'components/Column'
-import CurrencyInputPanel from 'components/CurrencyInputPanel'
+
 import { useActiveWeb3React } from 'hooks'
 import { ButtonError, ButtonLight } from 'components/Button'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -17,6 +17,7 @@ import { ArrowRight } from 'react-feather'
 
 import NetworkMenu from 'components/NetworkMenu'
 import { useBridgeActionHandlers, useBridgeState, useSwitchNetworkSrcDest } from 'state/bridge/hooks'
+import BridgeCurrencyInputPanel from 'components/BridgeCurrencyInputPanel'
 
 
 const BridgeBody = styled.div`
@@ -96,7 +97,6 @@ export default function Bridge() {
   const { typedInputValue, networkA, networkB, selectedCurrency } = useBridgeState();
 
   const { onUserInput, onCurrencySelection } = useBridgeActionHandlers();
-
   // States
   const atMaxAmountInput = false; // Temp
 
@@ -186,7 +186,7 @@ export default function Bridge() {
               </BridgeCardContainer>
             </BridgeTokenContainer>
 
-            <CurrencyInputPanel
+            <BridgeCurrencyInputPanel
               label={'Transfer Amount'}
               value={typedInputValue}
               onUserInput={handleTypeInput}
@@ -194,7 +194,7 @@ export default function Bridge() {
               onMax={handleMaxInput}
               onCurrencySelect={handleInputSelect}
               currency={selectedCurrency}
-              id={''}
+              id={"bridge-input"}
             />
 
             {!account ? (

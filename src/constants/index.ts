@@ -1,8 +1,10 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@bolt-dex/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import boltchainLogo from 'assets/svg/bolt-logo.svg'
+import boltchainLogo from 'assets/images/bridge-assets-list/bolt-logo.svg'
 import ethereumLogo from 'assets/images/ethereum-logo.png'
+import bscLogo from 'assets/images/bridge-assets-list/bsc-logo.svg'
+import polygonLogo from 'assets/images/bridge-assets-list/polygon-logo.svg'
 
 import { injected } from '../connectors'
 
@@ -46,7 +48,9 @@ export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
+  [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.BNB]: new Token(ChainId.BNB, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.POLYGON]: new Token(ChainId.POLYGON, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
@@ -66,7 +70,9 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
-  [ChainId.BOLTCHAIN]: [WETH[ChainId.BOLTCHAIN]]
+  [ChainId.BOLTCHAIN]: [WETH[ChainId.BOLTCHAIN]],
+  [ChainId.BNB]: [WETH[ChainId.BNB]],
+  [ChainId.POLYGON]: [WETH[ChainId.POLYGON]]
 }
 
 // used to construct intermediary pairs for trading
@@ -241,6 +247,7 @@ interface ChainInfo {
   readonly label: string
   readonly logoUrl: string
   readonly chain: string
+  readonly chainId: string
 }
 
 type ChainInfoMap = {
@@ -255,13 +262,35 @@ export const CHAIN_INFO: ChainInfoMap = {
     // infoLink: 'https://info.uniswap.org/#/',
     label: 'Ethereum',
     logoUrl: ethereumLogo,
-    chain: 'ETH'
+    chain: 'ETH',
+    chainId: ChainId.MAINNET.toString()
     // nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     // color: darkTheme.chain_1
   },
   [ChainId.BOLTCHAIN]: {
     label: 'BoltChain',
     logoUrl: boltchainLogo,
-    chain: 'BOLT'
+    chain: 'BOLT',
+    chainId: ChainId.BOLTCHAIN.toString()
+  },
+  [ChainId.BNB]: {
+    label: 'Binance Smart Chain',
+    logoUrl: bscLogo,
+    chain: 'BNB',
+    chainId: '56'
+  },
+  [ChainId.POLYGON]: {
+    label: 'Polygon',
+    logoUrl: polygonLogo,
+    chain: 'POLYGON',
+    chainId: '137'
   }
+}
+
+// Create a map from name to chainId for bridgeableTokens
+export const BRIDGEABLE_TOKENS: { [name: string]: number } = {
+  BOLT: ChainId.BOLTCHAIN,
+  ETH: 2,
+  BSC: 6,
+  MATIC: 17
 }
