@@ -1,7 +1,7 @@
-import React, { forwardRef } from "react";
 import { ChainId } from "@bolt-dex/sdk";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import useTheme from "hooks/useTheme";
+import React, { forwardRef } from "react";
 import { BridgeMenu } from "state/bridge/actions";
 import {
   useBridgeActionHandlers,
@@ -11,8 +11,7 @@ import {
   useNetworkToggleBMenu,
 } from "state/bridge/hooks";
 import styled from "styled-components";
-
-import { CHAIN_INFO } from "../../constants/";
+import { CHAIN_INFO } from "../../constants";
 import { TYPE } from "../../theme";
 import { ButtonDropdownLight } from "../Button";
 

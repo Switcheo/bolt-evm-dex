@@ -6,7 +6,6 @@ import {
   TokenAmount,
   Trade,
 } from "@bolt-dex/sdk";
-
 import { DAI, USDC } from "../constants";
 import { MockV1Pair } from "../data/V1";
 import v1SwapArguments from "./v1SwapArguments";

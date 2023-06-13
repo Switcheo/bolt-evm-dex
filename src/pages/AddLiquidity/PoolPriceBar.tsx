@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
 import { Currency, Percent, Price } from "@bolt-dex/sdk";
+import React, { useContext } from "react";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-
 import { AutoColumn } from "../../components/Column";
 import { AutoRow } from "../../components/Row";
 import { ONE_BIPS } from "../../constants";

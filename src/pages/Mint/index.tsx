@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import AddressInputPanel from "components/AddressInputPanel";
 import { ButtonError } from "components/Button";
 import { AutoColumn, ColumnCenter } from "components/Column";
@@ -6,9 +5,9 @@ import { SwapPoolTabs } from "components/NavigationTabs";
 import { isAddress } from "ethers/lib/utils";
 import useTheme from "hooks/useTheme";
 import AppBody from "pages/AppBody";
+import React, { useState } from "react";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import { TYPE } from "theme";
-
 import { WSS_FAUCET_URL } from "../../constants";
 import { Wrapper } from "./styleds";
 

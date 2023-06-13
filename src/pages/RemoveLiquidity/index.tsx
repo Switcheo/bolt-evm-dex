@@ -1,15 +1,14 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
 import { Currency, currencyEquals, ETHER, Percent, WETH } from "@bolt-dex/sdk";
 import { BigNumber } from "@ethersproject/bignumber";
 import { splitSignature } from "@ethersproject/bytes";
 import { Contract } from "@ethersproject/contracts";
 import { TransactionResponse } from "@ethersproject/providers";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { ArrowDown, Plus } from "react-feather";
 import ReactGA from "react-ga";
 import { RouteComponentProps } from "react-router";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-
 import {
   ButtonConfirmed,
   ButtonError,

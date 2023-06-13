@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   JSBI,
   Percent,
@@ -9,7 +8,7 @@ import {
 } from "@bolt-dex/sdk";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
-
+import { useMemo } from "react";
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from "../constants";
 import { getTradeVersion, useV1TradeExchangeAddress } from "../data/V1";
 import { useTransactionAdder } from "../state/transactions/hooks";

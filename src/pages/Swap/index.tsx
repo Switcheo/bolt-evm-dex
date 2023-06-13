@@ -1,3 +1,6 @@
+import { CurrencyAmount, JSBI, Token, Trade } from "@bolt-dex/sdk";
+import UnsupportedCurrencyFooter from "components/swap/UnsupportedCurrencyFooter";
+import { useIsTransactionUnsupported } from "hooks/Trades";
 import React, {
   useCallback,
   useContext,
@@ -5,16 +8,12 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { CurrencyAmount, JSBI, Token, Trade } from "@bolt-dex/sdk";
-import UnsupportedCurrencyFooter from "components/swap/UnsupportedCurrencyFooter";
-import { useIsTransactionUnsupported } from "hooks/Trades";
 import { ArrowDown } from "react-feather";
 import ReactGA from "react-ga";
 import { RouteComponentProps } from "react-router-dom";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
 import { isTradeBetter } from "utils/trades";
-
 import AddressInputPanel from "../../components/AddressInputPanel";
 import {
   ButtonConfirmed,

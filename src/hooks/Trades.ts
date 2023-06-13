@@ -1,9 +1,8 @@
-import { useMemo } from "react";
 import { Currency, CurrencyAmount, Pair, Token, Trade } from "@bolt-dex/sdk";
 import flatMap from "lodash.flatmap";
+import { useMemo } from "react";
 import { useUserSingleHopOnly } from "state/user/hooks";
 import { isTradeBetter } from "utils/trades";
-
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,

@@ -1,8 +1,7 @@
-import React from "react";
 import { ChainId, Currency, currencyEquals, ETHER, Token } from "@bolt-dex/sdk";
+import React from "react";
 import { Text } from "rebass";
 import styled from "styled-components";
-
 import { SUGGESTED_BASES } from "../../constants";
 import { AutoColumn } from "../Column";
 import CurrencyLogo from "../CurrencyLogo";

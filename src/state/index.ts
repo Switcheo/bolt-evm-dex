@@ -1,6 +1,5 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { load, save } from "redux-localstorage-simple";
-
 import application from "./application/reducer";
 import bridge from "./bridge/reducer";
 import burn from "./burn/reducer";

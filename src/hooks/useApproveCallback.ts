@@ -1,8 +1,7 @@
-import { useCallback, useMemo } from "react";
 import { CurrencyAmount, ETHER, TokenAmount, Trade } from "@bolt-dex/sdk";
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
-
+import { useCallback, useMemo } from "react";
 import { ROUTER_ADDRESS } from "../constants";
 import { useTokenAllowance } from "../data/Allowances";
 import { getTradeVersion, useV1TradeExchangeAddress } from "../data/V1";

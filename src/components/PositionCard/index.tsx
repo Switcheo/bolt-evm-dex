@@ -1,11 +1,10 @@
-import React, { useState } from "react";
 import { JSBI, Pair, Percent, TokenAmount } from "@bolt-dex/sdk";
 import { darken, transparentize } from "polished";
+import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
 import { Link } from "react-router-dom";
 import { Text } from "rebass";
 import styled from "styled-components";
-
 import { BIG_INT_ZERO } from "../../constants";
 import { useTotalSupply } from "../../data/TotalSupply";
 import { useActiveWeb3React } from "../../hooks";

@@ -1,6 +1,6 @@
-import { AutoColumn } from "components/Column";
-import { RowBetween } from "components/Row";
 import styled from "styled-components";
+import { AutoColumn } from "../Column";
+import { RowBetween } from "../Row";
 
 export const PaddedColumn = styled(AutoColumn)`
   padding: 20px;
@@ -39,7 +39,7 @@ export const Separator = styled.div`
   background-color: ${({ theme }) => theme.bg2};
 `;
 
-export const MenuItem = styled(RowBetween)`
+export const MenuItem = styled(RowBetween)<{ dim?: boolean }>`
   padding: 4px 20px;
   height: 56px;
   display: grid;

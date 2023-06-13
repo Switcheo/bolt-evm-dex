@@ -6,7 +6,6 @@ import {
   TokenAmount,
   Trade,
 } from "@bolt-dex/sdk";
-
 import {
   ALLOWED_PRICE_IMPACT_HIGH,
   ALLOWED_PRICE_IMPACT_LOW,

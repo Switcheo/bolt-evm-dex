@@ -1,6 +1,5 @@
 import { currencyEquals, Percent, Trade } from "@bolt-dex/sdk";
-
-import { ONE_HUNDRED_PERCENT, ZERO_PERCENT } from "./../constants/index";
+import { ONE_HUNDRED_PERCENT, ZERO_PERCENT } from "../constants";
 
 // returns whether tradeB is better than tradeA by at least a threshold percentage amount
 export function isTradeBetter(

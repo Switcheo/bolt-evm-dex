@@ -1,6 +1,5 @@
-import React from "react";
 import { Percent } from "@bolt-dex/sdk";
-
+import React from "react";
 import { ONE_BIPS } from "../../constants";
 import { warningSeverity } from "../../utils/prices";
 import { ErrorText } from "./styleds";

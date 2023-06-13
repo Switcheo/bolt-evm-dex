@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   ChainId,
   Currency,
@@ -7,7 +6,7 @@ import {
   Price,
   WETH,
 } from "@bolt-dex/sdk";
-
+import { useMemo } from "react";
 import { USDC } from "../constants";
 import { PairState, usePairs } from "../data/Reserves";
 import { useActiveWeb3React } from "../hooks";

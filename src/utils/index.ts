@@ -13,7 +13,6 @@ import { AddressZero } from "@ethersproject/constants";
 import { Contract } from "@ethersproject/contracts";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { abi as IUniswapV2Router02ABI } from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
-
 import { ROUTER_ADDRESS } from "../constants";
 import { TokenAddressMap } from "../state/lists/hooks";
 

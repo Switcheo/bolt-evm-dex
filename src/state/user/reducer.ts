@@ -1,5 +1,4 @@
 import { createReducer } from "@reduxjs/toolkit";
-
 import {
   DEFAULT_DEADLINE_FROM_NOW,
   INITIAL_ALLOWED_SLIPPAGE,

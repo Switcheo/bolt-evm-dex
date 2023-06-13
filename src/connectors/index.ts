@@ -1,6 +1,5 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { InjectedConnector } from "@web3-react/injected-connector";
-
 // import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 // import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 // import { PortisConnector } from '@web3-react/portis-connector'
@@ -11,18 +10,16 @@ import { NetworkConnector } from "./NetworkConnector";
 // import UNISWAP_LOGO_URL from '../assets/svg/logo.svg'
 
 const NETWORK_URL = process.env.REACT_APP_NETWORK_URL;
-// const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
-// const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
-// const WALLETCONNECT_BRIDGE_URL = process.env.REACT_APP_WALLETCONNECT_BRIDGE_URL
+// const FORMATIC_KEY = import.meta.env.VITE_FORTMATIC_KEY
+// const PORTIS_ID = import.meta.env.VITE_PORTIS_ID
+// const WALLETCONNECT_BRIDGE_URL = import.meta.env.VITE_WALLETCONNECT_BRIDGE_URL
 
 export const NETWORK_CHAIN_ID: number = parseInt(
   process.env.REACT_APP_CHAIN_ID ?? "1",
 );
 
 if (typeof NETWORK_URL === "undefined") {
-  throw new Error(
-    `REACT_APP_NETWORK_URL must be a defined environment variable`,
-  );
+  throw new Error(`VITE_NETWORK_URL must be a defined environment variable`);
 }
 
 export const network = new NetworkConnector({

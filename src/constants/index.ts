@@ -4,7 +4,6 @@ import boltchainLogo from "assets/images/bridge-assets-list/bolt-logo.svg";
 import bscLogo from "assets/images/bridge-assets-list/bsc-logo.svg";
 import polygonLogo from "assets/images/bridge-assets-list/polygon-logo.svg";
 import ethereumLogo from "assets/images/ethereum-logo.png";
-
 import { injected } from "../connectors";
 
 export const TOKENS_LIST_URL =

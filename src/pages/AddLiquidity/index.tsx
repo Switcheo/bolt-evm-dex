@@ -1,4 +1,3 @@
-import React, { useCallback, useContext, useState } from "react";
 import {
   Currency,
   currencyEquals,
@@ -10,12 +9,12 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { TransactionResponse } from "@ethersproject/providers";
 import UnsupportedCurrencyFooter from "components/swap/UnsupportedCurrencyFooter";
 import { useIsTransactionUnsupported } from "hooks/Trades";
+import React, { useCallback, useContext, useState } from "react";
 import { Plus } from "react-feather";
 import ReactGA from "react-ga";
 import { RouteComponentProps } from "react-router-dom";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-
 import {
   ButtonError,
   ButtonLight,

@@ -1,5 +1,4 @@
 import { CurrencyAmount, ETHER, JSBI } from "@bolt-dex/sdk";
-
 import { MIN_ETH } from "../constants";
 
 /**

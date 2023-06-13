@@ -81,7 +81,7 @@ export function BridgeCurrencySearch({
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>();
-  const handleInput = useCallback((event) => {
+  const handleInput = useCallback((event: { target: { value: any; }; }) => {
     const input = event.target.value;
     const checksummedInput = isAddress(input);
     setSearchQuery(checksummedInput || input);
@@ -134,11 +134,12 @@ export function BridgeCurrencySearch({
       {filteredTokens.length !== 0 ? (
         <div style={{ flex: "1" }}>
           <AutoSizer disableWidth>
-            {({ height }) => (
+            {({ height }: {height:number}) => (
               <CurrencyList
                 height={height}
                 currencies={filteredTokens}
                 onCurrencySelect={handleCurrencySelect}
+
                 selectedCurrency={selectedCurrency}
                 fixedListRef={fixedList}
               />

@@ -1,17 +1,16 @@
+import { LightGreyCard } from "components/Card";
+import useTheme from "hooks/useTheme";
+import _ from "lodash";
 import React, {
   CSSProperties,
   MutableRefObject,
   useCallback,
   useMemo,
 } from "react";
-import { LightGreyCard } from "components/Card";
-import useTheme from "hooks/useTheme";
-import _ from "lodash";
 import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
 import { Token } from "state/bridge/actions";
 import styled from "styled-components";
-
 // import { useActiveWeb3React } from '../../hooks'
 
 import { TYPE } from "../../theme";
@@ -90,14 +89,12 @@ function CurrencyRow({
   currency,
   onSelect,
   isSelected,
-  otherSelected,
   style,
 }: {
   currency: Token;
   onSelect: () => void;
   isSelected: boolean;
-  otherSelected: boolean;
-  style: CSSProperties;
+  style?: CSSProperties;
 }) {
   // const { account } = useActiveWeb3React()
   // const selectedTokenList = useCombinedActiveList()
@@ -177,7 +174,6 @@ export default function CurrencyList({
           currency={currency}
           isSelected={isSelected}
           onSelect={handleSelect}
-          otherSelected={false}
         />
       );
     },
