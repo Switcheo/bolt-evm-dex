@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "@ethersproject/experimental": "^5.0.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.0.2",
     "@popperjs/core": "^2.4.4",
     "@reach/dialog": "^0.10.3",
     "@reach/portal": "^0.10.3",
@@ -58,7 +59,7 @@
     "multihashes": "^3.0.1",
     "node-vibrant": "^3.1.5",
     "polished": "^3.3.2",
-    "prettier": "^1.17.0",
+    "prettier": "^2.8.8",
     "qs": "^6.9.7",
     "react": "^16.13.1",
     "react-device-detect": "^1.6.2",
@@ -95,13 +96,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'"
-  },
-  "eslintConfig": {
-    "extends": "react-app",
-    "ignorePatterns": [
-      "node_modules"
-    ]
+    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "format": "prettier \"src/**/*.+(ts|js|tsx)\" --write"
   },
   "browserslist": {
     "production": [

@@ -1,9 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export default function BridgeHistory() {
-    return (
-        <div>
-        BridgeHistory
-        </div>
-    )
+  return <div>BridgeHistory</div>;
 }

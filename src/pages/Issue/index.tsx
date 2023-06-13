@@ -1,24 +1,38 @@
-import React, { useEffect } from 'react'
-import { SwapPoolTabs } from 'components/NavigationTabs'
-import { Wrapper } from './styleds'
-import { AutoColumn } from 'components/Column'
-import { RowBetween } from 'components/Row'
-import styled from 'styled-components'
-import { ERC20Options, premintPattern, printERC20 } from '@openzeppelin/wizard/dist/erc20'
+import React, { useEffect } from "react";
+import {
+  ERC20Options,
+  premintPattern,
+  printERC20,
+} from "@openzeppelin/wizard/dist/erc20";
+import { AutoColumn } from "components/Column";
+import { SwapPoolTabs } from "components/NavigationTabs";
+import { RowBetween } from "components/Row";
+import styled from "styled-components";
 
-import hljs from './highlightjs'
-import 'highlight.js/styles/github-dark.css'
-import { ButtonPrimary } from 'components/Button'
-import { AutoRow } from 'components/Row'
+import hljs from "./highlightjs";
+import { Wrapper } from "./styleds";
 
-import { Solc } from 'utils/solidity-compiler/wrapper'
-import { useActiveWeb3React } from 'hooks'
-import { ethers } from 'ethers'
-import { useTransactionAdder } from 'state/transactions/hooks'
-import { codeSet, compilingSet, highlightedCodeSet, optsSet, selectCode, selectCompiling, selectHighlightedCode, selectOpts } from 'state/issue/issueSlice'
-import { useAppDispatch, useAppSelector } from 'state/issue/hooks'
-import { getCompilerInput } from 'utils/issueUtils'
-import Loader from 'components/Loader'
+import "highlight.js/styles/github-dark.css";
+
+import { ButtonPrimary } from "components/Button";
+import Loader from "components/Loader";
+import { AutoRow } from "components/Row";
+import { ethers } from "ethers";
+import { useActiveWeb3React } from "hooks";
+import { useAppDispatch, useAppSelector } from "state/issue/hooks";
+import {
+  codeSet,
+  compilingSet,
+  highlightedCodeSet,
+  optsSet,
+  selectCode,
+  selectCompiling,
+  selectHighlightedCode,
+  selectOpts,
+} from "state/issue/issueSlice";
+import { useTransactionAdder } from "state/transactions/hooks";
+import { getCompilerInput } from "utils/issueUtils";
+import { Solc } from "utils/solidity-compiler/wrapper";
 
 const IssueBody = styled.div`
   position: relative;
@@ -26,12 +40,12 @@ const IssueBody = styled.div`
   // margin: 0 5rem;
   width: 100%;
   background: ${({ theme }) => theme.bg1};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
+    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
   /* padding: 1rem; */
   margin-top: -50px;
-`
+`;
 
 const IssueRow = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -41,7 +55,7 @@ const IssueRow = styled(RowBetween)`
     flex-direction: column-reverse;
   `};
   gap: 1rem;
-`
+`;
 
 const SettingsSection = styled.div`
   width: 20rem;
@@ -52,7 +66,7 @@ const SettingsSection = styled.div`
   padding: 1rem;
   border-radius: 15px;
   border: 1px solid ${({ theme }) => theme.bg2};
-`
+`;
 
 const OutputSection = styled.div`
   border-radius: 15px;
@@ -62,7 +76,7 @@ const OutputSection = styled.div`
   flex-grow: 1;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.bg2};
-`
+`;
 
 const OutputPreSection = styled.pre`
   overflow: auto;
@@ -76,7 +90,7 @@ const OutputPreSection = styled.pre`
   & > code {
     font-family: monospace;
   }
-`
+`;
 
 const OutputCodeSection = styled.code`
   overflow-x: auto;
@@ -86,7 +100,7 @@ const OutputCodeSection = styled.code`
   padding: 1rem;
   z-index: 2;
   height: 100%;
-`
+`;
 
 const ControlSection = styled.div`
   display: flex;
@@ -101,7 +115,7 @@ const ControlSection = styled.div`
   & > * + * {
     margin-top: 0.75rem;
   }
-`
+`;
 
 const CheckboxGroup = styled.div`
   display: flex;
@@ -116,7 +130,7 @@ const CheckboxGroup = styled.div`
   & input {
     margin-right: 0.5rem;
   }
-`
+`;
 
 const ControlSectionHeading = styled.h2`
   margin-top: 0;
@@ -126,13 +140,13 @@ const ControlSectionHeading = styled.h2`
   font-size: 1.25rem;
   color: ${({ theme }) => theme.text3};
   font-weight: 600;
-`
+`;
 
 const TokenDetailsSection = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 0.5rem;
-`
+`;
 
 const LabeledInput = styled.label`
   display: flex;
@@ -146,14 +160,14 @@ const LabeledInput = styled.label`
     margin-top: 0.25rem;
     width: 100%;
   }
-`
+`;
 
 const Input = styled.input<{ error?: boolean }>`
   border: 1px solid ${({ theme }) => theme.bg2};
   border-radius: 6px;
   flex: 1 1 auto;
   background-color: ${({ theme }) => theme.bg1};
-  transition: color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')};
+  transition: color 300ms ${({ error }) => (error ? "step-end" : "step-start")};
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -184,76 +198,79 @@ const Input = styled.input<{ error?: boolean }>`
     border: 1px solid ${({ theme }) => theme.primary1};
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-`
+`;
 
 const SpinnerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-`
+`;
 
-type ERC20OptionKeys = Exclude<keyof ERC20Options, 'name' | 'symbol' | 'access' | 'upgradeable' | 'info'>
+type ERC20OptionKeys = Exclude<
+  keyof ERC20Options,
+  "name" | "symbol" | "access" | "upgradeable" | "info"
+>;
 
 interface ERC20Feature {
-  id: ERC20OptionKeys
-  label: string
+  id: ERC20OptionKeys;
+  label: string;
 }
 
 const ERC20Features: ERC20Feature[] = [
   {
-    id: 'mintable',
-    label: 'Mintable'
+    id: "mintable",
+    label: "Mintable",
   },
   {
-    id: 'burnable',
-    label: 'Burnable'
+    id: "burnable",
+    label: "Burnable",
   },
   {
-    id: 'pausable',
-    label: 'Pausable'
+    id: "pausable",
+    label: "Pausable",
   },
   {
-    id: 'permit',
-    label: 'Permit'
+    id: "permit",
+    label: "Permit",
   },
   {
-    id: 'votes',
-    label: 'Votes'
+    id: "votes",
+    label: "Votes",
   },
   {
-    id: 'flashmint',
-    label: 'Flash Minting'
+    id: "flashmint",
+    label: "Flash Minting",
   },
   {
-    id: 'snapshots',
-    label: 'Snapshot'
-  }
-]
+    id: "snapshots",
+    label: "Snapshot",
+  },
+];
 
 interface CompilerOutput {
   errors?: string[];
   contracts?: {
     [fullContractName: string]: {
       [contractName: string]: {
-        abi: any[],
+        abi: any[];
         evm: {
           bytecode: {
-            object: string
-          }
-        }
-      }
-    }
+            object: string;
+          };
+        };
+      };
+    };
   };
   sources?: {
     [fileName: string]: {
-      id: number
-    }
-  }
+      id: number;
+    };
+  };
 }
 
 export default function Issue() {
-  const { library } = useActiveWeb3React()
+  const { library } = useActiveWeb3React();
 
   const opts = useAppSelector(selectOpts);
   const code = useAppSelector(selectCode);
@@ -261,7 +278,7 @@ export default function Issue() {
   const compiling = useAppSelector(selectCompiling);
   const dispatch = useAppDispatch();
 
-  const addTransaction = useTransactionAdder()
+  const addTransaction = useTransactionAdder();
 
   /*
   The dispatch function reference will be stable as long as the same store instance is being passed to the <Provider>. Normally, that store instance never changes in an application.
@@ -269,65 +286,68 @@ export default function Issue() {
   */
   useEffect(() => {
     dispatch(codeSet(printERC20(opts)));
-  }, [opts, dispatch])
+  }, [opts, dispatch]);
 
   useEffect(() => {
-    dispatch(highlightedCodeSet(hljs.highlight(code, { language: 'solidity' }).value));
-  }, [code, dispatch])
+    dispatch(
+      highlightedCodeSet(hljs.highlight(code, { language: "solidity" }).value),
+    );
+  }, [code, dispatch]);
 
   const handleDeployment = async () => {
-    dispatch(compilingSet(true))
-    const compiler = new Solc()
-    const input = getCompilerInput(code, opts.name)
+    dispatch(compilingSet(true));
+    const compiler = new Solc();
+    const input = getCompilerInput(code, opts.name);
 
-    const output: CompilerOutput = await compiler.compile(input)
+    const output: CompilerOutput = await compiler.compile(input);
 
     // Contract name is opts.name. if theres' space, remove it
-    const contractName = opts.name.replace(/\s/g, '')
-    const compiledContractOutput = output.contracts?.[opts.name]?.[contractName]
+    const contractName = opts.name.replace(/\s/g, "");
+    const compiledContractOutput =
+      output.contracts?.[opts.name]?.[contractName];
 
     if (!compiledContractOutput || output.errors) {
-      console.error(output.errors ?? 'No compiled contract output')
-      dispatch(compilingSet(false))
-      return
+      console.error(output.errors ?? "No compiled contract output");
+      dispatch(compilingSet(false));
+      return;
     }
 
-    const bytecode = compiledContractOutput.evm.bytecode.object
-    const abi = compiledContractOutput.abi
+    const bytecode = compiledContractOutput.evm.bytecode.object;
+    const abi = compiledContractOutput.abi;
 
     try {
-      const signer = library?.getSigner()
-      const factory = new ethers.ContractFactory(abi, bytecode, signer)
+      const signer = library?.getSigner();
+      const factory = new ethers.ContractFactory(abi, bytecode, signer);
 
-      const newContract = await factory.deploy()
+      const newContract = await factory.deploy();
 
       addTransaction(newContract.deployTransaction, {
-        summary: `Deploy ${contractName}`
-      })
+        summary: `Deploy ${contractName}`,
+      });
 
-      await newContract.deployed()
+      await newContract.deployed();
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      dispatch(compilingSet(false))
+      dispatch(compilingSet(false));
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
-    dispatch(optsSet({ ...opts, [name]: value }))
-  }
+    dispatch(optsSet({ ...opts, [name]: value }));
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target
+    const { name, checked } = e.target;
 
-    dispatch(optsSet({ ...opts, [name]: checked }))
-  }
+    dispatch(optsSet({ ...opts, [name]: checked }));
+  };
 
   return (
     <>
-      <SwapPoolTabs active={'issue'} />
+      <SwapPoolTabs active={"issue"} />
       <IssueBody>
         <Wrapper id="issue-page">
           <AutoColumn gap="1rem">
@@ -337,16 +357,18 @@ export default function Issue() {
                 width="unset"
                 borderRadius="10px"
                 onClick={async () => {
-                  await handleDeployment()
+                  await handleDeployment();
                 }}
                 disabled={compiling}
               >
-                {
-                  compiling ? <SpinnerContainer>
+                {compiling ? (
+                  <SpinnerContainer>
                     <Loader />
                     <span>Deploying ERC20...</span>
-                  </SpinnerContainer> : 'Deploy ERC20'
-                }
+                  </SpinnerContainer>
+                ) : (
+                  "Deploy ERC20"
+                )}
               </ButtonPrimary>
             </AutoRow>
             <IssueRow minWidth="32rem">
@@ -403,15 +425,19 @@ export default function Issue() {
                   </ControlSection>
                   <ControlSection>
                     <ControlSectionHeading>Features</ControlSectionHeading>
-                    {ERC20Features.map(feature => {
+                    {ERC20Features.map((feature) => {
                       return (
                         <CheckboxGroup key={`features-${feature.id}`}>
                           <label>
-                            <input type="checkbox" name={feature.id} onChange={handleCheckboxChange} />
+                            <input
+                              type="checkbox"
+                              name={feature.id}
+                              onChange={handleCheckboxChange}
+                            />
                             {feature.label}
                           </label>
                         </CheckboxGroup>
-                      )
+                      );
                     })}
                   </ControlSection>
                 </div>
@@ -419,7 +445,9 @@ export default function Issue() {
 
               <OutputSection>
                 <OutputPreSection>
-                  <OutputCodeSection dangerouslySetInnerHTML={{ __html: highlightedCode ?? '' }} />
+                  <OutputCodeSection
+                    dangerouslySetInnerHTML={{ __html: highlightedCode ?? "" }}
+                  />
                 </OutputPreSection>
               </OutputSection>
             </IssueRow>
@@ -427,5 +455,5 @@ export default function Issue() {
         </Wrapper>
       </IssueBody>
     </>
-  )
+  );
 }

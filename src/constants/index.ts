@@ -1,72 +1,164 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@bolt-dex/sdk'
-import { AbstractConnector } from '@web3-react/abstract-connector'
+import { ChainId, JSBI, Percent, Token, WETH } from "@bolt-dex/sdk";
+import { AbstractConnector } from "@web3-react/abstract-connector";
+import boltchainLogo from "assets/images/bridge-assets-list/bolt-logo.svg";
+import bscLogo from "assets/images/bridge-assets-list/bsc-logo.svg";
+import polygonLogo from "assets/images/bridge-assets-list/polygon-logo.svg";
+import ethereumLogo from "assets/images/ethereum-logo.png";
 
-import boltchainLogo from 'assets/images/bridge-assets-list/bolt-logo.svg'
-import ethereumLogo from 'assets/images/ethereum-logo.png'
-import bscLogo from 'assets/images/bridge-assets-list/bsc-logo.svg'
-import polygonLogo from 'assets/images/bridge-assets-list/polygon-logo.svg'
+import { injected } from "../connectors";
 
-import { injected } from '../connectors'
+export const TOKENS_LIST_URL =
+  "https://api.carbon.network/carbon/coin/v1/tokens?pagination.limit=5000";
 
-export const TOKENS_LIST_URL = 'https://api.carbon.network/carbon/coin/v1/tokens?pagination.limit=5000'
+export const WSS_FAUCET_URL =
+  "wss://faucet.bolt.switcheo.network/faucet-smart/api";
 
-export const WSS_FAUCET_URL = 'wss://faucet.bolt.switcheo.network/faucet-smart/api'
+export const ROUTER_ADDRESS = "0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757";
 
-export const ROUTER_ADDRESS = '0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757'
-
-export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export interface SimpleMap<T = unknown> {
-  [key: string]: T
+  [key: string]: T;
 }
 
 // a list of tokens by chain
 type ChainTokenList = {
-  readonly [chainId in ChainId]: Token[]
-}
+  readonly [chainId in ChainId]: Token[];
+};
 
-export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth')
-export const DAI = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')
-export const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C')
-export const USDT = new Token(ChainId.MAINNET, '0xdAC17F958D2ee523a2206206994597C13D831ec7', 6, 'USDT', 'Tether USD')
-export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC')
-export const FEI = new Token(ChainId.MAINNET, '0x956F47F50A910163D8BF957Cf5846D573E7f87CA', 18, 'FEI', 'Fei USD')
-export const TRIBE = new Token(ChainId.MAINNET, '0xc7283b66Eb1EB5FB86327f08e1B5816b0720212B', 18, 'TRIBE', 'Tribe')
-export const FRAX = new Token(ChainId.MAINNET, '0x853d955aCEf822Db058eb8505911ED77F175b99e', 18, 'FRAX', 'Frax')
-export const FXS = new Token(ChainId.MAINNET, '0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0', 18, 'FXS', 'Frax Share')
-export const renBTC = new Token(ChainId.MAINNET, '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D', 8, 'renBTC', 'renBTC')
+export const AMPL = new Token(
+  ChainId.MAINNET,
+  "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+  9,
+  "AMPL",
+  "Ampleforth",
+);
+export const DAI = new Token(
+  ChainId.MAINNET,
+  "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  18,
+  "DAI",
+  "Dai Stablecoin",
+);
+export const USDC = new Token(
+  ChainId.MAINNET,
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  6,
+  "USDC",
+  "USD//C",
+);
+export const USDT = new Token(
+  ChainId.MAINNET,
+  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  6,
+  "USDT",
+  "Tether USD",
+);
+export const WBTC = new Token(
+  ChainId.MAINNET,
+  "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  8,
+  "WBTC",
+  "Wrapped BTC",
+);
+export const FEI = new Token(
+  ChainId.MAINNET,
+  "0x956F47F50A910163D8BF957Cf5846D573E7f87CA",
+  18,
+  "FEI",
+  "Fei USD",
+);
+export const TRIBE = new Token(
+  ChainId.MAINNET,
+  "0xc7283b66Eb1EB5FB86327f08e1B5816b0720212B",
+  18,
+  "TRIBE",
+  "Tribe",
+);
+export const FRAX = new Token(
+  ChainId.MAINNET,
+  "0x853d955aCEf822Db058eb8505911ED77F175b99e",
+  18,
+  "FRAX",
+  "Frax",
+);
+export const FXS = new Token(
+  ChainId.MAINNET,
+  "0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0",
+  18,
+  "FXS",
+  "Frax Share",
+);
+export const renBTC = new Token(
+  ChainId.MAINNET,
+  "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+  8,
+  "renBTC",
+  "renBTC",
+);
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
-export const AVERAGE_BLOCK_TIME_IN_SECS = 13
-export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320
-export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS
+export const AVERAGE_BLOCK_TIME_IN_SECS = 13;
+export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
+export const PROPOSAL_LENGTH_IN_SECS =
+  AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS;
 
-export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
+export const GOVERNANCE_ADDRESS = "0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F";
 
-export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
+export const TIMELOCK_ADDRESS = "0x1a9C8182C09F50C8318d769245beA52c32BE35BC";
 
-const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
+const UNI_ADDRESS = "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984";
 export const UNI: { [chainId in ChainId]: Token } = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.BOLTCHAIN]: new Token(ChainId.BOLTCHAIN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.BNB]: new Token(ChainId.BNB, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.POLYGON]: new Token(ChainId.POLYGON, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
-}
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    UNI_ADDRESS,
+    18,
+    "UNI",
+    "Uniswap",
+  ),
+  [ChainId.RINKEBY]: new Token(
+    ChainId.RINKEBY,
+    UNI_ADDRESS,
+    18,
+    "UNI",
+    "Uniswap",
+  ),
+  [ChainId.ROPSTEN]: new Token(
+    ChainId.ROPSTEN,
+    UNI_ADDRESS,
+    18,
+    "UNI",
+    "Uniswap",
+  ),
+  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, "UNI", "Uniswap"),
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, "UNI", "Uniswap"),
+  [ChainId.BOLTCHAIN]: new Token(
+    ChainId.BOLTCHAIN,
+    UNI_ADDRESS,
+    18,
+    "UNI",
+    "Uniswap",
+  ),
+  [ChainId.BNB]: new Token(ChainId.BNB, UNI_ADDRESS, 18, "UNI", "Uniswap"),
+  [ChainId.POLYGON]: new Token(
+    ChainId.POLYGON,
+    UNI_ADDRESS,
+    18,
+    "UNI",
+    "Uniswap",
+  ),
+};
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
-  [UNI_ADDRESS]: 'UNI',
-  [GOVERNANCE_ADDRESS]: 'Governance',
-  [TIMELOCK_ADDRESS]: 'Timelock'
-}
+  [UNI_ADDRESS]: "UNI",
+  [GOVERNANCE_ADDRESS]: "Governance",
+  [TIMELOCK_ADDRESS]: "Timelock",
+};
 
 // TODO: specify merkle distributor for mainnet
 export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0x090D4613473dEE047c3f2706764f49E0821D256e'
-}
+  [ChainId.MAINNET]: "0x090D4613473dEE047c3f2706764f49E0821D256e",
+};
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
@@ -76,90 +168,112 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
   [ChainId.BOLTCHAIN]: [WETH[ChainId.BOLTCHAIN]],
   [ChainId.BNB]: [WETH[ChainId.BNB]],
-  [ChainId.POLYGON]: [WETH[ChainId.POLYGON]]
-}
+  [ChainId.POLYGON]: [WETH[ChainId.POLYGON]],
+};
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC]
-}
+  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
+};
 
-export const ADDITIONAL_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
+export const ADDITIONAL_BASES: {
+  [chainId in ChainId]?: { [tokenAddress: string]: Token[] };
+} = {
   [ChainId.MAINNET]: {
-    '0xA948E86885e12Fb09AfEF8C52142EBDbDf73cD18': [new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap')],
-    '0x561a4717537ff4AF5c687328c0f7E90a319705C0': [new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap')],
+    "0xA948E86885e12Fb09AfEF8C52142EBDbDf73cD18": [
+      new Token(ChainId.MAINNET, UNI_ADDRESS, 18, "UNI", "Uniswap"),
+    ],
+    "0x561a4717537ff4AF5c687328c0f7E90a319705C0": [
+      new Token(ChainId.MAINNET, UNI_ADDRESS, 18, "UNI", "Uniswap"),
+    ],
     [FEI.address]: [TRIBE],
     [TRIBE.address]: [FEI],
     [FRAX.address]: [FXS],
     [FXS.address]: [FRAX],
     [WBTC.address]: [renBTC],
-    [renBTC.address]: [WBTC]
-  }
-}
+    [renBTC.address]: [WBTC],
+  },
+};
 
 /**
  * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
  * tokens.
  */
-export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
+export const CUSTOM_BASES: {
+  [chainId in ChainId]?: { [tokenAddress: string]: Token[] };
+} = {
   [ChainId.MAINNET]: {
-    [AMPL.address]: [DAI, WETH[ChainId.MAINNET]]
-  }
-}
+    [AMPL.address]: [DAI, WETH[ChainId.MAINNET]],
+  },
+};
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC]
-}
+  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
+};
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC]
-}
+  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
+};
 
-export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
+export const PINNED_PAIRS: {
+  readonly [chainId in ChainId]?: [Token, Token][];
+} = {
   [ChainId.MAINNET]: [
     [
-      new Token(ChainId.MAINNET, '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', 8, 'cDAI', 'Compound Dai'),
-      new Token(ChainId.MAINNET, '0x39AA39c021dfbaE8faC545936693aC917d5E7563', 8, 'cUSDC', 'Compound USD Coin')
+      new Token(
+        ChainId.MAINNET,
+        "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+        8,
+        "cDAI",
+        "Compound Dai",
+      ),
+      new Token(
+        ChainId.MAINNET,
+        "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
+        8,
+        "cUSDC",
+        "Compound USD Coin",
+      ),
     ],
     [USDC, USDT],
-    [DAI, USDT]
-  ]
-}
+    [DAI, USDT],
+  ],
+};
 
 export interface WalletInfo {
-  connector?: AbstractConnector
-  name: string
-  iconName: string
-  description: string
-  href: string | null
-  color: string
-  primary?: true
-  mobile?: true
-  mobileOnly?: true
+  connector?: AbstractConnector;
+  name: string;
+  iconName: string;
+  description: string;
+  href: string | null;
+  color: string;
+  primary?: true;
+  mobile?: true;
+  mobileOnly?: true;
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {
     connector: injected,
-    name: 'Injected',
-    iconName: 'arrow-right.svg',
-    description: 'Injected web3 provider.',
+    name: "Injected",
+    iconName: "arrow-right.svg",
+    description: "Injected web3 provider.",
     href: null,
-    color: '#010101',
-    primary: true
+    color: "#010101",
+    primary: true,
   },
   METAMASK: {
     connector: injected,
-    name: 'MetaMask',
-    iconName: 'metamask.png',
-    description: 'Easy-to-use browser extension.',
+    name: "MetaMask",
+    iconName: "metamask.png",
+    description: "Easy-to-use browser extension.",
     href: null,
-    color: '#E8831D'
+    color: "#E8831D",
   },
   // WALLET_CONNECT: {
   //   connector: walletconnect,
@@ -179,14 +293,14 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //   color: '#315CF5'
   // },
   COINBASE_LINK: {
-    name: 'Open in Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Open in Coinbase Wallet app.',
-    href: 'https://go.cb-w.com/mtUDhEZPy1',
-    color: '#315CF5',
+    name: "Open in Coinbase Wallet",
+    iconName: "coinbaseWalletIcon.svg",
+    description: "Open in Coinbase Wallet app.",
+    href: "https://go.cb-w.com/mtUDhEZPy1",
+    color: "#315CF5",
     mobile: true,
-    mobileOnly: true
-  }
+    mobileOnly: true,
+  },
   // FORTMATIC: {
   //   connector: fortmatic,
   //   name: 'Fortmatic',
@@ -205,58 +319,79 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //   color: '#4A6C9B',
   //   mobile: true
   // }
-}
+};
 
-export const NetworkContextName = 'NETWORK'
+export const NetworkContextName = "NETWORK";
 
 // default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 50
+export const INITIAL_ALLOWED_SLIPPAGE = 50;
 // 20 minutes, denominated in seconds
-export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
+export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20;
 
 // used for rewards deadlines
-export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7)
+export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7);
 
-export const BIG_INT_ZERO = JSBI.BigInt(0)
+export const BIG_INT_ZERO = JSBI.BigInt(0);
 
 // one basis point
-export const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
-export const BIPS_BASE = JSBI.BigInt(10000)
+export const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000));
+export const BIPS_BASE = JSBI.BigInt(10000);
 // used for warning states
-export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(JSBI.BigInt(100), BIPS_BASE) // 1%
-export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(JSBI.BigInt(300), BIPS_BASE) // 3%
-export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(JSBI.BigInt(500), BIPS_BASE) // 5%
+export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(
+  JSBI.BigInt(100),
+  BIPS_BASE,
+); // 1%
+export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(
+  JSBI.BigInt(300),
+  BIPS_BASE,
+); // 3%
+export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(
+  JSBI.BigInt(500),
+  BIPS_BASE,
+); // 5%
 // if the price slippage exceeds this number, force the user to type 'confirm' to execute
-export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(JSBI.BigInt(1000), BIPS_BASE) // 10%
+export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(
+  JSBI.BigInt(1000),
+  BIPS_BASE,
+); // 10%
 // for non expert mode disable swaps above this
-export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(JSBI.BigInt(1500), BIPS_BASE) // 15%
+export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(
+  JSBI.BigInt(1500),
+  BIPS_BASE,
+); // 15%
 
 // used to ensure the user doesn't send so much ETH so they end up with <.01
-export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
-export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000))
+export const MIN_ETH: JSBI = JSBI.exponentiate(
+  JSBI.BigInt(10),
+  JSBI.BigInt(16),
+); // .01 ETH
+export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(
+  JSBI.BigInt(50),
+  JSBI.BigInt(10000),
+);
 
-export const ZERO_PERCENT = new Percent('0')
-export const ONE_HUNDRED_PERCENT = new Percent('1')
+export const ZERO_PERCENT = new Percent("0");
+export const ONE_HUNDRED_PERCENT = new Percent("1");
 
 // SDN OFAC addresses
 export const BLOCKED_ADDRESSES: string[] = [
-  '0x7F367cC41522cE07553e823bf3be79A889DEbe1B',
-  '0xd882cFc20F52f2599D84b8e8D58C7FB62cfE344b',
-  '0x901bb9583b24D97e995513C6778dc6888AB6870e',
-  '0xA7e5d5A720f06526557c513402f2e6B5fA20b008',
-  '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C'
-]
+  "0x7F367cC41522cE07553e823bf3be79A889DEbe1B",
+  "0xd882cFc20F52f2599D84b8e8D58C7FB62cfE344b",
+  "0x901bb9583b24D97e995513C6778dc6888AB6870e",
+  "0xA7e5d5A720f06526557c513402f2e6B5fA20b008",
+  "0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C",
+];
 
 interface ChainInfo {
-  readonly label: string
-  readonly logoUrl: string
-  readonly chain: string
-  readonly chainId: string
+  readonly label: string;
+  readonly logoUrl: string;
+  readonly chain: string;
+  readonly chainId: string;
 }
 
 type ChainInfoMap = {
-  readonly [chainId: number]: ChainInfo
-}
+  readonly [chainId: number]: ChainInfo;
+};
 
 export const CHAIN_INFO: ChainInfoMap = {
   [ChainId.MAINNET]: {
@@ -264,91 +399,89 @@ export const CHAIN_INFO: ChainInfoMap = {
     // docs: 'https://docs.uniswap.org/',
     // explorer: 'https://etherscan.io/',
     // infoLink: 'https://info.uniswap.org/#/',
-    label: 'Ethereum',
+    label: "Ethereum",
     logoUrl: ethereumLogo,
-    chain: 'ETH',
-    chainId: ChainId.MAINNET.toString()
+    chain: "ETH",
+    chainId: ChainId.MAINNET.toString(),
     // nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     // color: darkTheme.chain_1
   },
   [ChainId.BOLTCHAIN]: {
-    label: 'BoltChain',
+    label: "BoltChain",
     logoUrl: boltchainLogo,
-    chain: 'BOLT',
-    chainId: ChainId.BOLTCHAIN.toString()
+    chain: "BOLT",
+    chainId: ChainId.BOLTCHAIN.toString(),
   },
   [ChainId.BNB]: {
-    label: 'Binance Smart Chain',
+    label: "Binance Smart Chain",
     logoUrl: bscLogo,
-    chain: 'BNB',
-    chainId: '56'
+    chain: "BNB",
+    chainId: "56",
   },
   [ChainId.POLYGON]: {
-    label: 'Polygon',
+    label: "Polygon",
     logoUrl: polygonLogo,
-    chain: 'POLYGON',
-    chainId: '137'
-  }
-}
-
+    chain: "POLYGON",
+    chainId: "137",
+  },
+};
 
 export enum Blockchain {
-  Neo = 'neo',
-  Ethereum = 'eth',
-  BinanceSmartChain = 'bsc',
-  Zilliqa = 'zil',
-  Arbitrum = 'arbitrum',
-  Polygon = 'polygon',
-  Okc = 'okc',
-  Native = 'native',
-  Btc = 'btc',
-  Carbon = 'carbon',
-  Switcheo = 'switcheo',
-  TradeHub = 'tradehub',
-  PolyNetwork = 'polynetwork',
-  Neo3 = 'neo3',
-  Osmosis = 'osmosis',
-  Ibc = 'ibc',
-  Terra = 'terra',
-  CosmosHub = 'cosmoshub',
-  Juno = 'juno',
-  Evmos = 'evmos',
-  Axelar = 'axelar',
-  Stride = 'stride',
-  Kujira = 'kujira',
-  Terra2 = 'terra2',
-  Quicksilver = 'quicksilver',
-  Comdex = 'comdex',
-  StafiHub = 'stafi',
-  Persistence = 'persistence',
-  Stargaze = 'stargaze',
-  Canto = 'canto',
-  OmniFlixHub = 'omniflixhub',
-  Agoric = 'agoric',
-  Sommelier = 'sommelier'
+  Neo = "neo",
+  Ethereum = "eth",
+  BinanceSmartChain = "bsc",
+  Zilliqa = "zil",
+  Arbitrum = "arbitrum",
+  Polygon = "polygon",
+  Okc = "okc",
+  Native = "native",
+  Btc = "btc",
+  Carbon = "carbon",
+  Switcheo = "switcheo",
+  TradeHub = "tradehub",
+  PolyNetwork = "polynetwork",
+  Neo3 = "neo3",
+  Osmosis = "osmosis",
+  Ibc = "ibc",
+  Terra = "terra",
+  CosmosHub = "cosmoshub",
+  Juno = "juno",
+  Evmos = "evmos",
+  Axelar = "axelar",
+  Stride = "stride",
+  Kujira = "kujira",
+  Terra2 = "terra2",
+  Quicksilver = "quicksilver",
+  Comdex = "comdex",
+  StafiHub = "stafi",
+  Persistence = "persistence",
+  Stargaze = "stargaze",
+  Canto = "canto",
+  OmniFlixHub = "omniflixhub",
+  Agoric = "agoric",
+  Sommelier = "sommelier",
 }
 
-export const BRIDGEABLE_EVM_CHAINS = [2, 6, 17]
-
+export const BRIDGEABLE_EVM_CHAINS = [2, 6, 17];
 
 export const CHAIN_MAPPING: { [key: string]: number } = {
   ETH: ChainId.MAINNET,
   BOLT: ChainId.BOLTCHAIN,
   BNB: ChainId.BNB,
-  POLYGON: ChainId.POLYGON
-}
+  POLYGON: ChainId.POLYGON,
+};
 
 export const MAIN_TOKEN_DENOMS: SimpleMap<string> = {
-  [CHAIN_INFO[ChainId.MAINNET].chain]: 'swthe.1.2.683ddd',
+  [CHAIN_INFO[ChainId.MAINNET].chain]: "swthe.1.2.683ddd",
   // [CHAIN_INFO[ChainId.BOLTCHAIN].chain]: 'swth.1.2.683ddd',
-  [CHAIN_INFO[ChainId.BNB].chain]: 'swth.1.6.5bc06b',
-  [CHAIN_INFO[ChainId.POLYGON].chain]: 'swth.1.17.dbb4d5'
-}
+  [CHAIN_INFO[ChainId.BNB].chain]: "swth.1.6.5bc06b",
+  [CHAIN_INFO[ChainId.POLYGON].chain]: "swth.1.17.dbb4d5",
+};
 
 // Create a map from name to chainId for bridgeableTokens
 export const BRIDGEABLE_TOKENS: { [name: string]: number } = {
   BOLT: ChainId.BOLTCHAIN,
   ETH: 2,
   BSC: 6,
-  MATIC: 17
-}
+  MATIC: 17,
+};

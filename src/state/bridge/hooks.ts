@@ -1,7 +1,10 @@
-import { AppDispatch, AppState } from 'state'
+import { useCallback } from "react";
+import { nanoid } from "@reduxjs/toolkit";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, AppState } from "state";
+
 import {
   BridgeMenu,
-  TokenList,
   fetchBridgeableTokens,
   selectTokenCurrency,
   setNetworkA,
@@ -9,99 +12,115 @@ import {
   setNetworkB,
   setNetworkBMenu,
   switchNetworkSrcDest,
+  Token,
+  TokenList,
   updateInputValue,
-  Token
-} from './actions'
-import { useDispatch, useSelector } from 'react-redux'
-import { useCallback } from 'react'
-import { nanoid } from '@reduxjs/toolkit'
+} from "./actions";
 
 export const useBridgeState = () => {
-  return useSelector<AppState, AppState['bridge']>(state => state.bridge)
-}
+  return useSelector<AppState, AppState["bridge"]>((state) => state.bridge);
+};
 
 export const useBridgeActionHandlers = () => {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
 
   const onUserInput = useCallback(
     (typedValue: string) => {
-      dispatch(updateInputValue(typedValue))
+      dispatch(updateInputValue(typedValue));
     },
-    [dispatch]
-  )
+    [dispatch],
+  );
 
   const onCurrencySelection = useCallback(
     (currency: Token) => {
-      dispatch(selectTokenCurrency(currency))
+      dispatch(selectTokenCurrency(currency));
     },
-    [dispatch]
-  )
+    [dispatch],
+  );
 
   const onNetworkASelection = useCallback(
     (networkId: string) => {
-      dispatch(setNetworkAMenu(null))
-      dispatch(setNetworkA(networkId))
+      dispatch(setNetworkAMenu(null));
+      dispatch(setNetworkA(networkId));
     },
-    [dispatch]
-  )
+    [dispatch],
+  );
 
   const onNetworkBSelection = useCallback(
     (networkId: string) => {
-      dispatch(setNetworkBMenu(null))
-      dispatch(setNetworkB(networkId))
+      dispatch(setNetworkBMenu(null));
+      dispatch(setNetworkB(networkId));
     },
-    [dispatch]
-  )
+    [dispatch],
+  );
 
   return {
     onUserInput,
     onCurrencySelection,
     onNetworkASelection,
-    onNetworkBSelection
-  }
-}
+    onNetworkBSelection,
+  };
+};
 
 export const useNetworkAMenuOpen = (menu: BridgeMenu) => {
-  const networkAMenu = useSelector((state: AppState) => state.bridge.networkAMenu)
-  return networkAMenu === menu
-}
+  const networkAMenu = useSelector(
+    (state: AppState) => state.bridge.networkAMenu,
+  );
+  return networkAMenu === menu;
+};
 
 export const useNetworkToggleAMenu = (menu: BridgeMenu) => {
-  const open = useNetworkAMenuOpen(menu)
-  const dispatch = useDispatch<AppDispatch>()
-  return useCallback(() => dispatch(setNetworkAMenu(open ? null : menu)), [dispatch, menu, open])
-}
+  const open = useNetworkAMenuOpen(menu);
+  const dispatch = useDispatch<AppDispatch>();
+  return useCallback(
+    () => dispatch(setNetworkAMenu(open ? null : menu)),
+    [dispatch, menu, open],
+  );
+};
 
 export const useNetworkBMenuOpen = (menu: BridgeMenu) => {
-  const networkBMenu = useSelector((state: AppState) => state.bridge.networkBMenu)
-  return networkBMenu === menu
-}
+  const networkBMenu = useSelector(
+    (state: AppState) => state.bridge.networkBMenu,
+  );
+  return networkBMenu === menu;
+};
 
 export const useNetworkToggleBMenu = (menu: BridgeMenu) => {
-  const open = useNetworkBMenuOpen(menu)
-  const dispatch = useDispatch<AppDispatch>()
-  return useCallback(() => dispatch(setNetworkBMenu(open ? null : menu)), [dispatch, menu, open])
-}
+  const open = useNetworkBMenuOpen(menu);
+  const dispatch = useDispatch<AppDispatch>();
+  return useCallback(
+    () => dispatch(setNetworkBMenu(open ? null : menu)),
+    [dispatch, menu, open],
+  );
+};
 
 export const useSwitchNetworkSrcDest = () => {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
   return useCallback(() => {
-    dispatch(switchNetworkSrcDest())
-  }, [dispatch])
-}
+    dispatch(switchNetworkSrcDest());
+  }, [dispatch]);
+};
 
-export const useFetchBridgeableTokens = (tokensUrl: string, bridgesUrl: string) => {
-  const dispatch = useDispatch<AppDispatch>()
+export const useFetchBridgeableTokens = (
+  tokensUrl: string,
+  bridgesUrl: string,
+) => {
+  const dispatch = useDispatch<AppDispatch>();
 
   return useCallback(async () => {
-    const requestId = nanoid()
-    dispatch(fetchBridgeableTokens.pending({ tokensUrl, bridgesUrl, requestId }))
+    const requestId = nanoid();
+    dispatch(
+      fetchBridgeableTokens.pending({ tokensUrl, bridgesUrl, requestId }),
+    );
 
     try {
       // Fetch both and await both
-      const [tokensResponse, ] = await Promise.all([fetch(tokensUrl), fetch(bridgesUrl)])
+      const [tokensResponse] = await Promise.all([
+        fetch(tokensUrl),
+        fetch(bridgesUrl),
+      ]);
 
-      const tokensJson: TokenList = await tokensResponse.json()
+      const tokensJson: TokenList = await tokensResponse.json();
       // const bridgesJson: BridgesListResponse = await bridgesResponse.json()
 
       // const filteredBridges = bridgesJson.bridges.filter(
@@ -125,15 +144,22 @@ export const useFetchBridgeableTokens = (tokensUrl: string, bridgesUrl: string) 
           tokenList: tokensJson.tokens,
           requestId,
           tokensUrl,
-          bridgesUrl
-        })
-      )
+          bridgesUrl,
+        }),
+      );
     } catch (error) {
-      let errorMessage = ''
+      let errorMessage = "";
       if (error instanceof Error) {
-        errorMessage = error.message
+        errorMessage = error.message;
       }
-      dispatch(fetchBridgeableTokens.rejected({ errorMessage, requestId, tokensUrl, bridgesUrl }))
+      dispatch(
+        fetchBridgeableTokens.rejected({
+          errorMessage,
+          requestId,
+          tokensUrl,
+          bridgesUrl,
+        }),
+      );
     }
-  }, [dispatch, tokensUrl, bridgesUrl])
-}
+  }, [dispatch, tokensUrl, bridgesUrl]);
+};

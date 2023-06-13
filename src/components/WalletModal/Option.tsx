@@ -1,6 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import { ExternalLink } from '../../theme'
+import React from "react";
+import styled from "styled-components";
+
+import { ExternalLink } from "../../theme";
 
 const InfoCard = styled.button<{ active?: boolean }>`
   background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
@@ -12,8 +13,8 @@ const InfoCard = styled.button<{ active?: boolean }>`
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-  border-color: ${({ theme, active }) => (active ? 'transparent' : theme.bg3)};
-`
+  border-color: ${({ theme, active }) => (active ? "transparent" : theme.bg3)};
+`;
 
 const OptionCard = styled(InfoCard as any)`
   display: flex;
@@ -22,22 +23,23 @@ const OptionCard = styled(InfoCard as any)`
   justify-content: space-between;
   margin-top: 2rem;
   padding: 1rem;
-`
+`;
 
 const OptionCardLeft = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   justify-content: center;
   height: 100%;
-`
+`;
 
 const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
   margin-top: 0;
   &:hover {
-    cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
-    border: ${({ clickable, theme }) => (clickable ? `1px solid ${theme.primary1}` : ``)};
+    cursor: ${({ clickable }) => (clickable ? "pointer" : "")};
+    border: ${({ clickable, theme }) =>
+      clickable ? `1px solid ${theme.primary1}` : ``};
   }
-  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
-`
+  opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
+`;
 
 const GreenCircle = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -51,27 +53,30 @@ const GreenCircle = styled.div`
     background-color: ${({ theme }) => theme.green1};
     border-radius: 50%;
   }
-`
+`;
 
 const CircleWrapper = styled.div`
   color: ${({ theme }) => theme.green1};
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const HeaderText = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : ({ theme }) => theme.text1)};
+  color: ${(props) =>
+    props.color === "blue"
+      ? ({ theme }) => theme.primary1
+      : ({ theme }) => theme.text1};
   font-size: 1rem;
   font-weight: 500;
-`
+`;
 
 const SubHeader = styled.div`
   color: ${({ theme }) => theme.text1};
   margin-top: 10px;
   font-size: 12px;
-`
+`;
 
 const IconWrapper = styled.div<{ size?: number | null }>`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -79,13 +84,13 @@ const IconWrapper = styled.div<{ size?: number | null }>`
   justify-content: center;
   & > img,
   span {
-    height: ${({ size }) => (size ? size + 'px' : '24px')};
-    width: ${({ size }) => (size ? size + 'px' : '24px')};
+    height: ${({ size }) => (size ? size + "px" : "24px")};
+    width: ${({ size }) => (size ? size + "px" : "24px")};
   }
   ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: flex-end;
   `};
-`
+`;
 
 export default function Option({
   link = null,
@@ -97,21 +102,26 @@ export default function Option({
   subheader = null,
   icon,
   active = false,
-  id
+  id,
 }: {
-  link?: string | null
-  clickable?: boolean
-  size?: number | null
-  onClick?: null | (() => void)
-  color: string
-  header: React.ReactNode
-  subheader: React.ReactNode | null
-  icon: string
-  active?: boolean
-  id: string
+  link?: string | null;
+  clickable?: boolean;
+  size?: number | null;
+  onClick?: null | (() => void);
+  color: string;
+  header: React.ReactNode;
+  subheader: React.ReactNode | null;
+  icon: string;
+  active?: boolean;
+  id: string;
 }) {
   const content = (
-    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
+    <OptionCardClickable
+      id={id}
+      onClick={onClick}
+      clickable={clickable && !active}
+      active={active}
+    >
       <OptionCardLeft>
         <HeaderText color={color}>
           {active ? (
@@ -121,20 +131,20 @@ export default function Option({
               </GreenCircle>
             </CircleWrapper>
           ) : (
-            ''
+            ""
           )}
           {header}
         </HeaderText>
         {subheader && <SubHeader>{subheader}</SubHeader>}
       </OptionCardLeft>
       <IconWrapper size={size}>
-        <img src={icon} alt={'Icon'} />
+        <img src={icon} alt={"Icon"} />
       </IconWrapper>
     </OptionCardClickable>
-  )
+  );
   if (link) {
-    return <ExternalLink href={link}>{content}</ExternalLink>
+    return <ExternalLink href={link}>{content}</ExternalLink>;
   }
 
-  return content
+  return content;
 }

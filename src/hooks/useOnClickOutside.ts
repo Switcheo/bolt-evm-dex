@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef } from 'react'
+import { MutableRefObject, useEffect, useRef } from "react";
 
 /**
  * Hook that alerts clicks outside of the passed ref
@@ -8,16 +8,16 @@ import { MutableRefObject, useEffect, useRef } from 'react'
  */
 export function useOnClickOutside<T extends HTMLElement | null>(
   node: MutableRefObject<T>,
-  handler: (() => void) | undefined
+  handler: (() => void) | undefined,
 ) {
-  const handlerRef = useRef<(() => void) | undefined>(handler)
+  const handlerRef = useRef<(() => void) | undefined>(handler);
 
   useEffect(() => {
     /**
      * Update the handler ref on each render, so if it changes the latest callback will be invoked
      */
-    handlerRef.current = handler
-  }, [handler])
+    handlerRef.current = handler;
+  }, [handler]);
 
   useEffect(() => {
     /**
@@ -25,17 +25,17 @@ export function useOnClickOutside<T extends HTMLElement | null>(
      */
     const handleClickOutside = (e: MouseEvent) => {
       if (node.current && node.current.contains(e.target as Node)) {
-        return
+        return;
       }
-      handlerRef.current?.()
-    }
+      handlerRef.current?.();
+    };
 
     // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [node])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [node]);
 }

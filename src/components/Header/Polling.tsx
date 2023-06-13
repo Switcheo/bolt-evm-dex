@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import styled, { keyframes } from 'styled-components'
-import { TYPE, ExternalLink } from '../../theme'
+import React, { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
 
-import { useBlockNumber } from '../../state/application/hooks'
-import { getEtherscanLink } from '../../utils'
-import { useActiveWeb3React } from '../../hooks'
+import { useActiveWeb3React } from "../../hooks";
+import { useBlockNumber } from "../../state/application/hooks";
+import { ExternalLink, TYPE } from "../../theme";
+import { getEtherscanLink } from "../../utils";
 
 const StyledPolling = styled.div`
   position: fixed;
@@ -18,14 +18,17 @@ const StyledPolling = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `}
-`
-const StyledPollingNumber = styled(TYPE.small)<{ breathe: boolean; hovering: boolean }>`
+`;
+const StyledPollingNumber = styled(TYPE.small)<{
+  breathe: boolean;
+  hovering: boolean;
+}>`
   transition: opacity 0.25s ease;
   opacity: ${({ breathe, hovering }) => (hovering ? 0.7 : breathe ? 1 : 0.2)};
   :hover {
     opacity: 1;
   }
-`
+`;
 const StyledPollingDot = styled.div`
   width: 8px;
   height: 8px;
@@ -35,7 +38,7 @@ const StyledPollingDot = styled.div`
   border-radius: 50%;
   position: relative;
   background-color: ${({ theme }) => theme.green1};
-`
+`;
 
 const rotate360 = keyframes`
   from {
@@ -44,7 +47,7 @@ const rotate360 = keyframes`
   to {
     transform: rotate(360deg);
   }
-`
+`;
 
 const Spinner = styled.div`
   animation: ${rotate360} 1s cubic-bezier(0.83, 0, 0.17, 1) infinite;
@@ -62,42 +65,51 @@ const Spinner = styled.div`
 
   left: -3px;
   top: -3px;
-`
+`;
 
 export default function Polling() {
-  const { chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React();
 
-  const blockNumber = useBlockNumber()
+  const blockNumber = useBlockNumber();
 
-  const [isMounting, setIsMounting] = useState(false)
-  const [isHover, setIsHover] = useState(false)
+  const [isMounting, setIsMounting] = useState(false);
+  const [isHover, setIsHover] = useState(false);
 
   useEffect(
     () => {
       if (!blockNumber) {
-        return
+        return;
       }
 
-      setIsMounting(true)
-      const mountingTimer = setTimeout(() => setIsMounting(false), 1000)
+      setIsMounting(true);
+      const mountingTimer = setTimeout(() => setIsMounting(false), 1000);
 
       // this will clear Timeout when component unmount like in willComponentUnmount
       return () => {
-        clearTimeout(mountingTimer)
-      }
+        clearTimeout(mountingTimer);
+      };
     },
-    [blockNumber] //useEffect will run only one time
+    [blockNumber], //useEffect will run only one time
     //if you pass a value to array, like this [data] than clearTimeout will run every time this value changes (useEffect re-run)
-  )
+  );
 
   return (
-    <ExternalLink href={chainId && blockNumber ? getEtherscanLink(chainId, blockNumber.toString(), 'block') : ''}>
-      <StyledPolling onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+    <ExternalLink
+      href={
+        chainId && blockNumber
+          ? getEtherscanLink(chainId, blockNumber.toString(), "block")
+          : ""
+      }
+    >
+      <StyledPolling
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+      >
         <StyledPollingNumber breathe={isMounting} hovering={isHover}>
           {blockNumber}
         </StyledPollingNumber>
         <StyledPollingDot>{isMounting && <Spinner />}</StyledPollingDot>
       </StyledPolling>
     </ExternalLink>
-  )
+  );
 }

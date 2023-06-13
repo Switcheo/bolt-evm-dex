@@ -1,45 +1,46 @@
-import React, { Suspense } from 'react'
-import { Route, Switch } from 'react-router-dom'
-import styled from 'styled-components'
+import React, { Suspense } from "react";
+import { Route, Switch } from "react-router-dom";
+import styled from "styled-components";
+
 // import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 // import AddressClaimModal from '../components/claim/AddressClaimModal'
-import Header from '../components/Header'
-import Polling from '../components/Header/Polling'
-import URLWarning from '../components/Header/URLWarning'
-import Popups from '../components/Popups'
-import Web3ReactManager from '../components/Web3ReactManager'
+import Header from "../components/Header";
+import Polling from "../components/Header/Polling";
+import URLWarning from "../components/Header/URLWarning";
+import Popups from "../components/Popups";
+import Web3ReactManager from "../components/Web3ReactManager";
 // import { ApplicationModal } from '../state/application/actions'
 // import { useModalOpen, useToggleModal } from '../state/application/hooks'
-import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
-import AddLiquidity from './AddLiquidity'
+import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
+import AddLiquidity from "./AddLiquidity";
 import {
   RedirectDuplicateTokenIds,
   RedirectOldAddLiquidityPathStructure,
-} from './AddLiquidity/redirects'
-import Pool from './Pool'
-import PoolFinder from './PoolFinder'
-import RemoveLiquidity from './RemoveLiquidity'
-import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
-import Swap from './Swap'
+} from "./AddLiquidity/redirects";
+import Bridge from "./Bridge";
+import BridgeHistory from "./BridgeHistory";
+import Issue from "./Issue";
+import Mint from "./Mint";
+import Pool from "./Pool";
+import PoolFinder from "./PoolFinder";
+import RemoveLiquidity from "./RemoveLiquidity";
+import { RedirectOldRemoveLiquidityPathStructure } from "./RemoveLiquidity/redirects";
+import Swap from "./Swap";
 // import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
-import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
-import Mint from './Mint'
-import Issue from './Issue'
-import Bridge from './Bridge'
-import BridgeHistory from './BridgeHistory'
+import { RedirectPathToSwapOnly, RedirectToSwap } from "./Swap/redirects";
 
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
   overflow-x: hidden;
-`
+`;
 
 const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   justify-content: space-between;
-`
+`;
 
 const BodyWrapper = styled.div`
   display: flex;
@@ -58,11 +59,11 @@ const BodyWrapper = styled.div`
   `};
 
   z-index: 1;
-`
+`;
 
 const Marginer = styled.div`
   margin-top: 5rem;
-`
+`;
 
 // function TopLevelModals() {
 //   const open = useModalOpen(ApplicationModal.ADDRESS_CLAIM)
@@ -87,21 +88,57 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
+              <Route
+                exact
+                strict
+                path="/swap/:outputCurrency"
+                component={RedirectToSwap}
+              />
               <Route exact strict path="/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={Pool} />
               <Route exact strict path="/mint" component={Mint} />
               <Route exact strict path="/issue" component={Issue} />
               <Route exact strict path="/bridge" component={Bridge} />
-              <Route exact strict path="/bridge-history" component={BridgeHistory} />
+              <Route
+                exact
+                strict
+                path="/bridge-history"
+                component={BridgeHistory}
+              />
               <Route exact path="/add" component={AddLiquidity} />
-              <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+              <Route
+                exact
+                path="/add/:currencyIdA"
+                component={RedirectOldAddLiquidityPathStructure}
+              />
+              <Route
+                exact
+                path="/add/:currencyIdA/:currencyIdB"
+                component={RedirectDuplicateTokenIds}
+              />
               <Route exact path="/create" component={AddLiquidity} />
-              <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-              <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+              <Route
+                exact
+                path="/create/:currencyIdA"
+                component={RedirectOldAddLiquidityPathStructure}
+              />
+              <Route
+                exact
+                path="/create/:currencyIdA/:currencyIdB"
+                component={RedirectDuplicateTokenIds}
+              />
+              <Route
+                exact
+                strict
+                path="/remove/:tokens"
+                component={RedirectOldRemoveLiquidityPathStructure}
+              />
+              <Route
+                exact
+                strict
+                path="/remove/:currencyIdA/:currencyIdB"
+                component={RemoveLiquidity}
+              />
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
           </Web3ReactManager>
@@ -109,5 +146,5 @@ export default function App() {
         </BodyWrapper>
       </AppWrapper>
     </Suspense>
-  )
+  );
 }

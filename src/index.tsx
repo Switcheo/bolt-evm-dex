@@ -1,29 +1,34 @@
-import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
-import 'inter-ui'
-import React, { StrictMode } from 'react'
-// import { isMobile } from 'react-device-detect'
-import ReactDOM from 'react-dom'
-// import ReactGA from 'react-ga'
-import { Provider } from 'react-redux'
-import { HashRouter } from 'react-router-dom'
-import { NetworkContextName } from './constants'
-import './i18n'
-import App from './pages/App'
-import store from './state'
-import * as serviceWorkerRegistration from './serviceWorkerRegistration'
-import ApplicationUpdater from './state/application/updater'
-import ListsUpdater from './state/lists/updater'
-import MulticallUpdater from './state/multicall/updater'
-import TransactionUpdater from './state/transactions/updater'
-import UserUpdater from './state/user/updater'
-import BridgeUpdater from './state/bridge/updater'
-import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
-import getLibrary from './utils/getLibrary'
+import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
 
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+import "inter-ui";
+
+import React, { StrictMode } from "react";
+// import { isMobile } from 'react-device-detect'
+import ReactDOM from "react-dom";
+// import ReactGA from 'react-ga'
+import { Provider } from "react-redux";
+import { HashRouter } from "react-router-dom";
+
+import { NetworkContextName } from "./constants";
+
+import "./i18n";
+
+import App from "./pages/App";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import store from "./state";
+import ApplicationUpdater from "./state/application/updater";
+import BridgeUpdater from "./state/bridge/updater";
+import ListsUpdater from "./state/lists/updater";
+import MulticallUpdater from "./state/multicall/updater";
+import TransactionUpdater from "./state/transactions/updater";
+import UserUpdater from "./state/user/updater";
+import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
+import getLibrary from "./utils/getLibrary";
+
+const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
 
 if (!!window.ethereum) {
-  window.ethereum.autoRefreshOnNetworkChange = false
+  window.ethereum.autoRefreshOnNetworkChange = false;
 }
 
 // const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
@@ -59,7 +64,7 @@ function Updaters() {
       <MulticallUpdater />
       <BridgeUpdater />
     </>
-  )
+  );
 }
 
 ReactDOM.render(
@@ -79,7 +84,7 @@ ReactDOM.render(
       </Web3ProviderNetwork>
     </Web3ReactProvider>
   </StrictMode>,
-  document.getElementById('root')
-)
+  document.getElementById("root"),
+);
 
-serviceWorkerRegistration.unregister()
+serviceWorkerRegistration.unregister();

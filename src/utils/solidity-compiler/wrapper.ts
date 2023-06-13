@@ -34,7 +34,10 @@ export class Solc {
     this.worker.postMessage(event);
   }
 
-  async compile(sources: { [key: string]: { content: string } }, importCallback?: ImportCallback): Promise<any> {
+  async compile(
+    sources: { [key: string]: { content: string } },
+    importCallback?: ImportCallback,
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       const message = this.createCompilerInput(sources, importCallback);
       this.worker.postMessage(message);
@@ -55,12 +58,20 @@ export class Solc {
   }
 
   createCompilerWebWorker(): Worker {
-    return new Worker(URL.createObjectURL(new Blob([`(new ${_Worker})`], { type: "module" })));
+    return new Worker(
+      URL.createObjectURL(new Blob([`(new ${_Worker})`], { type: "module" })),
+    );
   }
 
-  createCompilerInput(sources: { [key: string]: { content: string } }, importCallback?: ImportCallback) {
+  createCompilerInput(
+    sources: { [key: string]: { content: string } },
+    importCallback?: ImportCallback,
+  ) {
     const compilerInput = CompilerHelpers.createCompileInput(sources);
-    const fnStr = importCallback !== undefined ? FnTransform.stringify(importCallback) : undefined;
+    const fnStr =
+      importCallback !== undefined
+        ? FnTransform.stringify(importCallback)
+        : undefined;
     const event = {
       type: "compile",
       compilerInput,

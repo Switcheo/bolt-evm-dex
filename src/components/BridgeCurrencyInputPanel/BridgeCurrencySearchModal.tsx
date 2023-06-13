@@ -1,29 +1,29 @@
-import React, { useCallback } from 'react'
-import Modal from '../Modal'
+import React, { useCallback } from "react";
+import { Token } from "state/bridge/actions";
 
-import { BridgeCurrencySearch } from './BridgeCurrencySearch'
-import { Token } from 'state/bridge/actions'
+import Modal from "../Modal";
+import { BridgeCurrencySearch } from "./BridgeCurrencySearch";
 
 interface BridgeCurrencySearchModalProps {
-  isOpen: boolean
-  onDismiss: () => void
-  selectedCurrency?: Token | null
-  onCurrencySelect: (currency: Token) => void
+  isOpen: boolean;
+  onDismiss: () => void;
+  selectedCurrency?: Token | null;
+  onCurrencySelect: (currency: Token) => void;
 }
 
 export default function BridgeCurrencySearchModal({
   isOpen,
   onDismiss,
   onCurrencySelect,
-  selectedCurrency
+  selectedCurrency,
 }: BridgeCurrencySearchModalProps) {
   const handleCurrencySelect = useCallback(
     (currency: Token) => {
-      onCurrencySelect(currency)
-      onDismiss()
+      onCurrencySelect(currency);
+      onDismiss();
     },
-    [onDismiss, onCurrencySelect]
-  )
+    [onDismiss, onCurrencySelect],
+  );
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={80}>
@@ -34,5 +34,5 @@ export default function BridgeCurrencySearchModal({
         selectedCurrency={selectedCurrency}
       />
     </Modal>
-  )
+  );
 }

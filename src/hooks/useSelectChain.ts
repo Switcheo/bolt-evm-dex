@@ -1,13 +1,13 @@
-import { useWeb3React } from '@web3-react/core'
-import { SupportedChainId } from 'constants/chains'
-import { useCallback } from 'react'
+import { useCallback } from "react";
+import { useWeb3React } from "@web3-react/core";
+import { SupportedChainId } from "constants/chains";
 
 const useSelectChain = () => {
   // const dispatch = useAppDispatch()
-  const { connector } = useWeb3React()
+  const { connector } = useWeb3React();
 
   return useCallback(async (targetChain: SupportedChainId) => {
-    if (!connector) return
+    if (!connector) return;
 
     // const connection = getConnection(connector)
 
@@ -21,7 +21,7 @@ const useSelectChain = () => {
     //   console.error('Failed to switch networks', error)
 
     //   dispatch(addPopup({ content: { failedSwitchNetwork: targetChain }, key: 'failed-network-switch' }))
-  }, [])
-}
+  }, []);
+};
 
-export default useSelectChain
+export default useSelectChain;

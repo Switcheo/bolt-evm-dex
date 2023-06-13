@@ -1,23 +1,20 @@
-import React from 'react'
-import { Text } from 'rebass'
-import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
+import React from "react";
+import { ChainId } from "@bolt-dex/sdk";
+import { darken } from "polished";
+import { Moon, Sun } from "react-feather";
+import { useTranslation } from "react-i18next";
+import { NavLink } from "react-router-dom";
+import { Text } from "rebass";
+import styled from "styled-components";
 
-import styled from 'styled-components'
-
-import Logo from '../../assets/svg/boltchain-horizontal-logo.svg'
-import LogoDark from '../../assets/svg/boltchain-horizontal-logo.svg'
-import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
-import { useETHBalances } from '../../state/wallet/hooks'
-
-import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
-
-import Row, { RowFixed } from '../Row'
-import Web3Status from '../Web3Status'
-import { ChainId } from '@bolt-dex/sdk'
+import Logo from "../../assets/svg/boltchain-horizontal-logo.svg";
+import LogoDark from "../../assets/svg/boltchain-horizontal-logo.svg";
+import { useActiveWeb3React } from "../../hooks";
+import { useDarkModeManager } from "../../state/user/hooks";
+import { useETHBalances } from "../../state/wallet/hooks";
+import { YellowCard } from "../Card";
+import Row, { RowFixed } from "../Row";
+import Web3Status from "../Web3Status";
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -42,7 +39,7 @@ const HeaderFrame = styled.div`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
         padding: 0.5rem 1rem;
   `}
-`
+`;
 
 const HeaderControls = styled.div`
   display: flex;
@@ -66,7 +63,7 @@ const HeaderControls = styled.div`
     border-radius: 12px 12px 0 0;
     background-color: ${({ theme }) => theme.bg1};
   `};
-`
+`;
 
 const HeaderElement = styled.div`
   display: flex;
@@ -81,18 +78,18 @@ const HeaderElement = styled.div`
    flex-direction: row-reverse;
     align-items: center;
   `};
-`
+`;
 
 const HeaderElementWrap = styled.div`
   display: flex;
   align-items: center;
-`
+`;
 
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
    width: 100%;
   `};
-`
+`;
 
 const HeaderLinks = styled(Row)`
   justify-content: center;
@@ -100,7 +97,7 @@ const HeaderLinks = styled(Row)`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
 `};
-`
+`;
 
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
@@ -115,13 +112,13 @@ const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
-`
+`;
 
 const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
-`
+`;
 
 const NetworkCard = styled(YellowCard)`
   border-radius: 12px;
@@ -134,13 +131,13 @@ const NetworkCard = styled(YellowCard)`
     text-overflow: ellipsis;
     flex-shrink: 1;
   `};
-`
+`;
 
 const BalanceText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
-`
+`;
 
 const Title = styled.a`
   display: flex;
@@ -154,19 +151,19 @@ const Title = styled.a`
   :hover {
     cursor: pointer;
   }
-`
+`;
 
 const UniIcon = styled.div`
   transition: transform 0.3s ease;
   :hover {
     transform: rotate(-5deg);
   }
-`
+`;
 
-const activeClassName = 'ACTIVE'
+const activeClassName = "ACTIVE";
 
 const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+  activeClassName,
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
@@ -190,7 +187,7 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => darken(0.1, theme.text1)};
   }
-`
+`;
 
 export const StyledMenuButton = styled.button`
   position: relative;
@@ -219,79 +216,89 @@ export const StyledMenuButton = styled.button`
   > * {
     stroke: ${({ theme }) => theme.text1};
   }
-`
+`;
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  [ChainId.BOLTCHAIN]: 'BoltChain',
-}
+  [ChainId.RINKEBY]: "Rinkeby",
+  [ChainId.ROPSTEN]: "Ropsten",
+  [ChainId.GÖRLI]: "Görli",
+  [ChainId.KOVAN]: "Kovan",
+  [ChainId.BOLTCHAIN]: "BoltChain",
+};
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
-  const { t } = useTranslation()
+  const { account, chainId } = useActiveWeb3React();
+  const { t } = useTranslation();
 
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  const userEthBalance = useETHBalances(account ? [account] : [])?.[
+    account ?? ""
+  ];
+  const [darkMode, toggleDarkMode] = useDarkModeManager();
 
   return (
     <HeaderFrame>
       <HeaderRow>
         <Title href=".">
           <UniIcon>
-            <img width={'180px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+            <img width={"180px"} src={darkMode ? LogoDark : Logo} alt="logo" />
           </UniIcon>
         </Title>
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
+          <StyledNavLink id={`swap-nav-link`} to={"/swap"}>
+            {t("swap")}
           </StyledNavLink>
           <StyledNavLink
             id={`pool-nav-link`}
-            to={'/pool'}
+            to={"/pool"}
             isActive={(match, { pathname }) =>
               Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/create') ||
-              pathname.startsWith('/find')
+              pathname.startsWith("/add") ||
+              pathname.startsWith("/remove") ||
+              pathname.startsWith("/create") ||
+              pathname.startsWith("/find")
             }
           >
-            {t('pool')}
+            {t("pool")}
           </StyledNavLink>
 
           <StyledNavLink
             id={`mint-nav-link`}
-            to={'/mint'}
-            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/mint')}
+            to={"/mint"}
+            isActive={(match, { pathname }) =>
+              Boolean(match) || pathname.startsWith("/mint")
+            }
           >
-            {t('mint')}
+            {t("mint")}
           </StyledNavLink>
 
           <StyledNavLink
             id={`issue-nav-link`}
-            to={'/issue'}
-            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/issue')}
+            to={"/issue"}
+            isActive={(match, { pathname }) =>
+              Boolean(match) || pathname.startsWith("/issue")
+            }
           >
-            {t('issue')}
+            {t("issue")}
           </StyledNavLink>
 
           <StyledNavLink
             id={`bridge-nav-link`}
-            to={'/bridge'}
-            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/bridge/')}
+            to={"/bridge"}
+            isActive={(match, { pathname }) =>
+              Boolean(match) || pathname.startsWith("/bridge/")
+            }
           >
-            {t('bridge')}
+            {t("bridge")}
           </StyledNavLink>
 
           <StyledNavLink
             id={`bridge-history-nav-link`}
-            to={'/bridge-history'}
-            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/bridge-history')}
+            to={"/bridge-history"}
+            isActive={(match, { pathname }) =>
+              Boolean(match) || pathname.startsWith("/bridge-history")
+            }
           >
-            {t('bridge-history')}
+            {t("bridge-history")}
           </StyledNavLink>
         </HeaderLinks>
       </HeaderRow>
@@ -299,12 +306,19 @@ export default function Header() {
         <HeaderElement>
           <HideSmall>
             {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+              <NetworkCard title={NETWORK_LABELS[chainId]}>
+                {NETWORK_LABELS[chainId]}
+              </NetworkCard>
             )}
           </HideSmall>
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+          <AccountElement active={!!account} style={{ pointerEvents: "auto" }}>
             {account && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+              <BalanceText
+                style={{ flexShrink: 0 }}
+                pl="0.75rem"
+                pr="0.5rem"
+                fontWeight={500}
+              >
                 {userEthBalance?.toSignificant(4)} ETH
               </BalanceText>
             ) : null}
@@ -318,5 +332,5 @@ export default function Header() {
         </HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>
-  )
+  );
 }

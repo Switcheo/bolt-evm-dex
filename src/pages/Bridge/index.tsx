@@ -1,25 +1,25 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from "react";
+import BridgeCurrencyInputPanel from "components/BridgeCurrencyInputPanel";
+import { ButtonError, ButtonLight } from "components/Button";
+import ChainLogo from "components/ChainLogo";
+import { AutoColumn } from "components/Column";
+import { SwapPoolTabs } from "components/NavigationTabs";
+import NetworkMenu from "components/NetworkMenu";
+import { ArrowWrapper } from "components/swap/styleds";
+import { useActiveWeb3React } from "hooks";
+import useTheme from "hooks/useTheme";
+import { ArrowRight } from "react-feather";
+import { useWalletModalToggle } from "state/application/hooks";
+import {
+  useBridgeActionHandlers,
+  useBridgeState,
+  useSwitchNetworkSrcDest,
+} from "state/bridge/hooks";
+import styled from "styled-components";
+import { TYPE } from "theme";
+import { getBridgeableTokens } from "utils/bridge";
 
-import styled from 'styled-components'
-
-import { SwapPoolTabs } from 'components/NavigationTabs'
-import { Wrapper } from './styleds'
-import { AutoColumn } from 'components/Column'
-
-import { useActiveWeb3React } from 'hooks'
-import { ButtonError, ButtonLight } from 'components/Button'
-import { useWalletModalToggle } from 'state/application/hooks'
-import { TYPE } from 'theme'
-import useTheme from 'hooks/useTheme'
-import ChainLogo from 'components/ChainLogo'
-import { ArrowWrapper } from 'components/swap/styleds'
-import { ArrowRight } from 'react-feather'
-
-import NetworkMenu from 'components/NetworkMenu'
-import { useBridgeActionHandlers, useBridgeState, useSwitchNetworkSrcDest } from 'state/bridge/hooks'
-import BridgeCurrencyInputPanel from 'components/BridgeCurrencyInputPanel'
-import { getBridgeableTokens } from 'utils/bridge'
-
+import { Wrapper } from "./styleds";
 
 const BridgeBody = styled.div`
   position: relative;
@@ -27,13 +27,13 @@ const BridgeBody = styled.div`
   // margin: 0 5rem;
   width: 100%;
   background: ${({ theme }) => theme.bg1};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
+    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
   /* padding: 1rem; */
   margin-top: -50px;
   gap: 1rem;
-`
+`;
 
 const BridgeHeader = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const BridgeHeader = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 1rem 1rem 0 1rem;
-`
+`;
 
 const BridgeTokenContainer = styled.div`
   display: flex;
@@ -49,9 +49,9 @@ const BridgeTokenContainer = styled.div`
   align-items: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
-`
+`;
 
-const BridgeCardContainer = styled.div<{hideInput: boolean}>`
+const BridgeCardContainer = styled.div<{ hideInput: boolean }>`
   display: flex;
   padding: 1rem 2rem;
   border-radius: 1rem;
@@ -59,10 +59,10 @@ const BridgeCardContainer = styled.div<{hideInput: boolean}>`
   align-items: center;
   flex: 1 1 0;
   gap: 0.5rem;
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  border-radius: ${({ hideInput }) => (hideInput ? "8px" : "20px")};
   border: 1px solid ${({ theme }) => theme.bg2};
   background-color: ${({ theme }) => theme.bg1};
-`
+`;
 
 const BridgeTokenLogoContainer = styled.div`
   display: flex;
@@ -70,32 +70,38 @@ const BridgeTokenLogoContainer = styled.div`
   align-items: center;
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
-`
+`;
 
 const BridgeArrow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex: 0.3 1 0%;
-`
+`;
 
 const ActiveText = styled.div`
   font-weight: 500;
   font-size: 24px;
-`
+`;
 
 export default function Bridge() {
-  const { account } = useActiveWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
-  const theme = useTheme()
+  const { account } = useActiveWeb3React();
+  const toggleWalletModal = useWalletModalToggle();
+  const theme = useTheme();
 
-  const tokenARef = useRef<HTMLDivElement>(null)
-  const tokenBRef = useRef<HTMLDivElement>(null)
+  const tokenARef = useRef<HTMLDivElement>(null);
+  const tokenBRef = useRef<HTMLDivElement>(null);
 
   const onSwitchTokens = useSwitchNetworkSrcDest();
 
   // Real
-  const { typedInputValue, networkA, networkB, selectedCurrency, bridgeableTokens } = useBridgeState();
+  const {
+    typedInputValue,
+    networkA,
+    networkB,
+    selectedCurrency,
+    bridgeableTokens,
+  } = useBridgeState();
 
   const { onUserInput, onCurrencySelection } = useBridgeActionHandlers();
   // States
@@ -104,25 +110,27 @@ export default function Bridge() {
   // Handlers
   const handleTypeInput = useCallback(
     (value: string) => {
-      onUserInput(value)
+      onUserInput(value);
     },
-    [onUserInput]
-  )
+    [onUserInput],
+  );
 
-  const handleMaxInput = useCallback(() => {
-  }, []);
+  const handleMaxInput = useCallback(() => {}, []);
 
-  const handleInputSelect = useCallback((inputCurrency) => {
-    onCurrencySelection(inputCurrency)
-  }, [onCurrencySelection]);
+  const handleInputSelect = useCallback(
+    (inputCurrency) => {
+      onCurrencySelection(inputCurrency);
+    },
+    [onCurrencySelection],
+  );
 
   useEffect(() => {
-    console.log(getBridgeableTokens(bridgeableTokens ?? []))
-  }, [networkA, bridgeableTokens])
+    console.log(getBridgeableTokens(bridgeableTokens ?? []));
+  }, [networkA, bridgeableTokens]);
 
   return (
     <>
-      <SwapPoolTabs active={'issue'} />
+      <SwapPoolTabs active={"issue"} />
       <BridgeBody>
         <Wrapper id="bridge-page">
           <AutoColumn gap="md">
@@ -140,12 +148,15 @@ export default function Bridge() {
                   <ChainLogo chain={networkA.networkId} />
                 </BridgeTokenLogoContainer>
 
-                <NetworkMenu ref={tokenARef} selectedInput={networkA.networkId ?? ''} />
+                <NetworkMenu
+                  ref={tokenARef}
+                  selectedInput={networkA.networkId ?? ""}
+                />
 
                 {!account && (
                   <ButtonLight
                     onClick={toggleWalletModal}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: "1rem" }}
                     padding="0.5rem"
                     borderRadius="0.75rem"
                   >
@@ -160,7 +171,7 @@ export default function Bridge() {
                     size="24"
                     onClick={() => {
                       // setApprovalSubmitted(false) // reset 2 step UI for approvals
-                      onSwitchTokens()
+                      onSwitchTokens();
                     }}
                     color={theme.primary1}
                   />
@@ -176,12 +187,15 @@ export default function Bridge() {
                   <ChainLogo chain={networkB.networkId} />
                 </BridgeTokenLogoContainer>
 
-                <NetworkMenu ref={tokenBRef} selectedOutput={networkB.networkId ?? ''} />
+                <NetworkMenu
+                  ref={tokenBRef}
+                  selectedOutput={networkB.networkId ?? ""}
+                />
 
                 {!account && (
                   <ButtonLight
                     onClick={toggleWalletModal}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: "1rem" }}
                     padding="0.5rem"
                     borderRadius="0.75rem"
                   >
@@ -192,7 +206,7 @@ export default function Bridge() {
             </BridgeTokenContainer>
 
             <BridgeCurrencyInputPanel
-              label={'Transfer Amount'}
+              label={"Transfer Amount"}
               value={typedInputValue}
               onUserInput={handleTypeInput}
               showMaxButton={!atMaxAmountInput}
@@ -203,11 +217,18 @@ export default function Bridge() {
             />
 
             {!account ? (
-              <ButtonLight onClick={toggleWalletModal} style={{ marginTop: '1rem' }}>
+              <ButtonLight
+                onClick={toggleWalletModal}
+                style={{ marginTop: "1rem" }}
+              >
                 Connect Wallet
               </ButtonLight>
             ) : (
-              <ButtonError style={{ marginTop: '1rem' }} onClick={() => {}} id="swap-button">
+              <ButtonError
+                style={{ marginTop: "1rem" }}
+                onClick={() => {}}
+                id="swap-button"
+              >
                 Bridge
               </ButtonError>
             )}
@@ -215,5 +236,5 @@ export default function Bridge() {
         </Wrapper>
       </BridgeBody>
     </>
-  )
+  );
 }

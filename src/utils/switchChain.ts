@@ -1,19 +1,19 @@
-import { SupportedChainId } from "constants/chains"
+import { SupportedChainId } from "constants/chains";
 import { RPC_URLS } from "constants/networks";
 
 /**
-* Get the RPC URL for the specified chain ID.
-* @param {SupportedChainId} chainId - The chain ID.
-* @returns {string} The RPC URL for the specified chain ID.
-*/
+ * Get the RPC URL for the specified chain ID.
+ * @param {SupportedChainId} chainId - The chain ID.
+ * @returns {string} The RPC URL for the specified chain ID.
+ */
 export const getRpcUrl = (chainId: SupportedChainId) => {
   switch (chainId) {
     case SupportedChainId.MAINNET:
       return RPC_URLS[SupportedChainId.MAINNET][0];
     default:
-      return RPC_URLS[chainId][0]
+      return RPC_URLS[chainId][0];
   }
-}
+};
 
 // export const switchChain = async (chainId: SupportedChainId) => {
 //   const provider = (window as any).ethereum;

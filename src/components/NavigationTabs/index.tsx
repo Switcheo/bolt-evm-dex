@@ -1,28 +1,28 @@
-import React from 'react'
-import styled from 'styled-components'
-import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
-import { NavLink, Link as HistoryLink } from 'react-router-dom'
+import React from "react";
+import { darken } from "polished";
+import { ArrowLeft } from "react-feather";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { Link as HistoryLink, NavLink } from "react-router-dom";
+import { AppDispatch } from "state";
+import { resetMintState } from "state/mint/actions";
+import styled from "styled-components";
 
-import { ArrowLeft } from 'react-feather'
-import { RowBetween } from '../Row'
+import { RowBetween } from "../Row";
 // import QuestionHelper from '../QuestionHelper'
-import Settings from '../Settings'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from 'state'
-import { resetMintState } from 'state/mint/actions'
+import Settings from "../Settings";
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   border-radius: 3rem;
   justify-content: space-evenly;
-`
+`;
 
-const activeClassName = 'ACTIVE'
+const activeClassName = "ACTIVE";
 
 const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+  activeClassName,
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
@@ -45,47 +45,75 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => darken(0.1, theme.text1)};
   }
-`
+`;
 
 const ActiveText = styled.div`
   font-weight: 500;
   font-size: 20px;
-`
+`;
 
 const StyledArrowLeft = styled(ArrowLeft)`
   color: ${({ theme }) => theme.text1};
-`
+`;
 
-export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'mint' | 'issue' | 'bridge' }) {
-  const { t } = useTranslation()
+export function SwapPoolTabs({
+  active,
+}: {
+  active: "swap" | "pool" | "mint" | "issue" | "bridge";
+}) {
+  const { t } = useTranslation();
   return (
-    <Tabs style={{ marginBottom: '20px', display: 'none' }}>
-      <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-        {t('swap')}
+    <Tabs style={{ marginBottom: "20px", display: "none" }}>
+      <StyledNavLink
+        id={`swap-nav-link`}
+        to={"/swap"}
+        isActive={() => active === "swap"}
+      >
+        {t("swap")}
       </StyledNavLink>
-      <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-        {t('pool')}
+      <StyledNavLink
+        id={`pool-nav-link`}
+        to={"/pool"}
+        isActive={() => active === "pool"}
+      >
+        {t("pool")}
       </StyledNavLink>
-      <StyledNavLink id={`mint-nav-link`} to={'/mint'} isActive={() => active === 'mint'}>
-        {t('mint')}
+      <StyledNavLink
+        id={`mint-nav-link`}
+        to={"/mint"}
+        isActive={() => active === "mint"}
+      >
+        {t("mint")}
       </StyledNavLink>
-      <StyledNavLink id={`issue-nav-link`} to={'/issue'} isActive={() => active === 'issue'}>
-        {t('issue')}
+      <StyledNavLink
+        id={`issue-nav-link`}
+        to={"/issue"}
+        isActive={() => active === "issue"}
+      >
+        {t("issue")}
       </StyledNavLink>
-      <StyledNavLink id={`bridge-nav-link`} to={'/bridge'} isActive={() => active === 'bridge'}>
-        {t('bridge')}
+      <StyledNavLink
+        id={`bridge-nav-link`}
+        to={"/bridge"}
+        isActive={() => active === "bridge"}
+      >
+        {t("bridge")}
       </StyledNavLink>
-      <StyledNavLink id={`bridge-history-nav-link`} to={'/bridge-history'} isActive={() => active === 'bridge'}>
-        {t('bridge-history')}
+      <StyledNavLink
+        id={`bridge-history-nav-link`}
+        to={"/bridge-history"}
+        isActive={() => active === "bridge"}
+      >
+        {t("bridge-history")}
       </StyledNavLink>
     </Tabs>
-  )
+  );
 }
 
 export function FindPoolTabs() {
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+      <RowBetween style={{ padding: "1rem 1rem 0 1rem" }}>
         <HistoryLink to="/pool">
           <StyledArrowLeft />
         </HistoryLink>
@@ -93,27 +121,39 @@ export function FindPoolTabs() {
         <Settings />
       </RowBetween>
     </Tabs>
-  )
+  );
 }
 
-export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating: boolean }) {
+export function AddRemoveTabs({
+  adding,
+  creating,
+}: {
+  adding: boolean;
+  creating: boolean;
+}) {
   // reset states on back
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+      <RowBetween style={{ padding: "1rem 1rem 0 1rem" }}>
         <HistoryLink
           to="/pool"
           onClick={() => {
-            adding && dispatch(resetMintState())
+            adding && dispatch(resetMintState());
           }}
         >
           <StyledArrowLeft />
         </HistoryLink>
-        <ActiveText>{creating ? 'Create a pair' : adding ? 'Add Liquidity' : 'Remove Liquidity'}</ActiveText>
+        <ActiveText>
+          {creating
+            ? "Create a pair"
+            : adding
+            ? "Add Liquidity"
+            : "Remove Liquidity"}
+        </ActiveText>
         <Settings />
       </RowBetween>
     </Tabs>
-  )
+  );
 }

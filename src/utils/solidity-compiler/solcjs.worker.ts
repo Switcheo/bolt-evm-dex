@@ -1,4 +1,3 @@
-
 declare const self: Worker;
 
 interface WorkerContext extends Worker {
@@ -35,7 +34,9 @@ class Compiler {
   init(version: Version) {
     const buildVersion = this.getVersionScript(version);
     importScripts(`https://binaries.soliditylang.org/bin/${buildVersion}`);
-    importScripts("https://unpkg.com/solc-wrapper-bundle@latest/dist/bundle.js");
+    importScripts(
+      "https://unpkg.com/solc-wrapper-bundle@latest/dist/bundle.js",
+    );
     const wrapper = this.ctx.wrapper;
     const module = this.ctx.Module;
     this.solc = wrapper(module);
@@ -78,8 +79,7 @@ class Compiler {
     let output;
     if (fn === undefined) {
       output = this.solc.compile(input);
-    }
-    else {
+    } else {
       const callback = this.constructFn(fn);
       output = this.solc.compile(input, { import: callback });
     }

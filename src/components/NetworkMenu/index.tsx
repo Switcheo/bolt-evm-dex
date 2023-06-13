@@ -1,20 +1,20 @@
-import React, { forwardRef } from 'react'
-import styled from 'styled-components'
-
-import { TYPE } from '../../theme'
-import { ButtonDropdownLight } from '../Button'
-import useTheme from 'hooks/useTheme'
-import { ChainId } from '@bolt-dex/sdk'
-import { CHAIN_INFO } from '../../constants/'
+import React, { forwardRef } from "react";
+import { ChainId } from "@bolt-dex/sdk";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
+import useTheme from "hooks/useTheme";
+import { BridgeMenu } from "state/bridge/actions";
 import {
   useBridgeActionHandlers,
   useNetworkAMenuOpen,
   useNetworkBMenuOpen,
   useNetworkToggleAMenu,
-  useNetworkToggleBMenu
-} from 'state/bridge/hooks'
-import { BridgeMenu } from 'state/bridge/actions'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
+  useNetworkToggleBMenu,
+} from "state/bridge/hooks";
+import styled from "styled-components";
+
+import { CHAIN_INFO } from "../../constants/";
+import { TYPE } from "../../theme";
+import { ButtonDropdownLight } from "../Button";
 
 const StyledMenu = styled.div`
   display: flex;
@@ -24,13 +24,13 @@ const StyledMenu = styled.div`
   border: none;
   text-align: left;
   width: 100%;
-`
+`;
 
 const MenuFlyout = styled.span`
   min-width: 8.125rem;
   background-color: ${({ theme }) => theme.bg2};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
+    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 12px;
   padding: 0.5rem;
   display: flex;
@@ -44,7 +44,7 @@ const MenuFlyout = styled.span`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     top: -17.25rem;
   `};
-`
+`;
 
 const MenuItem = styled.div`
   flex: 1;
@@ -58,83 +58,98 @@ const MenuItem = styled.div`
   > svg {
     margin-right: 8px;
   }
-`
+`;
 
-const LOGO_SIZE = 20
+const LOGO_SIZE = 20;
 
 const Logo = styled.img`
   height: ${LOGO_SIZE}px;
   width: ${LOGO_SIZE}px;
   margin-right: 12px;
-`
+`;
 
-const NETWORK_SELECTOR_CHAINS = [ChainId.MAINNET, ChainId.BOLTCHAIN, ChainId.BNB, ChainId.POLYGON]
+const NETWORK_SELECTOR_CHAINS = [
+  ChainId.MAINNET,
+  ChainId.BOLTCHAIN,
+  ChainId.BNB,
+  ChainId.POLYGON,
+];
 
 interface NetworkMenuProps {
-  selectedInput?: string
-  selectedOutput?: string
+  selectedInput?: string;
+  selectedOutput?: string;
 }
 
-const NetworkMenu = forwardRef<HTMLDivElement, NetworkMenuProps>((props, ref) => {
-  const theme = useTheme()
+const NetworkMenu = forwardRef<HTMLDivElement, NetworkMenuProps>(
+  (props, ref) => {
+    const theme = useTheme();
 
-  const open = useNetworkAMenuOpen(BridgeMenu.NETWORK_A)
-  const toggle = useNetworkToggleAMenu(BridgeMenu.NETWORK_A)
+    const open = useNetworkAMenuOpen(BridgeMenu.NETWORK_A);
+    const toggle = useNetworkToggleAMenu(BridgeMenu.NETWORK_A);
 
-  const openB = useNetworkBMenuOpen(BridgeMenu.NETWORK_B)
-  const toggleB = useNetworkToggleBMenu(BridgeMenu.NETWORK_B)
+    const openB = useNetworkBMenuOpen(BridgeMenu.NETWORK_B);
+    const toggleB = useNetworkToggleBMenu(BridgeMenu.NETWORK_B);
 
-  const { onNetworkASelection, onNetworkBSelection } = useBridgeActionHandlers()
+    const { onNetworkASelection, onNetworkBSelection } =
+      useBridgeActionHandlers();
 
-  if (typeof ref !== 'function' && ref) {
-    if (props?.selectedInput) { useOnClickOutside(ref, open ? toggle : undefined) }
-    else if (props?.selectedOutput) { useOnClickOutside(ref, openB ? toggleB : undefined) }
-  }
-
-  const handleNetworkSelection = (chainId: string) => {
-    if (props?.selectedInput) {
-      onNetworkASelection(chainId)
-    } else if (props?.selectedOutput) {
-      onNetworkBSelection(chainId)
+    if (typeof ref !== "function" && ref) {
+      if (props?.selectedInput) {
+        useOnClickOutside(ref, open ? toggle : undefined);
+      } else if (props?.selectedOutput) {
+        useOnClickOutside(ref, openB ? toggleB : undefined);
+      }
     }
-  }
 
-  const getChainInfo = () => {
-    return NETWORK_SELECTOR_CHAINS.map(chainId => {
-      const chainInfo = CHAIN_INFO[chainId]
-      return (
-        <MenuItem
-          key={chainId}
-          style={{ display: 'flex', alignItems: 'center' }}
-          onClick={e => {
-            e.preventDefault()
-            e.stopPropagation()
-            handleNetworkSelection(chainInfo.chain)
-          }}
+    const handleNetworkSelection = (chainId: string) => {
+      if (props?.selectedInput) {
+        onNetworkASelection(chainId);
+      } else if (props?.selectedOutput) {
+        onNetworkBSelection(chainId);
+      }
+    };
+
+    const getChainInfo = () => {
+      return NETWORK_SELECTOR_CHAINS.map((chainId) => {
+        const chainInfo = CHAIN_INFO[chainId];
+        return (
+          <MenuItem
+            key={chainId}
+            style={{ display: "flex", alignItems: "center" }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleNetworkSelection(chainInfo.chain);
+            }}
+          >
+            <Logo src={chainInfo.logoUrl} alt={`${chainInfo.label}-logo`} />
+            {chainInfo.label}
+          </MenuItem>
+        );
+      });
+    };
+
+    return (
+      <StyledMenu ref={ref}>
+        <ButtonDropdownLight
+          padding="0.5rem"
+          style={{ borderRadius: "0.75rem" }}
+          onClick={props?.selectedInput ? toggle : toggleB}
         >
-          <Logo src={chainInfo.logoUrl} alt={`${chainInfo.label}-logo`} />
-          {chainInfo.label}
-        </MenuItem>
-      )
-    })
-  }
+          <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+            {props?.selectedInput ?? props.selectedOutput ?? ""}
+          </TYPE.body>
+        </ButtonDropdownLight>
+        {props?.selectedInput && open && (
+          <MenuFlyout>{getChainInfo()}</MenuFlyout>
+        )}
 
-  return (
-    <StyledMenu ref={ref}>
-      <ButtonDropdownLight
-        padding="0.5rem"
-        style={{ borderRadius: '0.75rem' }}
-        onClick={props?.selectedInput ? toggle : toggleB}
-      >
-        <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
-          {props?.selectedInput ?? props.selectedOutput ?? ''}
-        </TYPE.body>
-      </ButtonDropdownLight>
-      {props?.selectedInput && open && <MenuFlyout>{getChainInfo()}</MenuFlyout>}
+        {props?.selectedOutput && openB && (
+          <MenuFlyout>{getChainInfo()}</MenuFlyout>
+        )}
+      </StyledMenu>
+    );
+  },
+);
 
-      {props?.selectedOutput && openB && <MenuFlyout>{getChainInfo()}</MenuFlyout>}
-    </StyledMenu>
-  )
-})
-
-export default NetworkMenu
+export default NetworkMenu;

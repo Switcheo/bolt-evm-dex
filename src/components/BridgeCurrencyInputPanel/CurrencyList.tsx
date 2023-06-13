@@ -1,20 +1,23 @@
-import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
-import { FixedSizeList } from 'react-window'
-import { Text } from 'rebass'
-import styled from 'styled-components'
+import React, {
+  CSSProperties,
+  MutableRefObject,
+  useCallback,
+  useMemo,
+} from "react";
+import { LightGreyCard } from "components/Card";
+import useTheme from "hooks/useTheme";
+import _ from "lodash";
+import { FixedSizeList } from "react-window";
+import { Text } from "rebass";
+import { Token } from "state/bridge/actions";
+import styled from "styled-components";
+
 // import { useActiveWeb3React } from '../../hooks'
 
-import { TYPE } from '../../theme'
-
-import Column from '../Column'
-import { RowFixed, RowBetween } from '../Row'
-
-import { MenuItem } from './styleds'
-
-import { LightGreyCard } from 'components/Card'
-import useTheme from 'hooks/useTheme'
-import { Token } from 'state/bridge/actions'
-import _ from 'lodash'
+import { TYPE } from "../../theme";
+import Column from "../Column";
+import { RowBetween, RowFixed } from "../Row";
+import { MenuItem } from "./styleds";
 
 // const StyledBalanceText = styled(Text)`
 //   white-space: nowrap;
@@ -43,7 +46,7 @@ const FixedContentRow = styled.div`
   display: grid;
   grid-gap: 16px;
   align-items: center;
-`
+`;
 
 // function Balance({ balance }: { balance: CurrencyAmount }) {
 //   return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(4)}</StyledBalanceText>
@@ -88,13 +91,13 @@ function CurrencyRow({
   onSelect,
   isSelected,
   otherSelected,
-  style
+  style,
 }: {
-  currency: Token
-  onSelect: () => void
-  isSelected: boolean
-  otherSelected: boolean
-  style: CSSProperties
+  currency: Token;
+  onSelect: () => void;
+  isSelected: boolean;
+  otherSelected: boolean;
+  style: CSSProperties;
 }) {
   // const { account } = useActiveWeb3React()
   // const selectedTokenList = useCombinedActiveList()
@@ -114,16 +117,16 @@ function CurrencyRow({
         <Text title={currency.symbol} fontWeight={500}>
           {currency.symbol}
         </Text>
-        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
+        <TYPE.darkGray ml="0px" fontSize={"12px"} fontWeight={300}>
           {currency.name}
         </TYPE.darkGray>
       </Column>
       {/* <TokenTags currency={currency} /> */}
-      <RowFixed style={{ justifySelf: 'flex-end' }}>
+      <RowFixed style={{ justifySelf: "flex-end" }}>
         {/* {balance ? <Balance balance={balance} /> : account ? <Loader /> : null} */}
       </RowFixed>
     </MenuItem>
-  )
+  );
 }
 
 export default function CurrencyList({
@@ -131,25 +134,27 @@ export default function CurrencyList({
   currencies,
   selectedCurrency,
   onCurrencySelect,
-  fixedListRef
+  fixedListRef,
 }: {
-  height: number
-  currencies: Token[]
-  selectedCurrency?: Token | null
-  onCurrencySelect: (currency: Token) => void
-  fixedListRef?: MutableRefObject<FixedSizeList | undefined>
+  height: number;
+  currencies: Token[];
+  selectedCurrency?: Token | null;
+  onCurrencySelect: (currency: Token) => void;
+  fixedListRef?: MutableRefObject<FixedSizeList | undefined>;
 }) {
   const itemData: (Token | undefined)[] = useMemo(() => {
-    return currencies
-  }, [currencies])
+    return currencies;
+  }, [currencies]);
 
-  const theme = useTheme()
+  const theme = useTheme();
 
   const Row = useCallback(
     ({ data, index, style }) => {
-      const currency: Token = data[index]
-      const isSelected = Boolean(selectedCurrency && _.isEqual(selectedCurrency, currency))
-      const handleSelect = () => onCurrencySelect(currency)
+      const currency: Token = data[index];
+      const isSelected = Boolean(
+        selectedCurrency && _.isEqual(selectedCurrency, currency),
+      );
+      const handleSelect = () => onCurrencySelect(currency);
 
       if (!data) {
         return (
@@ -164,7 +169,7 @@ export default function CurrencyList({
               </RowBetween>
             </LightGreyCard>
           </FixedContentRow>
-        )
+        );
       }
       return (
         <CurrencyRow
@@ -174,10 +179,10 @@ export default function CurrencyList({
           onSelect={handleSelect}
           otherSelected={false}
         />
-      )
+      );
     },
-    [onCurrencySelect, selectedCurrency, theme.text1]
-  )
+    [onCurrencySelect, selectedCurrency, theme.text1],
+  );
 
   // const itemKey = useCallback((index: number, data: any) => data[index], [])
 
@@ -193,5 +198,5 @@ export default function CurrencyList({
     >
       {Row}
     </FixedSizeList>
-  )
+  );
 }

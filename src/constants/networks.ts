@@ -1,10 +1,11 @@
-import { SupportedChainId } from "./chains"
+import { SupportedChainId } from "./chains";
 
-const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
-if (typeof INFURA_KEY === 'undefined') {
-  throw new Error(`REACT_APP_INFURA_KEY must be a defined environment variable`)
+const INFURA_KEY = process.env.REACT_APP_INFURA_KEY;
+if (typeof INFURA_KEY === "undefined") {
+  throw new Error(
+    `REACT_APP_INFURA_KEY must be a defined environment variable`,
+  );
 }
-
 
 /**
  * Fallback JSON-RPC endpoints.
@@ -19,38 +20,38 @@ if (typeof INFURA_KEY === 'undefined') {
 export const FALLBACK_URLS = {
   [SupportedChainId.MAINNET]: [
     // "Safe" URLs
-    'https://api.mycryptoapi.com/eth',
-    'https://cloudflare-eth.com',
+    "https://api.mycryptoapi.com/eth",
+    "https://cloudflare-eth.com",
     // "Fallback" URLs
-    'https://rpc.ankr.com/eth',
-    'https://eth-mainnet.public.blastapi.io',
+    "https://rpc.ankr.com/eth",
+    "https://eth-mainnet.public.blastapi.io",
   ],
   [SupportedChainId.POLYGON]: [
     // "Safe" URLs
-    'https://polygon-rpc.com/',
-    'https://rpc-mainnet.matic.network',
-    'https://matic-mainnet.chainstacklabs.com',
-    'https://rpc-mainnet.maticvigil.com',
-    'https://rpc-mainnet.matic.quiknode.pro',
-    'https://matic-mainnet-full-rpc.bwarelabs.com',
+    "https://polygon-rpc.com/",
+    "https://rpc-mainnet.matic.network",
+    "https://matic-mainnet.chainstacklabs.com",
+    "https://rpc-mainnet.maticvigil.com",
+    "https://rpc-mainnet.matic.quiknode.pro",
+    "https://matic-mainnet-full-rpc.bwarelabs.com",
   ],
   [SupportedChainId.BSC]: [
     // "Safe" URLs
-    'https://endpoints.omniatech.io/v1/bsc/mainnet/public',
-    'https://bsc-mainnet.gateway.pokt.network/v1/lb/6136201a7bad1500343e248d',
-    'https://1rpc.io/bnb',
-    'https://bsc-dataseed3.binance.org',
-    'https://bsc-dataseed2.defibit.io',
-    'https://bsc-dataseed1.ninicoin.io',
-    'https://binance.nodereal.io',
-    'https://bsc-dataseed4.defibit.io',
-    'https://rpc.ankr.com/bsc',
+    "https://endpoints.omniatech.io/v1/bsc/mainnet/public",
+    "https://bsc-mainnet.gateway.pokt.network/v1/lb/6136201a7bad1500343e248d",
+    "https://1rpc.io/bnb",
+    "https://bsc-dataseed3.binance.org",
+    "https://bsc-dataseed2.defibit.io",
+    "https://bsc-dataseed1.ninicoin.io",
+    "https://binance.nodereal.io",
+    "https://bsc-dataseed4.defibit.io",
+    "https://rpc.ankr.com/bsc",
   ],
   [SupportedChainId.BOLTCHAIN]: [
     // "Safe" URLs
-    'https://rpc.bolt.switcheo.network',
-  ]
-}
+    "https://rpc.bolt.switcheo.network",
+  ],
+};
 
 /**
  * Known JSON-RPC endpoints.
@@ -66,5 +67,5 @@ export const RPC_URLS = {
     ...FALLBACK_URLS[SupportedChainId.POLYGON],
   ],
   [SupportedChainId.BSC]: [...FALLBACK_URLS[SupportedChainId.BSC]],
-  [SupportedChainId.BOLTCHAIN]: [...FALLBACK_URLS[SupportedChainId.BOLTCHAIN]]
-}
+  [SupportedChainId.BOLTCHAIN]: [...FALLBACK_URLS[SupportedChainId.BOLTCHAIN]],
+};
