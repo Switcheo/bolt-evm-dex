@@ -16,6 +16,10 @@ export const ROUTER_ADDRESS = '0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
+export interface SimpleMap<T = unknown> {
+  [key: string]: T
+}
+
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
@@ -287,11 +291,58 @@ export const CHAIN_INFO: ChainInfoMap = {
   }
 }
 
-export const CHAIN_MAPPING: {[key:string]: number} = {
-  "ETH": ChainId.MAINNET,
-  "BOLT": ChainId.BOLTCHAIN,
-  "BNB": ChainId.BNB,
-  "POLYGON": ChainId.POLYGON
+
+export enum Blockchain {
+  Neo = 'neo',
+  Ethereum = 'eth',
+  BinanceSmartChain = 'bsc',
+  Zilliqa = 'zil',
+  Arbitrum = 'arbitrum',
+  Polygon = 'polygon',
+  Okc = 'okc',
+  Native = 'native',
+  Btc = 'btc',
+  Carbon = 'carbon',
+  Switcheo = 'switcheo',
+  TradeHub = 'tradehub',
+  PolyNetwork = 'polynetwork',
+  Neo3 = 'neo3',
+  Osmosis = 'osmosis',
+  Ibc = 'ibc',
+  Terra = 'terra',
+  CosmosHub = 'cosmoshub',
+  Juno = 'juno',
+  Evmos = 'evmos',
+  Axelar = 'axelar',
+  Stride = 'stride',
+  Kujira = 'kujira',
+  Terra2 = 'terra2',
+  Quicksilver = 'quicksilver',
+  Comdex = 'comdex',
+  StafiHub = 'stafi',
+  Persistence = 'persistence',
+  Stargaze = 'stargaze',
+  Canto = 'canto',
+  OmniFlixHub = 'omniflixhub',
+  Agoric = 'agoric',
+  Sommelier = 'sommelier'
+}
+
+export const BRIDGEABLE_EVM_CHAINS = [2, 6, 17]
+
+
+export const CHAIN_MAPPING: { [key: string]: number } = {
+  ETH: ChainId.MAINNET,
+  BOLT: ChainId.BOLTCHAIN,
+  BNB: ChainId.BNB,
+  POLYGON: ChainId.POLYGON
+}
+
+export const MAIN_TOKEN_DENOMS: SimpleMap<string> = {
+  [CHAIN_INFO[ChainId.MAINNET].chain]: 'swthe.1.2.683ddd',
+  // [CHAIN_INFO[ChainId.BOLTCHAIN].chain]: 'swth.1.2.683ddd',
+  [CHAIN_INFO[ChainId.BNB].chain]: 'swth.1.6.5bc06b',
+  [CHAIN_INFO[ChainId.POLYGON].chain]: 'swth.1.17.dbb4d5'
 }
 
 // Create a map from name to chainId for bridgeableTokens

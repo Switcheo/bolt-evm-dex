@@ -115,13 +115,15 @@ export const useFetchBridgeableTokens = (tokensUrl: string, bridgesUrl: string) 
       ) // chain_id === 17, 2, 6
       
       // Filter to check if token is active and if the bridge id of the token is in the filteredBridges
-      const bridgeableTokens = tokensJson.tokens.filter(token =>
-        token.is_active && token.bridge_id === "1" && filteredBridges.some(bridge => bridge.chain_id === token.chain_id)
-      )
+      // const bridgeableTokens = tokensJson.tokens.filter(token =>
+      //   (token.is_active && token.bridge_id === "1" && filteredBridges.some(bridge => bridge.chain_id === token.chain_id || token.chain_id === '4'))
+      // )
+      // const bridgeableTokens = tokensJson.tokens.filter(token =>
+      //   token.is_active)
 
       dispatch(
         fetchBridgeableTokens.fulfilled({
-          tokenList: bridgeableTokens,
+          tokenList: tokensJson.tokens,
           requestId,
           tokensUrl,
           bridgesUrl

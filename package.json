@@ -91,7 +91,7 @@
     "workbox-strategies": "^6.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER=NONE react-scripts start",
     "start:service-worker": "yarn build && yarn serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

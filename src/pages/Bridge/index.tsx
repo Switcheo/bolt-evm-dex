@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import styled from 'styled-components'
 
@@ -18,6 +18,7 @@ import { ArrowRight } from 'react-feather'
 import NetworkMenu from 'components/NetworkMenu'
 import { useBridgeActionHandlers, useBridgeState, useSwitchNetworkSrcDest } from 'state/bridge/hooks'
 import BridgeCurrencyInputPanel from 'components/BridgeCurrencyInputPanel'
+import { getBridgeableTokens, getSwthBridgeTokens } from 'utils/bridge'
 
 
 const BridgeBody = styled.div`
@@ -94,7 +95,7 @@ export default function Bridge() {
   const onSwitchTokens = useSwitchNetworkSrcDest();
 
   // Real
-  const { typedInputValue, networkA, networkB, selectedCurrency } = useBridgeState();
+  const { typedInputValue, networkA, networkB, selectedCurrency, bridgeableTokens } = useBridgeState();
 
   const { onUserInput, onCurrencySelection } = useBridgeActionHandlers();
   // States
@@ -114,6 +115,10 @@ export default function Bridge() {
   const handleInputSelect = useCallback((inputCurrency) => {
     onCurrencySelection(inputCurrency)
   }, [onCurrencySelection]);
+
+  useEffect(() => {
+    console.log(getBridgeableTokens(bridgeableTokens ?? []))
+  }, [networkA, bridgeableTokens])
 
   return (
     <>
