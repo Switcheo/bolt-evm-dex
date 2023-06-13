@@ -1,7 +1,6 @@
 import { ChainId } from '@bolt-dex/sdk'
-import { BRIDGEABLE_EVM_CHAINS, Blockchain, MAIN_TOKEN_DENOMS, SimpleMap } from 'constants/index'
+import { BRIDGEABLE_EVM_CHAINS, MAIN_TOKEN_DENOMS, SimpleMap } from 'constants/index'
 import { Token } from 'state/bridge/actions'
-import { useBridgeState } from 'state/bridge/hooks'
 
 // /**
 //  * Returns the SWTH denom on the specified chain

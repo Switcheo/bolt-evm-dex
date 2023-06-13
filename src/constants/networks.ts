@@ -66,5 +66,5 @@ export const RPC_URLS = {
     ...FALLBACK_URLS[SupportedChainId.POLYGON],
   ],
   [SupportedChainId.BSC]: [...FALLBACK_URLS[SupportedChainId.BSC]],
-  [SupportedChainId.BOLTCHAIN]: [...FALLBACK_URLS[SupportedChainId.BOLTCHAIN]
+  [SupportedChainId.BOLTCHAIN]: [...FALLBACK_URLS[SupportedChainId.BOLTCHAIN]]
 }

@@ -15,7 +15,6 @@ import {
 } from 'state/bridge/hooks'
 import { BridgeMenu } from 'state/bridge/actions'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
-import { getSwthBridgeTokens } from 'utils/bridge'
 
 const StyledMenu = styled.div`
   display: flex;

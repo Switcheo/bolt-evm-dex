@@ -4,7 +4,7 @@ import { parseENSAddress } from '../utils/parseENSAddress'
 import uriToHttp from '../utils/uriToHttp'
 import useENSContentHash from './useENSContentHash'
 
-export default function useHttpLocations(uri: string | undefined): string[] {
+const useHttpLocations = (uri: string | undefined | null) => {
   const ens = useMemo(() => (uri ? parseENSAddress(uri) : undefined), [uri])
   const resolvedContentHash = useENSContentHash(ens?.ensName)
   return useMemo(() => {
@@ -15,3 +15,5 @@ export default function useHttpLocations(uri: string | undefined): string[] {
     }
   }, [ens, resolvedContentHash.contenthash, uri])
 }
+
+export default useHttpLocations

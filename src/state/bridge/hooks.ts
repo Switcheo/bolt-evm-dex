@@ -10,7 +10,6 @@ import {
   setNetworkBMenu,
   switchNetworkSrcDest,
   updateInputValue,
-  BridgesListResponse,
   Token
 } from './actions'
 import { useDispatch, useSelector } from 'react-redux'
@@ -100,20 +99,20 @@ export const useFetchBridgeableTokens = (tokensUrl: string, bridgesUrl: string) 
 
     try {
       // Fetch both and await both
-      const [tokensResponse, bridgesResponse] = await Promise.all([fetch(tokensUrl), fetch(bridgesUrl)])
+      const [tokensResponse, ] = await Promise.all([fetch(tokensUrl), fetch(bridgesUrl)])
 
       const tokensJson: TokenList = await tokensResponse.json()
-      const bridgesJson: BridgesListResponse = await bridgesResponse.json()
+      // const bridgesJson: BridgesListResponse = await bridgesResponse.json()
 
-      const filteredBridges = bridgesJson.bridges.filter(
-        bridge =>
-          bridge.bridge_name === 'Polynetwork' &&
-          (bridge.chain_name === 'Binance Smart Chain' ||
-            bridge.chain_name === 'Ethereum' ||
-            bridge.chain_name === 'Polygon') &&
-          bridge.enabled
-      ) // chain_id === 17, 2, 6
-      
+      // const filteredBridges = bridgesJson.bridges.filter(
+      //   bridge =>
+      //     bridge.bridge_name === 'Polynetwork' &&
+      //     (bridge.chain_name === 'Binance Smart Chain' ||
+      //       bridge.chain_name === 'Ethereum' ||
+      //       bridge.chain_name === 'Polygon') &&
+      //     bridge.enabled
+      // ) // chain_id === 17, 2, 6
+
       // Filter to check if token is active and if the bridge id of the token is in the filteredBridges
       // const bridgeableTokens = tokensJson.tokens.filter(token =>
       //   (token.is_active && token.bridge_id === "1" && filteredBridges.some(bridge => bridge.chain_id === token.chain_id || token.chain_id === '4'))

@@ -18,7 +18,7 @@ import { ArrowRight } from 'react-feather'
 import NetworkMenu from 'components/NetworkMenu'
 import { useBridgeActionHandlers, useBridgeState, useSwitchNetworkSrcDest } from 'state/bridge/hooks'
 import BridgeCurrencyInputPanel from 'components/BridgeCurrencyInputPanel'
-import { getBridgeableTokens, getSwthBridgeTokens } from 'utils/bridge'
+import { getBridgeableTokens } from 'utils/bridge'
 
 
 const BridgeBody = styled.div`
