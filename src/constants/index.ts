@@ -287,6 +287,13 @@ export const CHAIN_INFO: ChainInfoMap = {
   }
 }
 
+export const CHAIN_MAPPING: {[key:string]: number} = {
+  "ETH": ChainId.MAINNET,
+  "BOLT": ChainId.BOLTCHAIN,
+  "BNB": ChainId.BNB,
+  "POLYGON": ChainId.POLYGON
+}
+
 // Create a map from name to chainId for bridgeableTokens
 export const BRIDGEABLE_TOKENS: { [name: string]: number } = {
   BOLT: ChainId.BOLTCHAIN,
