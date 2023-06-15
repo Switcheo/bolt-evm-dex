@@ -1,22 +1,13 @@
-import { Trade, TradeType } from "@bolt-dex/sdk";
 import { BridgeTx } from "pages/Bridge";
-import React, { useContext, useMemo } from "react";
-import { AlertTriangle, ArrowDown } from "react-feather";
+import React, { useContext } from "react";
+import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-import { Field } from "../../state/swap/actions";
 import { TYPE } from "../../theme";
 import { isAddress, shortenAddress } from "../../utils";
-import {
-  computeSlippageAdjustedAmounts,
-  computeTradePriceBreakdown,
-  warningSeverity,
-} from "../../utils/prices";
-import { ButtonPrimary } from "../Button";
 import { AutoColumn } from "../Column";
-import CurrencyLogo from "../CurrencyLogo";
 import { RowBetween, RowFixed } from "../Row";
-import { SwapShowAcceptChanges, TruncatedText } from "./styleds";
+import { TruncatedText } from "./styleds";
 
 export default function BridgeModalHeader({
   bridgeTx,
@@ -49,11 +40,7 @@ export default function BridgeModalHeader({
         </RowFixed>
       </RowBetween>
       <RowFixed>
-        <ArrowDown
-          size="16"
-          color={theme.text2}
-          style={{ marginLeft: "4px", minWidth: "16px" }}
-        />
+        <ArrowDown size="16" color={theme.text2} style={{ marginLeft: "4px", minWidth: "16px" }} />
       </RowFixed>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
@@ -96,11 +83,7 @@ export default function BridgeModalHeader({
           </RowBetween>
         </SwapShowAcceptChanges>
       ) : null} */}
-      <AutoColumn
-        justify="flex-start"
-        gap="sm"
-        style={{ padding: "12px 0 0 0px" }}
-      >
+      <AutoColumn justify="flex-start" gap="sm" style={{ padding: "12px 0 0 0px" }}>
         {/* {trade.tradeType === TradeType.EXACT_INPUT ? (
           <TYPE.italic textAlign="left" style={{ width: "100%" }}>
             {`Output is estimated. You will receive at least `}
@@ -122,16 +105,10 @@ export default function BridgeModalHeader({
         )} */}
       </AutoColumn>
       {recipient !== null ? (
-        <AutoColumn
-          justify="flex-start"
-          gap="sm"
-          style={{ padding: "12px 0 0 0px" }}
-        >
+        <AutoColumn justify="flex-start" gap="sm" style={{ padding: "12px 0 0 0px" }}>
           <TYPE.main>
             Output will be sent to{" "}
-            <b title={recipient}>
-              {isAddress(recipient) ? shortenAddress(recipient) : recipient}
-            </b>
+            <b title={recipient}>{isAddress(recipient) ? shortenAddress(recipient) : recipient}</b>
           </TYPE.main>
         </AutoColumn>
       ) : null}

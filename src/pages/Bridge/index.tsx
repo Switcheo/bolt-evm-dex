@@ -7,7 +7,6 @@ import { SwapPoolTabs } from "components/NavigationTabs";
 import NetworkMenu from "components/NetworkMenu";
 import { ArrowWrapper } from "components/swap/styleds";
 import { useActiveWeb3React } from "hooks";
-import { ApprovalState, useApproveCallbackFromBridge } from "hooks/useApproveCallback";
 import { useBridgeCallback } from "hooks/useBridgeCallback";
 import useTheme from "hooks/useTheme";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -22,7 +21,6 @@ import {
 } from "state/bridge/hooks";
 import styled from "styled-components";
 import { TYPE } from "theme";
-import { BridgeableToken, getBridgeableTokens } from "utils/bridge";
 import { Wrapper } from "./styleds";
 
 const BridgeBody = styled.div`
@@ -161,13 +159,13 @@ export default function Bridge() {
       bridgeErrorMessage: undefined,
       txHash: undefined,
     });
-  }, [typedInputValue, selectedCurrency, networkA, networkB, account]);
+  }, [typedInputValue, selectedCurrency, networkA, networkB, account, getPendingBridgeTx, showConfirm]);
 
   console.log(getPendingBridgeTx());
 
   // const { callback: bridgeCallback, error: bridgeCallbackError } =
   //   useBridgeCallback(bridgeToConfirm);
-  const { state, callback: bridgeCallback, error } = useBridgeCallback(bridgeToConfirm);
+  const { callback: bridgeCallback } = useBridgeCallback(bridgeToConfirm);
 
   const handleBridge = useCallback(() => {
     if (!bridgeCallback) {
@@ -199,7 +197,7 @@ export default function Bridge() {
           txHash: undefined,
         });
       });
-  }, [bridgeCallback, bridgeToConfirm, showConfirm, account]);
+  }, [bridgeCallback, bridgeToConfirm, showConfirm]);
 
   const handleConfirmDismiss = useCallback(() => {
     setBridgeState({

@@ -1,16 +1,13 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { BRIDGEABLE_TOKENS, MAIN_TOKEN_DENOMS } from "constants/index";
 import { useActiveWeb3React } from "hooks";
 import { BridgeTx } from "pages/Bridge";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "state";
-import { getBridgeableTokens } from "utils/bridge";
 import {
   BridgeMenu,
   fetchBridgeableTokens,
   selectTokenCurrency,
-  setFilteredBridgeableTokens,
   setNetworkA,
   setNetworkAMenu,
   setNetworkB,
@@ -69,35 +66,25 @@ export const useBridgeActionHandlers = () => {
 };
 
 export const useNetworkAMenuOpen = (menu: BridgeMenu) => {
-  const networkAMenu = useSelector(
-    (state: AppState) => state.bridge.networkAMenu,
-  );
+  const networkAMenu = useSelector((state: AppState) => state.bridge.networkAMenu);
   return networkAMenu === menu;
 };
 
 export const useNetworkToggleAMenu = (menu: BridgeMenu) => {
   const open = useNetworkAMenuOpen(menu);
   const dispatch = useDispatch<AppDispatch>();
-  return useCallback(
-    () => dispatch(setNetworkAMenu(open ? null : menu)),
-    [dispatch, menu, open],
-  );
+  return useCallback(() => dispatch(setNetworkAMenu(open ? null : menu)), [dispatch, menu, open]);
 };
 
 export const useNetworkBMenuOpen = (menu: BridgeMenu) => {
-  const networkBMenu = useSelector(
-    (state: AppState) => state.bridge.networkBMenu,
-  );
+  const networkBMenu = useSelector((state: AppState) => state.bridge.networkBMenu);
   return networkBMenu === menu;
 };
 
 export const useNetworkToggleBMenu = (menu: BridgeMenu) => {
   const open = useNetworkBMenuOpen(menu);
   const dispatch = useDispatch<AppDispatch>();
-  return useCallback(
-    () => dispatch(setNetworkBMenu(open ? null : menu)),
-    [dispatch, menu, open],
-  );
+  return useCallback(() => dispatch(setNetworkBMenu(open ? null : menu)), [dispatch, menu, open]);
 };
 
 export const useSwitchNetworkSrcDest = () => {
@@ -129,15 +116,11 @@ export const useFetchBridgeableTokens = (
 
     try {
       // Fetch both and await both
-      const [tokensResponse, wrapperResponse] = await Promise.all([
-        fetch(tokensUrl),
-        fetch(bridgesUrl),
-        fetch(wrapperUrl),
-      ]);
+      const [tokensResponse] = await Promise.all([fetch(tokensUrl), fetch(bridgesUrl), fetch(wrapperUrl)]);
 
       const tokensJson: TokenList = await tokensResponse.json();
 
-      const bridgeableTokenChainId = BRIDGEABLE_TOKENS[fromNetworkId];
+      // const bridgeableTokenChainId = BRIDGEABLE_TOKENS[fromNetworkId];
 
       dispatch(
         fetchBridgeableTokens.fulfilled({
@@ -169,12 +152,8 @@ export const useFetchBridgeableTokens = (
 export const useGetPendingBridgeTx = () => {
   const networkA = useSelector((state: AppState) => state.bridge.networkA);
   const networkB = useSelector((state: AppState) => state.bridge.networkB);
-  const inputAmount = useSelector(
-    (state: AppState) => state.bridge.typedInputValue,
-  );
-  const selectedToken = useSelector(
-    (state: AppState) => state.bridge.selectedCurrency,
-  );
+  const inputAmount = useSelector((state: AppState) => state.bridge.typedInputValue);
+  const selectedToken = useSelector((state: AppState) => state.bridge.selectedCurrency);
   const { account } = useActiveWeb3React();
 
   const getPendingBridgeTx = useCallback(() => {

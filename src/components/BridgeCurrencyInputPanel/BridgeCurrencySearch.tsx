@@ -2,26 +2,14 @@ import useDebounce from "hooks/useDebounce";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
-import React, {
-  KeyboardEvent,
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
 import { AppDispatch } from "state";
-import {
-  fetchBridgeableTokens,
-  setFilteredBridgeableTokens,
-  Token,
-} from "state/bridge/actions";
+import { setFilteredBridgeableTokens, Token } from "state/bridge/actions";
 import { useBridgeState } from "state/bridge/hooks";
 import styled from "styled-components";
 import { BridgeableToken, getBridgeableTokens } from "utils/bridge";
@@ -61,8 +49,7 @@ export function BridgeCurrencySearch({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const debouncedQuery = useDebounce(searchQuery, 200);
 
-  const { bridgeableTokens, networkA, filteredBridgeableTokens } =
-    useBridgeState();
+  const { bridgeableTokens, networkA, filteredBridgeableTokens } = useBridgeState();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -73,27 +60,20 @@ export function BridgeCurrencySearch({
 
     const tokens = bridgeableTokens
       .filter((token) =>
-        listOfBridgeableTokens.some(
-          (bridgeableToken) =>
-            bridgeableToken.tokenAddress === token.token_address,
-        ),
+        listOfBridgeableTokens.some((bridgeableToken) => bridgeableToken.tokenAddress === token.token_address),
       )
       .map((token) => ({
         ...token,
         extra_info: listOfBridgeableTokens.find(
-          (bridgeableToken) =>
-            bridgeableToken.tokenAddress === token.token_address,
+          (bridgeableToken) => bridgeableToken.tokenAddress === token.token_address,
         ),
       }));
 
     dispatch(setFilteredBridgeableTokens(tokens));
-  }, [networkA]);
+  }, [networkA, bridgeableTokens, dispatch]);
 
   const filteredTokens: Token[] = useMemo(() => {
-    return filterTokens(
-      Object.values(filteredBridgeableTokens),
-      debouncedQuery,
-    );
+    return filterTokens(Object.values(filteredBridgeableTokens), debouncedQuery);
   }, [filteredBridgeableTokens, debouncedQuery]);
 
   const handleCurrencySelect = useCallback(
@@ -122,10 +102,7 @@ export function BridgeCurrencySearch({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         const s = debouncedQuery.toLowerCase().trim();
-        if (
-          filteredTokens[0].symbol?.toLowerCase() === s ||
-          filteredTokens.length === 1
-        ) {
+        if (filteredTokens[0].symbol?.toLowerCase() === s || filteredTokens.length === 1) {
           handleCurrencySelect(filteredTokens[0]);
         }
       }

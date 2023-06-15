@@ -1,5 +1,4 @@
 import { createReducer, PayloadAction } from "@reduxjs/toolkit";
-import { BridgeableToken } from "utils/bridge";
 import {
   BridgeMenu,
   fetchBridgeableTokens,
@@ -65,12 +64,9 @@ export default createReducer(initialState, (builder) =>
     .addCase(updateInputValue, (state, action) => {
       state.typedInputValue = action.payload;
     })
-    .addCase(
-      selectTokenCurrency,
-      (state, action: PayloadAction<Token | undefined>) => {
-        state.selectedCurrency = action.payload;
-      },
-    )
+    .addCase(selectTokenCurrency, (state, action: PayloadAction<Token | undefined>) => {
+      state.selectedCurrency = action.payload;
+    })
     .addCase(setNetworkA, (state, action) => {
       // If the action.payload is equal to the other network then just swap instead
       if (state.networkB.networkId === action.payload) {
@@ -128,10 +124,7 @@ export default createReducer(initialState, (builder) =>
         state.error = action.payload.errorMessage;
       },
     )
-    .addCase(
-      setFilteredBridgeableTokens,
-      (state, action: PayloadAction<Token[]>) => {
-        state.filteredBridgeableTokens = action.payload;
-      },
-    ),
+    .addCase(setFilteredBridgeableTokens, (state, action: PayloadAction<Token[]>) => {
+      state.filteredBridgeableTokens = action.payload;
+    }),
 );

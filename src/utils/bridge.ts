@@ -1,10 +1,5 @@
 import { ChainId } from "@bolt-dex/sdk";
-import {
-  BRIDGEABLE_EVM_CHAINS,
-  BRIDGEABLE_TOKENS,
-  MAIN_TOKEN_DENOMS,
-  SimpleMap,
-} from "constants/index";
+import { BRIDGEABLE_EVM_CHAINS, BRIDGEABLE_TOKENS, MAIN_TOKEN_DENOMS, SimpleMap } from "constants/index";
 import { Token } from "state/bridge/actions";
 
 // /**
@@ -98,76 +93,54 @@ export const bridgeableIncludes = (chain: number) => {
   return BRIDGEABLE_EVM_CHAINS.includes(chain);
 };
 
-export const getBridgeableTokens = (
-  bridgeableTokens: Token[],
-  networkFrom: string,
-) => {
+export const getBridgeableTokens = (bridgeableTokens: Token[], networkFrom: string) => {
   //   const { bridgeableTokens } = useBridgeState()
   const tokens: Token[] = bridgeableTokens;
   const bridgeableDenoms = BRIDGEABLE_WRAPPED_DENOMS[ChainId.MAINNET];
   const tokenChains: SimpleMap<SimpleMap> = {};
   const bridgeTokenResult: BridgeableToken[] = [];
 
-  Object.entries(wrapper.wrapper_mappings).forEach(
-    ([wrappedDenom, sourceDenom]) => {
-      if (!bridgeableDenoms.includes(wrappedDenom)) {
-        return;
-      }
+  Object.entries(wrapper.wrapper_mappings).forEach(([wrappedDenom, sourceDenom]) => {
+    if (!bridgeableDenoms.includes(wrappedDenom)) {
+      return;
+    }
 
-      // Find the wrapped token and the source token in the tokens array
-      // Check if denom === wrappedDenom / sourceDenom
-      const wrappedToken = tokens.find((d) => d.denom === wrappedDenom)!;
-      const sourceToken = tokens.find((d) => d.denom === sourceDenom)!;
+    // Find the wrapped token and the source token in the tokens array
+    // Check if denom === wrappedDenom / sourceDenom
+    const wrappedToken = tokens.find((d) => d.denom === wrappedDenom)!;
+    const sourceToken = tokens.find((d) => d.denom === sourceDenom)!;
 
-      let wrappedChain = Number(wrappedToken?.chain_id);
-      let sourceChain = Number(sourceToken?.chain_id);
+    let wrappedChain = Number(wrappedToken?.chain_id);
+    let sourceChain = Number(sourceToken?.chain_id);
 
-      // Check if the chain is bridgeable
-      if (
-        !wrappedChain ||
-        !bridgeableIncludes(wrappedChain) ||
-        !sourceChain ||
-        (!bridgeableIncludes(sourceChain) && sourceChain !== 4)
-      ) {
-        return;
-      }
+    // Check if the chain is bridgeable
+    if (
+      !wrappedChain ||
+      !bridgeableIncludes(wrappedChain) ||
+      !sourceChain ||
+      (!bridgeableIncludes(sourceChain) && sourceChain !== 4)
+    ) {
+      return;
+    }
 
-      if (!tokenChains[sourceDenom]) {
-        tokenChains[sourceDenom] = { [sourceChain]: sourceDenom };
-      }
-      tokenChains[sourceDenom][wrappedChain] = wrappedDenom;
+    if (!tokenChains[sourceDenom]) {
+      tokenChains[sourceDenom] = { [sourceChain]: sourceDenom };
+    }
+    tokenChains[sourceDenom][wrappedChain] = wrappedDenom;
 
-      if (sourceChain === 4) {
-        addSwthMapping(
-          bridgeTokenResult,
-          wrappedToken,
-          MAIN_TOKEN_DENOMS,
-          tokenChains[sourceDenom],
-        );
-      } else {
-        addMapping(
-          bridgeTokenResult,
-          wrappedToken,
-          sourceToken,
-          tokenChains[sourceDenom],
-        );
-        addMapping(
-          bridgeTokenResult,
-          sourceToken,
-          wrappedToken,
-          tokenChains[sourceDenom],
-        );
-      }
-    },
-  );
+    if (sourceChain === 4) {
+      addSwthMapping(bridgeTokenResult, wrappedToken, MAIN_TOKEN_DENOMS, tokenChains[sourceDenom]);
+    } else {
+      addMapping(bridgeTokenResult, wrappedToken, sourceToken, tokenChains[sourceDenom]);
+      addMapping(bridgeTokenResult, sourceToken, wrappedToken, tokenChains[sourceDenom]);
+    }
+  });
 
   const bridgeableTokenChainId = BRIDGEABLE_TOKENS[networkFrom];
-  const wrapperTokenSwthDenom = MAIN_TOKEN_DENOMS[bridgeableTokenChainId];
+  // const wrapperTokenSwthDenom = MAIN_TOKEN_DENOMS[bridgeableTokenChainId];
 
   // Filter the bridgeTokenResult to only include objects that object.blockchain == bridgeableTokenChainId
-  const filteredBridgeTokenResult = bridgeTokenResult.filter(
-    (obj) => obj.blockchain === bridgeableTokenChainId,
-  );
+  const filteredBridgeTokenResult = bridgeTokenResult.filter((obj) => obj.blockchain === bridgeableTokenChainId);
 
   return filteredBridgeTokenResult;
 };
@@ -182,12 +155,7 @@ export interface BridgeableToken {
   chains: SimpleMap;
 }
 
-const addMapping = (
-  r: BridgeableToken[],
-  a: Token,
-  b: Token,
-  chains: SimpleMap,
-) => {
+const addMapping = (r: BridgeableToken[], a: Token, b: Token, chains: SimpleMap) => {
   const aChain = Number(a.chain_id);
   r.push({
     blockchain: aChain,
@@ -200,12 +168,7 @@ const addMapping = (
   });
 };
 
-const addSwthMapping = (
-  r: BridgeableToken[],
-  a: Token,
-  b: { [key: string]: string },
-  chains: SimpleMap,
-) => {
+const addSwthMapping = (r: BridgeableToken[], a: Token, b: { [key: string]: string }, chains: SimpleMap) => {
   const aChain = Number(a.chain_id);
   r.push({
     blockchain: aChain,

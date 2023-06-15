@@ -1,22 +1,13 @@
-import { Trade, TradeType } from "@bolt-dex/sdk";
 import { BridgeTx } from "pages/Bridge";
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Repeat } from "react-feather";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-import { Field } from "../../state/swap/actions";
 import { TYPE } from "../../theme";
-import {
-  computeSlippageAdjustedAmounts,
-  computeTradePriceBreakdown,
-  formatExecutionPrice,
-  warningSeverity,
-} from "../../utils/prices";
 import { ButtonError } from "../Button";
 import { AutoColumn } from "../Column";
 import QuestionHelper from "../QuestionHelper";
 import { AutoRow, RowBetween, RowFixed } from "../Row";
-import FormattedPriceImpact from "./FormattedPriceImpact";
 import { StyledBalanceMaxMini, SwapCallbackError } from "./styleds";
 
 export default function BridgeModalFooter({
@@ -56,9 +47,7 @@ export default function BridgeModalFooter({
             }}
           >
             {/* {formatExecutionPrice(trade, showInverted)} */}
-            <StyledBalanceMaxMini
-              onClick={() => setShowInverted(!showInverted)}
-            >
+            <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)}>
               <Repeat size={14} />
             </StyledBalanceMaxMini>
           </Text>
@@ -124,9 +113,7 @@ export default function BridgeModalFooter({
           </Text>
         </ButtonError>
 
-        {bridgeErrorMessage ? (
-          <SwapCallbackError error={bridgeErrorMessage} />
-        ) : null}
+        {bridgeErrorMessage ? <SwapCallbackError error={bridgeErrorMessage} /> : null}
       </AutoRow>
     </>
   );

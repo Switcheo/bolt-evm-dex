@@ -1,17 +1,12 @@
-import { currencyEquals, Trade } from "@bolt-dex/sdk";
 import { BridgeTx } from "pages/Bridge";
-import React, { useCallback, useMemo } from "react";
-import TransactionConfirmationModal, {
-  ConfirmationModalContent,
-  TransactionErrorContent,
-} from "../TransactionConfirmationModal";
+import React, { useCallback } from "react";
+import { ConfirmationModalContent, TransactionErrorContent } from "../TransactionConfirmationModal";
 import BridgeConfirmationModal from "./BridgeConfirmationModal";
 import BridgeModalFooter from "./BridgeModalFooter";
 import BridgeModalHeader from "./BridgeModalHeader";
 
 export default function ConfirmBridgeModal({
   bridgeTx,
-  onAcceptChanges,
   onConfirm,
   onDismiss,
   recipient,
@@ -51,7 +46,7 @@ export default function ConfirmBridgeModal({
         bridgeErrorMessage={bridgeErrorMessage}
       />
     ) : null;
-  }, [onConfirm]);
+  }, [onConfirm, bridgeTx, bridgeErrorMessage, showAcceptChanges]);
 
   // text to show while loading
   const pendingText = `Bridging ${bridgeTx?.amount} ${bridgeTx?.srcToken?.symbol} to ${bridgeTx?.destToken?.symbol}`;
@@ -59,10 +54,7 @@ export default function ConfirmBridgeModal({
   const confirmationContent = useCallback(
     () =>
       bridgeErrorMessage ? (
-        <TransactionErrorContent
-          onDismiss={onDismiss}
-          message={bridgeErrorMessage}
-        />
+        <TransactionErrorContent onDismiss={onDismiss} message={bridgeErrorMessage} />
       ) : (
         <ConfirmationModalContent
           title="Confirm Bridge"
@@ -71,7 +63,7 @@ export default function ConfirmBridgeModal({
           bottomContent={modalBottom}
         />
       ),
-    [onDismiss, modalBottom, modalHeader],
+    [onDismiss, modalBottom, modalHeader, bridgeErrorMessage],
   );
 
   return (
