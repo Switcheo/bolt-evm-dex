@@ -1,6 +1,7 @@
 import { CurrencyAmount, ETHER, TokenAmount, Trade } from "@bolt-dex/sdk";
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
+import { BridgeTx } from "pages/Bridge";
 import { useCallback, useMemo } from "react";
 import { ROUTER_ADDRESS } from "../constants";
 import { useTokenAllowance } from "../data/Allowances";
@@ -141,4 +142,11 @@ export function useApproveCallbackFromTrade(
     amountToApprove,
     tradeIsV1 ? v1ExchangeAddress : ROUTER_ADDRESS,
   );
+}
+
+// Wraps useApproveCallback in the context of a bridge
+export function useApproveCallbackFromBridge(bridgeTx: BridgeTx) {
+  // return useApproveCallback(
+  //   bridgeTx.amount,
+  // )
 }

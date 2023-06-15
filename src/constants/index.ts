@@ -12,7 +12,7 @@ export const TOKENS_LIST_URL =
 export const WSS_FAUCET_URL =
   "wss://faucet.bolt.switcheo.network/faucet-smart/api";
 
-export const ROUTER_ADDRESS = "0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757";
+export const ROUTER_ADDRESS = "0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757"; // make it dynamic
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -461,7 +461,7 @@ export enum Blockchain {
   Sommelier = "sommelier",
 }
 
-export const BRIDGEABLE_EVM_CHAINS = [2, 6, 17];
+export const BRIDGEABLE_EVM_CHAINS = [2, 6, 17, 4];
 
 export const CHAIN_MAPPING: { [key: string]: number } = {
   ETH: ChainId.MAINNET,
@@ -479,8 +479,8 @@ export const MAIN_TOKEN_DENOMS: SimpleMap<string> = {
 
 // Create a map from name to chainId for bridgeableTokens
 export const BRIDGEABLE_TOKENS: { [name: string]: number } = {
-  BOLT: ChainId.BOLTCHAIN,
-  ETH: 2,
-  BSC: 6,
-  MATIC: 17,
+  [CHAIN_INFO[ChainId.BOLTCHAIN].chain]: ChainId.BOLTCHAIN,
+  [CHAIN_INFO[ChainId.MAINNET].chain]: 2,
+  [CHAIN_INFO[ChainId.BNB].chain]: 6,
+  [CHAIN_INFO[ChainId.POLYGON].chain]: 17,
 };

@@ -1,6 +1,7 @@
 import { ChainId } from "@bolt-dex/sdk";
 import {
   BRIDGEABLE_EVM_CHAINS,
+  BRIDGEABLE_TOKENS,
   MAIN_TOKEN_DENOMS,
   SimpleMap,
 } from "constants/index";
@@ -67,27 +68,28 @@ const wrapper = {
 
 export const BRIDGEABLE_WRAPPED_DENOMS = {
   [ChainId.MAINNET]: [
-    // 'zusdt.1.18.1728e9',
-    // 'zeth.1.18.54437c',
-    // 'zwbtc.1.18.a9cb60',
-    // 'zxcad.1.18.35137d',
+    "zusdt.1.18.1728e9",
+    "zeth.1.18.54437c",
+    "zwbtc.1.18.a9cb60",
+    "zxcad.1.18.35137d",
     "eport.1.2.7d4912",
     "efees.1.2.586fb5",
     "elunr.1.2.e2121e",
     "ezil.1.2.f1b7e4",
     "dxcad.1.2.67dde7",
-    // 'zbrkl.1.18.b8c24f',
-    // 'zopul.1.18.4bcdc9',
-    // 'ztraxx.1.18.9c8e35',
-    // 'swth.1.19.6f83d0',
+    "zbrkl.1.18.b8c24f",
+    "zopul.1.18.4bcdc9",
+    "ztraxx.1.18.9c8e35",
+    "swth.1.19.6f83d0",
     "swth.1.6.5bc06b",
-    // 'swth.1.18.4ef38b',
+    "swth.1.18.4ef38b",
     "swth.1.17.dbb4d5",
-    // 'zbnb.1.18.c406be',
+    "zbnb.1.18.c406be",
+    "swthe.1.2.683ddd",
     "zil.1.17.3997a2",
-    // 'zil.1.19.0f16f8',
+    "zil.1.19.0f16f8",
     "zil.1.6.52c256",
-    // 'zmatic.1.18.45185c'
+    "zmatic.1.18.45185c",
   ],
   [ChainId.BOLTCHAIN]: ["swth.1.111.ae86f6", "swth.1.502.976cb7"],
 };
@@ -96,7 +98,10 @@ export const bridgeableIncludes = (chain: number) => {
   return BRIDGEABLE_EVM_CHAINS.includes(chain);
 };
 
-export const getBridgeableTokens = (bridgeableTokens: Token[]) => {
+export const getBridgeableTokens = (
+  bridgeableTokens: Token[],
+  networkFrom: string,
+) => {
   //   const { bridgeableTokens } = useBridgeState()
   const tokens: Token[] = bridgeableTokens;
   const bridgeableDenoms = BRIDGEABLE_WRAPPED_DENOMS[ChainId.MAINNET];
@@ -156,10 +161,18 @@ export const getBridgeableTokens = (bridgeableTokens: Token[]) => {
     },
   );
 
-  return bridgeTokenResult;
+  const bridgeableTokenChainId = BRIDGEABLE_TOKENS[networkFrom];
+  const wrapperTokenSwthDenom = MAIN_TOKEN_DENOMS[bridgeableTokenChainId];
+
+  // Filter the bridgeTokenResult to only include objects that object.blockchain == bridgeableTokenChainId
+  const filteredBridgeTokenResult = bridgeTokenResult.filter(
+    (obj) => obj.blockchain === bridgeableTokenChainId,
+  );
+
+  return filteredBridgeTokenResult;
 };
 
-interface BridgeableToken {
+export interface BridgeableToken {
   blockchain: number;
   tokenAddress: string;
   lockproxyAddress: string;

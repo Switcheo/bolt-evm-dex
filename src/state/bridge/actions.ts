@@ -1,4 +1,5 @@
 import { ActionCreatorWithPayload, createAction } from "@reduxjs/toolkit";
+import { BridgeableToken } from "utils/bridge";
 
 export enum BridgeMenu {
   NETWORK_A,
@@ -19,7 +20,7 @@ export const setNetworkB = createAction<string>("bridge/setNetworkB");
 
 // Input actions
 export const updateInputValue = createAction<string>("bridge/updateInputValue");
-export const selectTokenCurrency = createAction<Token>(
+export const selectTokenCurrency = createAction<Token | undefined>(
   "bridge/selectTokenCurrency",
 );
 
@@ -42,6 +43,7 @@ export interface Token {
   bridge_address: string;
   is_active: boolean;
   is_collateral: boolean;
+  extra_info?: BridgeableToken;
 }
 
 export interface TokenList {
@@ -70,17 +72,20 @@ export interface BridgeableTokenActions {
   pending: ActionCreatorWithPayload<{
     tokensUrl: string;
     bridgesUrl: string;
+    wrapperUrl: string;
     requestId: string;
   }>;
   fulfilled: ActionCreatorWithPayload<{
     tokensUrl: string;
     bridgesUrl: string;
+    wrapperUrl: string;
     tokenList: Token[];
     requestId: string;
   }>;
   rejected: ActionCreatorWithPayload<{
     tokensUrl: string;
     bridgesUrl: string;
+    wrapperUrl: string;
     errorMessage: string;
     requestId: string;
   }>;
@@ -95,3 +100,7 @@ export const fetchBridgeableTokens: Readonly<BridgeableTokenActions> = {
 // From and to Tokens
 export const setFromToken = createAction<InputCurrency>("bridge/setFromToken");
 export const setToToken = createAction<InputCurrency>("bridge/setToToken");
+
+export const setFilteredBridgeableTokens = createAction<Token[]>(
+  "bridge/setFilteredBridgeableTokens",
+);

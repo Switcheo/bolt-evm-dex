@@ -1,12 +1,11 @@
-import React from "react";
 import { ChainId } from "@bolt-dex/sdk";
 import { darken } from "polished";
+import React from "react";
 import { Moon, Sun } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { Text } from "rebass";
 import styled from "styled-components";
-
 import Logo from "../../assets/svg/boltchain-horizontal-logo.svg";
 import LogoDark from "../../assets/svg/boltchain-horizontal-logo.svg";
 import { useActiveWeb3React } from "../../hooks";
@@ -224,6 +223,9 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.GÖRLI]: "Görli",
   [ChainId.KOVAN]: "Kovan",
   [ChainId.BOLTCHAIN]: "BoltChain",
+  [ChainId.BNB]: "Binance Smart Chain",
+  [ChainId.MAINNET]: "Ethereum",
+  [ChainId.POLYGON]: "Polygon",
 };
 
 export default function Header() {

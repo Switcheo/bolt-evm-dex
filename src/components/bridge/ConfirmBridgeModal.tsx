@@ -1,124 +1,87 @@
-import React, { useCallback, useMemo } from "react";
 import { currencyEquals, Trade } from "@bolt-dex/sdk";
-
+import { BridgeTx } from "pages/Bridge";
+import React, { useCallback, useMemo } from "react";
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
   TransactionErrorContent,
 } from "../TransactionConfirmationModal";
-import SwapModalFooter from "./BridgeModalFooter";
-import SwapModalHeader from "./BridgeModalHeader";
-
-/**
- * Returns true if the trade requires a confirmation of details before we can submit it
- * @param tradeA trade A
- * @param tradeB trade B
- */
-function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
-  return (
-    tradeA.tradeType !== tradeB.tradeType ||
-    !currencyEquals(tradeA.inputAmount.currency, tradeB.inputAmount.currency) ||
-    !tradeA.inputAmount.equalTo(tradeB.inputAmount) ||
-    !currencyEquals(
-      tradeA.outputAmount.currency,
-      tradeB.outputAmount.currency,
-    ) ||
-    !tradeA.outputAmount.equalTo(tradeB.outputAmount)
-  );
-}
+import BridgeConfirmationModal from "./BridgeConfirmationModal";
+import BridgeModalFooter from "./BridgeModalFooter";
+import BridgeModalHeader from "./BridgeModalHeader";
 
 export default function ConfirmBridgeModal({
-  trade,
-  originalTrade,
+  bridgeTx,
   onAcceptChanges,
-  allowedSlippage,
   onConfirm,
   onDismiss,
   recipient,
-  swapErrorMessage,
+  bridgeErrorMessage,
   isOpen,
   attemptingTxn,
   txHash,
 }: {
   isOpen: boolean;
-  trade: Trade | undefined;
-  originalTrade: Trade | undefined;
+  bridgeTx: BridgeTx | undefined;
   attemptingTxn: boolean;
   txHash: string | undefined;
   recipient: string | null;
-  allowedSlippage: number;
   onAcceptChanges: () => void;
   onConfirm: () => void;
-  swapErrorMessage: string | undefined;
+  bridgeErrorMessage: string | undefined;
   onDismiss: () => void;
 }) {
-  const showAcceptChanges = useMemo(
-    () =>
-      Boolean(
-        trade &&
-          originalTrade &&
-          tradeMeaningfullyDiffers(trade, originalTrade),
-      ),
-    [originalTrade, trade],
-  );
+  const showAcceptChanges = false;
 
   const modalHeader = useCallback(() => {
-    return trade ? (
-      <SwapModalHeader
-        trade={trade}
-        allowedSlippage={allowedSlippage}
+    return bridgeTx ? (
+      <BridgeModalHeader
+        bridgeTx={bridgeTx}
         recipient={recipient}
-        showAcceptChanges={showAcceptChanges}
-        onAcceptChanges={onAcceptChanges}
+        // onAcceptChanges={onAcceptChanges}
       />
     ) : null;
-  }, [allowedSlippage, onAcceptChanges, recipient, showAcceptChanges, trade]);
+  }, [recipient, bridgeTx]);
 
   const modalBottom = useCallback(() => {
-    return trade ? (
-      <SwapModalFooter
+    return bridgeTx ? (
+      <BridgeModalFooter
         onConfirm={onConfirm}
-        trade={trade}
+        bridgeTx={bridgeTx}
         disabledConfirm={showAcceptChanges}
-        swapErrorMessage={swapErrorMessage}
-        allowedSlippage={allowedSlippage}
+        bridgeErrorMessage={bridgeErrorMessage}
       />
     ) : null;
-  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade]);
+  }, [onConfirm]);
 
   // text to show while loading
-  const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
-    trade?.inputAmount?.currency?.symbol
-  } for ${trade?.outputAmount?.toSignificant(6)} ${
-    trade?.outputAmount?.currency?.symbol
-  }`;
+  const pendingText = `Bridging ${bridgeTx?.amount} ${bridgeTx?.srcToken?.symbol} to ${bridgeTx?.destToken?.symbol}`;
 
   const confirmationContent = useCallback(
     () =>
-      swapErrorMessage ? (
+      bridgeErrorMessage ? (
         <TransactionErrorContent
           onDismiss={onDismiss}
-          message={swapErrorMessage}
+          message={bridgeErrorMessage}
         />
       ) : (
         <ConfirmationModalContent
-          title="Confirm Swap"
+          title="Confirm Bridge"
           onDismiss={onDismiss}
           topContent={modalHeader}
           bottomContent={modalBottom}
         />
       ),
-    [onDismiss, modalBottom, modalHeader, swapErrorMessage],
+    [onDismiss, modalBottom, modalHeader],
   );
 
   return (
-    <TransactionConfirmationModal
+    <BridgeConfirmationModal
       isOpen={isOpen}
       onDismiss={onDismiss}
       attemptingTxn={attemptingTxn}
       hash={txHash}
       content={confirmationContent}
       pendingText={pendingText}
-      currencyToAdd={trade?.outputAmount.currency}
     />
   );
 }

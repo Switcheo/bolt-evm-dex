@@ -1,9 +1,9 @@
-import React, { useContext, useMemo } from "react";
 import { Trade, TradeType } from "@bolt-dex/sdk";
+import { BridgeTx } from "pages/Bridge";
+import React, { useContext, useMemo } from "react";
 import { AlertTriangle, ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-
 import { Field } from "../../state/swap/actions";
 import { TYPE } from "../../theme";
 import { isAddress, shortenAddress } from "../../utils";
@@ -18,55 +18,33 @@ import CurrencyLogo from "../CurrencyLogo";
 import { RowBetween, RowFixed } from "../Row";
 import { SwapShowAcceptChanges, TruncatedText } from "./styleds";
 
-export default function SwapModalHeader({
-  trade,
-  allowedSlippage,
+export default function BridgeModalHeader({
+  bridgeTx,
   recipient,
-  showAcceptChanges,
-  onAcceptChanges,
-}: {
-  trade: Trade;
-  allowedSlippage: number;
+}: // onAcceptChanges,
+{
+  bridgeTx: BridgeTx;
   recipient: string | null;
-  showAcceptChanges: boolean;
-  onAcceptChanges: () => void;
+  // onAcceptChanges: () => void;
 }) {
-  const slippageAdjustedAmounts = useMemo(
-    () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
-    [trade, allowedSlippage],
-  );
-  const { priceImpactWithoutFee } = useMemo(
-    () => computeTradePriceBreakdown(trade),
-    [trade],
-  );
-  const priceImpactSeverity = warningSeverity(priceImpactWithoutFee);
-
   const theme = useContext(ThemeContext);
 
   return (
     <AutoColumn gap={"md"} style={{ marginTop: "20px" }}>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
-          <CurrencyLogo
+          {/* <CurrencyLogo
             currency={trade.inputAmount.currency}
             size={"24px"}
             style={{ marginRight: "12px" }}
-          />
-          <TruncatedText
-            fontSize={24}
-            fontWeight={500}
-            color={
-              showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT
-                ? theme.primary1
-                : ""
-            }
-          >
-            {trade.inputAmount.toSignificant(6)}
+          /> */}
+          <TruncatedText fontSize={24} fontWeight={500} color={theme.primary1}>
+            {bridgeTx.amount}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
           <Text fontSize={24} fontWeight={500} style={{ marginLeft: "10px" }}>
-            {trade.inputAmount.currency.symbol}
+            {bridgeTx.srcToken?.symbol}
           </Text>
         </RowFixed>
       </RowBetween>
@@ -79,32 +57,22 @@ export default function SwapModalHeader({
       </RowFixed>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
-          <CurrencyLogo
+          {/* <CurrencyLogo
             currency={trade.outputAmount.currency}
             size={"24px"}
             style={{ marginRight: "12px" }}
-          />
-          <TruncatedText
-            fontSize={24}
-            fontWeight={500}
-            color={
-              priceImpactSeverity > 2
-                ? theme.red1
-                : showAcceptChanges && trade.tradeType === TradeType.EXACT_INPUT
-                ? theme.primary1
-                : ""
-            }
-          >
-            {trade.outputAmount.toSignificant(6)}
+          /> */}
+          <TruncatedText fontSize={24} fontWeight={500} color={theme.primary1}>
+            {bridgeTx.amount}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
           <Text fontSize={24} fontWeight={500} style={{ marginLeft: "10px" }}>
-            {trade.outputAmount.currency.symbol}
+            {bridgeTx.destToken?.symbol}
           </Text>
         </RowFixed>
       </RowBetween>
-      {showAcceptChanges ? (
+      {/* {showAcceptChanges ? (
         <SwapShowAcceptChanges justify="flex-start" gap={"0px"}>
           <RowBetween>
             <RowFixed>
@@ -127,13 +95,13 @@ export default function SwapModalHeader({
             </ButtonPrimary>
           </RowBetween>
         </SwapShowAcceptChanges>
-      ) : null}
+      ) : null} */}
       <AutoColumn
         justify="flex-start"
         gap="sm"
         style={{ padding: "12px 0 0 0px" }}
       >
-        {trade.tradeType === TradeType.EXACT_INPUT ? (
+        {/* {trade.tradeType === TradeType.EXACT_INPUT ? (
           <TYPE.italic textAlign="left" style={{ width: "100%" }}>
             {`Output is estimated. You will receive at least `}
             <b>
@@ -151,7 +119,7 @@ export default function SwapModalHeader({
             </b>
             {" or the transaction will revert."}
           </TYPE.italic>
-        )}
+        )} */}
       </AutoColumn>
       {recipient !== null ? (
         <AutoColumn

@@ -1,12 +1,16 @@
-import { useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
+import { BRIDGEABLE_TOKENS, MAIN_TOKEN_DENOMS } from "constants/index";
+import { useActiveWeb3React } from "hooks";
+import { BridgeTx } from "pages/Bridge";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "state";
-
+import { getBridgeableTokens } from "utils/bridge";
 import {
   BridgeMenu,
   fetchBridgeableTokens,
   selectTokenCurrency,
+  setFilteredBridgeableTokens,
   setNetworkA,
   setNetworkAMenu,
   setNetworkB,
@@ -42,6 +46,7 @@ export const useBridgeActionHandlers = () => {
     (networkId: string) => {
       dispatch(setNetworkAMenu(null));
       dispatch(setNetworkA(networkId));
+      dispatch(selectTokenCurrency(undefined));
     },
     [dispatch],
   );
@@ -50,6 +55,7 @@ export const useBridgeActionHandlers = () => {
     (networkId: string) => {
       dispatch(setNetworkBMenu(null));
       dispatch(setNetworkB(networkId));
+      dispatch(selectTokenCurrency(undefined));
     },
     [dispatch],
   );
@@ -98,46 +104,40 @@ export const useSwitchNetworkSrcDest = () => {
   const dispatch = useDispatch<AppDispatch>();
   return useCallback(() => {
     dispatch(switchNetworkSrcDest());
+    dispatch(selectTokenCurrency(undefined));
   }, [dispatch]);
 };
 
 export const useFetchBridgeableTokens = (
   tokensUrl: string,
   bridgesUrl: string,
+  wrapperUrl: string,
+  fromNetworkId: string,
 ) => {
   const dispatch = useDispatch<AppDispatch>();
 
   return useCallback(async () => {
     const requestId = nanoid();
     dispatch(
-      fetchBridgeableTokens.pending({ tokensUrl, bridgesUrl, requestId }),
+      fetchBridgeableTokens.pending({
+        tokensUrl,
+        bridgesUrl,
+        wrapperUrl,
+        requestId,
+      }),
     );
 
     try {
       // Fetch both and await both
-      const [tokensResponse] = await Promise.all([
+      const [tokensResponse, wrapperResponse] = await Promise.all([
         fetch(tokensUrl),
         fetch(bridgesUrl),
+        fetch(wrapperUrl),
       ]);
 
       const tokensJson: TokenList = await tokensResponse.json();
-      // const bridgesJson: BridgesListResponse = await bridgesResponse.json()
 
-      // const filteredBridges = bridgesJson.bridges.filter(
-      //   bridge =>
-      //     bridge.bridge_name === 'Polynetwork' &&
-      //     (bridge.chain_name === 'Binance Smart Chain' ||
-      //       bridge.chain_name === 'Ethereum' ||
-      //       bridge.chain_name === 'Polygon') &&
-      //     bridge.enabled
-      // ) // chain_id === 17, 2, 6
-
-      // Filter to check if token is active and if the bridge id of the token is in the filteredBridges
-      // const bridgeableTokens = tokensJson.tokens.filter(token =>
-      //   (token.is_active && token.bridge_id === "1" && filteredBridges.some(bridge => bridge.chain_id === token.chain_id || token.chain_id === '4'))
-      // )
-      // const bridgeableTokens = tokensJson.tokens.filter(token =>
-      //   token.is_active)
+      const bridgeableTokenChainId = BRIDGEABLE_TOKENS[fromNetworkId];
 
       dispatch(
         fetchBridgeableTokens.fulfilled({
@@ -145,6 +145,7 @@ export const useFetchBridgeableTokens = (
           requestId,
           tokensUrl,
           bridgesUrl,
+          wrapperUrl,
         }),
       );
     } catch (error) {
@@ -158,8 +159,37 @@ export const useFetchBridgeableTokens = (
           requestId,
           tokensUrl,
           bridgesUrl,
+          wrapperUrl,
         }),
       );
     }
-  }, [dispatch, tokensUrl, bridgesUrl]);
+  }, [dispatch, tokensUrl, bridgesUrl, wrapperUrl]);
+};
+
+export const useGetPendingBridgeTx = () => {
+  const networkA = useSelector((state: AppState) => state.bridge.networkA);
+  const networkB = useSelector((state: AppState) => state.bridge.networkB);
+  const inputAmount = useSelector(
+    (state: AppState) => state.bridge.typedInputValue,
+  );
+  const selectedToken = useSelector(
+    (state: AppState) => state.bridge.selectedCurrency,
+  );
+  const { account } = useActiveWeb3React();
+
+  const getPendingBridgeTx = useCallback(() => {
+    const pendingBridgeTx: BridgeTx = {
+      srcToken: selectedToken,
+      destToken: selectedToken,
+      srcChain: networkA.networkId,
+      destChain: networkB.networkId,
+      amount: inputAmount,
+      srcAddr: account ?? undefined,
+      destAddr: account ?? undefined,
+    };
+
+    return pendingBridgeTx;
+  }, [networkA, networkB, inputAmount, selectedToken, account]);
+
+  return getPendingBridgeTx;
 };

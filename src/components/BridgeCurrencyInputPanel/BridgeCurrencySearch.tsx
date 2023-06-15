@@ -1,3 +1,7 @@
+import useDebounce from "hooks/useDebounce";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
+import useTheme from "hooks/useTheme";
+import useToggle from "hooks/useToggle";
 import React, {
   KeyboardEvent,
   RefObject,
@@ -7,18 +11,20 @@ import React, {
   useRef,
   useState,
 } from "react";
-import useDebounce from "hooks/useDebounce";
-import { useOnClickOutside } from "hooks/useOnClickOutside";
-import useTheme from "hooks/useTheme";
-import useToggle from "hooks/useToggle";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
-import { Token } from "state/bridge/actions";
+import { AppDispatch } from "state";
+import {
+  fetchBridgeableTokens,
+  setFilteredBridgeableTokens,
+  Token,
+} from "state/bridge/actions";
 import { useBridgeState } from "state/bridge/hooks";
 import styled from "styled-components";
-
+import { BridgeableToken, getBridgeableTokens } from "utils/bridge";
 import { CloseIcon, TYPE } from "../../theme";
 import { isAddress } from "../../utils";
 import Column from "../Column";
@@ -55,16 +61,40 @@ export function BridgeCurrencySearch({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const debouncedQuery = useDebounce(searchQuery, 200);
 
-  const { bridgeableTokens } = useBridgeState();
+  const { bridgeableTokens, networkA, filteredBridgeableTokens } =
+    useBridgeState();
+  const dispatch = useDispatch<AppDispatch>();
 
-  // const showETH: boolean = useMemo(() => {
-  //   const s = debouncedQuery.toLowerCase().trim()
-  //   return s === '' || s === 'e' || s === 'et' || s === 'eth'
-  // }, [debouncedQuery])
+  useEffect(() => {
+    const listOfBridgeableTokens: BridgeableToken[] = getBridgeableTokens(
+      bridgeableTokens,
+      networkA.networkId ?? "ETH",
+    );
+
+    const tokens = bridgeableTokens
+      .filter((token) =>
+        listOfBridgeableTokens.some(
+          (bridgeableToken) =>
+            bridgeableToken.tokenAddress === token.token_address,
+        ),
+      )
+      .map((token) => ({
+        ...token,
+        extra_info: listOfBridgeableTokens.find(
+          (bridgeableToken) =>
+            bridgeableToken.tokenAddress === token.token_address,
+        ),
+      }));
+
+    dispatch(setFilteredBridgeableTokens(tokens));
+  }, [networkA]);
 
   const filteredTokens: Token[] = useMemo(() => {
-    return filterTokens(Object.values(bridgeableTokens), debouncedQuery);
-  }, [bridgeableTokens, debouncedQuery]);
+    return filterTokens(
+      Object.values(filteredBridgeableTokens),
+      debouncedQuery,
+    );
+  }, [filteredBridgeableTokens, debouncedQuery]);
 
   const handleCurrencySelect = useCallback(
     (currency: Token) => {
@@ -81,7 +111,7 @@ export function BridgeCurrencySearch({
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>();
-  const handleInput = useCallback((event: { target: { value: any; }; }) => {
+  const handleInput = useCallback((event: { target: { value: any } }) => {
     const input = event.target.value;
     const checksummedInput = isAddress(input);
     setSearchQuery(checksummedInput || input);
@@ -134,12 +164,11 @@ export function BridgeCurrencySearch({
       {filteredTokens.length !== 0 ? (
         <div style={{ flex: "1" }}>
           <AutoSizer disableWidth>
-            {({ height }: {height:number}) => (
+            {({ height }: { height: number }) => (
               <CurrencyList
                 height={height}
                 currencies={filteredTokens}
                 onCurrencySelect={handleCurrencySelect}
-
                 selectedCurrency={selectedCurrency}
                 fixedListRef={fixedList}
               />

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import ConfirmBridgeModal from "components/bridge/ConfirmBridgeModal";
 import BridgeCurrencyInputPanel from "components/BridgeCurrencyInputPanel";
 import { ButtonError, ButtonLight } from "components/Button";
 import ChainLogo from "components/ChainLogo";
@@ -7,18 +7,22 @@ import { SwapPoolTabs } from "components/NavigationTabs";
 import NetworkMenu from "components/NetworkMenu";
 import { ArrowWrapper } from "components/swap/styleds";
 import { useActiveWeb3React } from "hooks";
+import { ApprovalState, useApproveCallbackFromBridge } from "hooks/useApproveCallback";
+import { useBridgeCallback } from "hooks/useBridgeCallback";
 import useTheme from "hooks/useTheme";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight } from "react-feather";
 import { useWalletModalToggle } from "state/application/hooks";
+import { Token } from "state/bridge/actions";
 import {
   useBridgeActionHandlers,
   useBridgeState,
+  useGetPendingBridgeTx,
   useSwitchNetworkSrcDest,
 } from "state/bridge/hooks";
 import styled from "styled-components";
 import { TYPE } from "theme";
-import { getBridgeableTokens } from "utils/bridge";
-
+import { BridgeableToken, getBridgeableTokens } from "utils/bridge";
 import { Wrapper } from "./styleds";
 
 const BridgeBody = styled.div`
@@ -27,8 +31,8 @@ const BridgeBody = styled.div`
   // margin: 0 5rem;
   width: 100%;
   background: ${({ theme }) => theme.bg1};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
   /* padding: 1rem; */
   margin-top: -50px;
@@ -84,6 +88,25 @@ const ActiveText = styled.div`
   font-size: 24px;
 `;
 
+// Move to redux state
+export interface BridgeTx {
+  srcToken: Token | undefined;
+  destToken: Token | undefined;
+  srcChain: string;
+  destChain: string;
+  amount: string;
+  srcAddr: string | undefined | null;
+  destAddr: string | undefined | null;
+}
+
+export interface BridgingState {
+  showConfirm: boolean;
+  bridgeToConfirm: BridgeTx | undefined;
+  attemptingTxn: boolean;
+  bridgeErrorMessage: string | undefined;
+  txHash: string | undefined;
+}
+
 export default function Bridge() {
   const { account } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
@@ -95,17 +118,13 @@ export default function Bridge() {
   const onSwitchTokens = useSwitchNetworkSrcDest();
 
   // Real
-  const {
-    typedInputValue,
-    networkA,
-    networkB,
-    selectedCurrency,
-    bridgeableTokens,
-  } = useBridgeState();
+  const { typedInputValue, networkA, networkB, selectedCurrency } = useBridgeState();
 
   const { onUserInput, onCurrencySelection } = useBridgeActionHandlers();
   // States
   const atMaxAmountInput = false; // Temp
+
+  const getPendingBridgeTx = useGetPendingBridgeTx();
 
   // Handlers
   const handleTypeInput = useCallback(
@@ -124,15 +143,105 @@ export default function Bridge() {
     [onCurrencySelection],
   );
 
+  // modal and loading
+  const [{ showConfirm, bridgeToConfirm, bridgeErrorMessage, attemptingTxn, txHash }, setBridgeState] =
+    useState<BridgingState>({
+      showConfirm: false,
+      bridgeToConfirm: undefined,
+      attemptingTxn: false,
+      bridgeErrorMessage: undefined,
+      txHash: undefined,
+    });
+
   useEffect(() => {
-    console.log(getBridgeableTokens(bridgeableTokens ?? []));
-  }, [networkA, bridgeableTokens]);
+    setBridgeState({
+      attemptingTxn: false,
+      bridgeToConfirm: getPendingBridgeTx(),
+      showConfirm,
+      bridgeErrorMessage: undefined,
+      txHash: undefined,
+    });
+  }, [typedInputValue, selectedCurrency, networkA, networkB, account]);
+
+  console.log(getPendingBridgeTx());
+
+  // const { callback: bridgeCallback, error: bridgeCallbackError } =
+  //   useBridgeCallback(bridgeToConfirm);
+  const { state, callback: bridgeCallback, error } = useBridgeCallback(bridgeToConfirm);
+
+  const handleBridge = useCallback(() => {
+    if (!bridgeCallback) {
+      return;
+    }
+    setBridgeState({
+      attemptingTxn: true,
+      bridgeToConfirm,
+      showConfirm,
+      bridgeErrorMessage: undefined,
+      txHash: undefined,
+    });
+    bridgeCallback()
+      .then((hash: string) => {
+        setBridgeState({
+          attemptingTxn: false,
+          bridgeToConfirm,
+          showConfirm,
+          bridgeErrorMessage: undefined,
+          txHash: hash,
+        });
+      })
+      .catch((error: Error) => {
+        setBridgeState({
+          attemptingTxn: false,
+          bridgeToConfirm,
+          showConfirm,
+          bridgeErrorMessage: error.message,
+          txHash: undefined,
+        });
+      });
+  }, [bridgeCallback, bridgeToConfirm, showConfirm, account]);
+
+  const handleConfirmDismiss = useCallback(() => {
+    setBridgeState({
+      showConfirm: false,
+      bridgeToConfirm,
+      attemptingTxn,
+      bridgeErrorMessage,
+      txHash,
+    });
+    // if there was a tx hash, we want to clear the input
+    if (txHash) {
+      onUserInput("");
+    }
+  }, [attemptingTxn, onUserInput, bridgeErrorMessage, bridgeToConfirm, txHash]);
+
+  const handleAcceptChanges = useCallback(() => {
+    setBridgeState({
+      bridgeToConfirm,
+      bridgeErrorMessage,
+      txHash,
+      attemptingTxn,
+      showConfirm,
+    });
+  }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
 
   return (
     <>
-      <SwapPoolTabs active={"issue"} />
+      <SwapPoolTabs active={"bridge"} />
       <BridgeBody>
         <Wrapper id="bridge-page">
+          <ConfirmBridgeModal
+            isOpen={showConfirm}
+            bridgeTx={bridgeToConfirm}
+            onAcceptChanges={handleAcceptChanges}
+            attemptingTxn={attemptingTxn}
+            txHash={txHash}
+            // recipient={recipient}
+            onConfirm={handleBridge} // this is the actual confirm callback
+            bridgeErrorMessage={bridgeErrorMessage}
+            onDismiss={handleConfirmDismiss} // this is to dismiss the modal
+            recipient={bridgeToConfirm?.destAddr ?? ""}
+          />
           <AutoColumn gap="md">
             <BridgeHeader>
               <ActiveText>BoltBridge</ActiveText>
@@ -148,10 +257,7 @@ export default function Bridge() {
                   <ChainLogo chain={networkA.networkId} />
                 </BridgeTokenLogoContainer>
 
-                <NetworkMenu
-                  ref={tokenARef}
-                  selectedInput={networkA.networkId ?? ""}
-                />
+                <NetworkMenu ref={tokenARef} selectedInput={networkA.networkId ?? ""} />
 
                 {!account && (
                   <ButtonLight
@@ -187,10 +293,7 @@ export default function Bridge() {
                   <ChainLogo chain={networkB.networkId} />
                 </BridgeTokenLogoContainer>
 
-                <NetworkMenu
-                  ref={tokenBRef}
-                  selectedOutput={networkB.networkId ?? ""}
-                />
+                <NetworkMenu ref={tokenBRef} selectedOutput={networkB.networkId ?? ""} />
 
                 {!account && (
                   <ButtonLight
@@ -217,16 +320,22 @@ export default function Bridge() {
             />
 
             {!account ? (
-              <ButtonLight
-                onClick={toggleWalletModal}
-                style={{ marginTop: "1rem" }}
-              >
+              <ButtonLight onClick={toggleWalletModal} style={{ marginTop: "1rem" }}>
                 Connect Wallet
               </ButtonLight>
             ) : (
               <ButtonError
                 style={{ marginTop: "1rem" }}
-                onClick={() => {}}
+                disabled={!typedInputValue.length || !selectedCurrency}
+                onClick={() => {
+                  setBridgeState({
+                    bridgeToConfirm,
+                    bridgeErrorMessage,
+                    txHash: undefined,
+                    attemptingTxn: false,
+                    showConfirm: true,
+                  });
+                }}
                 id="swap-button"
               >
                 Bridge

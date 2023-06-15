@@ -1,9 +1,9 @@
-import React, { useContext, useMemo, useState } from "react";
 import { Trade, TradeType } from "@bolt-dex/sdk";
+import { BridgeTx } from "pages/Bridge";
+import React, { useContext, useMemo, useState } from "react";
 import { Repeat } from "react-feather";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-
 import { Field } from "../../state/swap/actions";
 import { TYPE } from "../../theme";
 import {
@@ -19,31 +19,22 @@ import { AutoRow, RowBetween, RowFixed } from "../Row";
 import FormattedPriceImpact from "./FormattedPriceImpact";
 import { StyledBalanceMaxMini, SwapCallbackError } from "./styleds";
 
-export default function SwapModalFooter({
-  trade,
+export default function BridgeModalFooter({
+  bridgeTx,
   onConfirm,
-  allowedSlippage,
-  swapErrorMessage,
+  // allowedSlippage,
+  bridgeErrorMessage,
   disabledConfirm,
 }: {
-  trade: Trade;
-  allowedSlippage: number;
+  bridgeTx: BridgeTx;
+  // allowedSlippage: number;
   onConfirm: () => void;
-  swapErrorMessage: string | undefined;
+  bridgeErrorMessage: string | undefined;
   disabledConfirm: boolean;
 }) {
   const [showInverted, setShowInverted] = useState<boolean>(false);
   // @ts-ignore
   const theme = useContext(ThemeContext);
-  const slippageAdjustedAmounts = useMemo(
-    () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
-    [allowedSlippage, trade],
-  );
-  const { priceImpactWithoutFee, realizedLPFee } = useMemo(
-    () => computeTradePriceBreakdown(trade),
-    [trade],
-  );
-  const severity = warningSeverity(priceImpactWithoutFee);
 
   return (
     <>
@@ -64,7 +55,7 @@ export default function SwapModalFooter({
               paddingLeft: "10px",
             }}
           >
-            {formatExecutionPrice(trade, showInverted)}
+            {/* {formatExecutionPrice(trade, showInverted)} */}
             <StyledBalanceMaxMini
               onClick={() => setShowInverted(!showInverted)}
             >
@@ -76,22 +67,22 @@ export default function SwapModalFooter({
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {trade.tradeType === TradeType.EXACT_INPUT
+              {/* {trade.tradeType === TradeType.EXACT_INPUT
                 ? "Minimum received"
-                : "Maximum sold"}
+                : "Maximum sold"} */}
             </TYPE.black>
             <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
           </RowFixed>
           <RowFixed>
             <TYPE.black fontSize={14}>
-              {trade.tradeType === TradeType.EXACT_INPUT
+              {/* {trade.tradeType === TradeType.EXACT_INPUT
                 ? slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4) ?? "-"
-                : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? "-"}
+                : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? "-"} */}
             </TYPE.black>
             <TYPE.black fontSize={14} marginLeft={"4px"}>
-              {trade.tradeType === TradeType.EXACT_INPUT
+              {/* {trade.tradeType === TradeType.EXACT_INPUT
                 ? trade.outputAmount.currency.symbol
-                : trade.inputAmount.currency.symbol}
+                : trade.inputAmount.currency.symbol} */}
             </TYPE.black>
           </RowFixed>
         </RowBetween>
@@ -102,7 +93,7 @@ export default function SwapModalFooter({
             </TYPE.black>
             <QuestionHelper text="The difference between the market price and your price due to trade size." />
           </RowFixed>
-          <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
+          {/* <FormattedPriceImpact priceImpact={priceImpactWithoutFee} /> */}
         </RowBetween>
         <RowBetween>
           <RowFixed>
@@ -112,11 +103,11 @@ export default function SwapModalFooter({
             <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
           </RowFixed>
           <TYPE.black fontSize={14}>
-            {realizedLPFee
+            {/* {realizedLPFee
               ? realizedLPFee?.toSignificant(6) +
                 " " +
                 trade.inputAmount.currency.symbol
-              : "-"}
+              : "-"} */}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>
@@ -125,17 +116,16 @@ export default function SwapModalFooter({
         <ButtonError
           onClick={onConfirm}
           disabled={disabledConfirm}
-          error={severity > 2}
           style={{ margin: "10px 0 0 0" }}
           id="confirm-swap-or-send"
         >
           <Text fontSize={20} fontWeight={500}>
-            {severity > 2 ? "Swap Anyway" : "Confirm Swap"}
+            Confirm Bridge
           </Text>
         </ButtonError>
 
-        {swapErrorMessage ? (
-          <SwapCallbackError error={swapErrorMessage} />
+        {bridgeErrorMessage ? (
+          <SwapCallbackError error={bridgeErrorMessage} />
         ) : null}
       </AutoRow>
     </>
