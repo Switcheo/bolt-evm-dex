@@ -1,19 +1,13 @@
-import React, { useContext, useMemo } from "react";
 // import { Pair, JSBI } from '@bolt-dex/sdk'
 import { Pair } from "@bolt-dex/sdk";
+import React, { useContext, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { ThemeContext } from "styled-components";
-
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import Card from "../../components/Card";
 import { AutoColumn } from "../../components/Column";
-import {
-  CardBGImage,
-  CardNoise,
-  CardSection,
-  DataCard,
-} from "../../components/earn/styled";
+import { CardBGImage, CardNoise, CardSection, DataCard } from "../../components/earn/styled";
 import { SwapPoolTabs } from "../../components/NavigationTabs";
 import { RowBetween, RowFixed } from "../../components/Row";
 import { Dots } from "../../components/swap/styleds";
@@ -21,10 +15,7 @@ import { usePairs } from "../../data/Reserves";
 // import FullPositionCard from '../../components/PositionCard'
 import { useUserHasLiquidityInAllTokens } from "../../data/V1";
 import { useActiveWeb3React } from "../../hooks";
-import {
-  toV2LiquidityToken,
-  useTrackedTokenPairs,
-} from "../../state/user/hooks";
+import { toV2LiquidityToken, useTrackedTokenPairs } from "../../state/user/hooks";
 import { useTokenBalancesWithLoadingIndicator } from "../../state/wallet/hooks";
 import { ExternalLink, HideSmall, StyledInternalLink, TYPE } from "../../theme";
 
@@ -37,11 +28,7 @@ const PageWrapper = styled(AutoColumn)`
 `;
 
 const VoteCard = styled(DataCard)`
-  background: radial-gradient(
-    76.02% 75.41% at 1.84% 0%,
-    #27ae60 0%,
-    #000000 100%
-  );
+  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #27ae60 0%, #000000 100%);
   overflow: hidden;
 `;
 
@@ -105,8 +92,10 @@ export default function Pool() {
     () => tokenPairsWithLiquidityTokens.map((tpwlt) => tpwlt.liquidityToken),
     [tokenPairsWithLiquidityTokens],
   );
-  const [v2PairsBalances, fetchingV2PairBalances] =
-    useTokenBalancesWithLoadingIndicator(account ?? undefined, liquidityTokens);
+  const [v2PairsBalances, fetchingV2PairBalances] = useTokenBalancesWithLoadingIndicator(
+    account ?? undefined,
+    liquidityTokens,
+  );
 
   // fetch the reserves for all V2 pools in which the user has a balance
   const liquidityTokensWithBalances = useMemo(
@@ -117,17 +106,15 @@ export default function Pool() {
     [tokenPairsWithLiquidityTokens, v2PairsBalances],
   );
 
-  const v2Pairs = usePairs(
-    liquidityTokensWithBalances.map(({ tokens }) => tokens),
-  );
+  console.log(liquidityTokensWithBalances.map(({ tokens }) => tokens));
+
+  const v2Pairs = usePairs(liquidityTokensWithBalances.map(({ tokens }) => tokens));
   const v2IsLoading =
     fetchingV2PairBalances ||
     v2Pairs?.length < liquidityTokensWithBalances.length ||
     v2Pairs?.some((V2Pair) => !V2Pair);
 
-  const allV2PairsWithLiquidity = v2Pairs
-    .map(([, pair]) => pair)
-    .filter((v2Pair): v2Pair is Pair => Boolean(v2Pair));
+  const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair));
 
   const hasV1Liquidity = useUserHasLiquidityInAllTokens();
 
@@ -155,9 +142,7 @@ export default function Pool() {
           <CardSection>
             <AutoColumn gap="md">
               <RowBetween>
-                <TYPE.white fontWeight={600}>
-                  Liquidity provider rewards
-                </TYPE.white>
+                <TYPE.white fontWeight={600}>Liquidity provider rewards</TYPE.white>
               </RowBetween>
               <RowBetween>
                 <TYPE.white fontSize={14}>
@@ -169,9 +154,7 @@ export default function Pool() {
                 target="_blank"
                 href="https://uniswap.org/docs/v2/core-concepts/pools/"
               >
-                <TYPE.white fontSize={14}>
-                  Read more about providing liquidity
-                </TYPE.white>
+                <TYPE.white fontSize={14}>Read more about providing liquidity</TYPE.white>
               </ExternalLink>
             </AutoColumn>
           </CardSection>
@@ -183,18 +166,12 @@ export default function Pool() {
           <AutoColumn gap="lg" style={{ width: "100%" }}>
             <TitleRow style={{ marginTop: "1rem" }} padding={"0"}>
               <HideSmall>
-                <TYPE.mediumHeader
-                  style={{ marginTop: "0.5rem", justifySelf: "flex-start" }}
-                >
+                <TYPE.mediumHeader style={{ marginTop: "0.5rem", justifySelf: "flex-start" }}>
                   Your liquidity
                 </TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonSecondary
-                  as={Link}
-                  padding="6px 8px"
-                  to="/create/ETH"
-                >
+                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to="/create/ETH">
                   Create a pair
                 </ResponsiveButtonSecondary>
                 <ResponsiveButtonPrimary
@@ -228,9 +205,7 @@ export default function Pool() {
               <>
                 <ButtonSecondary>
                   <RowBetween>
-                    <ExternalLink
-                      href={"https://uniswap.info/account/" + account}
-                    >
+                    <ExternalLink href={"https://uniswap.info/account/" + account}>
                       Account analytics and accrued fees
                     </ExternalLink>
                     <span> ↗</span>
@@ -259,18 +234,9 @@ export default function Pool() {
             )}
 
             <AutoColumn justify={"center"} gap="md">
-              <Text
-                textAlign="center"
-                fontSize={14}
-                style={{ padding: ".5rem 0 .5rem 0" }}
-              >
-                {hasV1Liquidity
-                  ? "Uniswap V1 liquidity found!"
-                  : "Don't see a pool you joined?"}{" "}
-                <StyledInternalLink
-                  id="import-pool-link"
-                  to={hasV1Liquidity ? "/migrate/v1" : "/find"}
-                >
+              <Text textAlign="center" fontSize={14} style={{ padding: ".5rem 0 .5rem 0" }}>
+                {hasV1Liquidity ? "Uniswap V1 liquidity found!" : "Don't see a pool you joined?"}{" "}
+                <StyledInternalLink id="import-pool-link" to={hasV1Liquidity ? "/migrate/v1" : "/find"}>
                   {hasV1Liquidity ? "Migrate now." : "Import it."}
                 </StyledInternalLink>
               </Text>

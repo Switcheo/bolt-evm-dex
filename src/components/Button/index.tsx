@@ -1,9 +1,8 @@
-import React from "react";
 import { darken, lighten } from "polished";
+import React from "react";
 import { ChevronDown } from "react-feather";
 import { ButtonProps, Button as RebassButton } from "rebass/styled-components";
 import styled from "styled-components";
-
 import { RowBetween } from "../Row";
 
 const Base = styled(RebassButton)<{
@@ -71,20 +70,15 @@ export const ButtonLight = styled(Base)`
   font-size: 16px;
   font-weight: 500;
   &:focus {
-    box-shadow: 0 0 0 1pt
-      ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
-    background-color: ${({ theme, disabled }) =>
-      !disabled && darken(0.03, theme.primary5)};
+    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
   }
   &:hover {
-    background-color: ${({ theme, disabled }) =>
-      !disabled && darken(0.03, theme.primary5)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
   }
   &:active {
-    box-shadow: 0 0 0 1pt
-      ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
-    background-color: ${({ theme, disabled }) =>
-      !disabled && darken(0.05, theme.primary5)};
+    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
   }
   :disabled {
     opacity: 0.4;
@@ -104,16 +98,13 @@ export const ButtonGray = styled(Base)`
   font-size: 16px;
   font-weight: 500;
   &:focus {
-    background-color: ${({ theme, disabled }) =>
-      !disabled && darken(0.05, theme.bg4)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
   }
   &:hover {
-    background-color: ${({ theme, disabled }) =>
-      !disabled && darken(0.05, theme.bg4)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
   }
   &:active {
-    background-color: ${({ theme, disabled }) =>
-      !disabled && darken(0.1, theme.bg4)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.1, theme.bg4)};
   }
 `;
 
@@ -173,12 +164,7 @@ export const ButtonUNIGradient = styled(ButtonPrimary)`
   height: 36px;
   font-weight: 500;
   background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(
-      174.47% 188.91% at 1.84% 0%,
-      #ff007a 0%,
-      #2172e5 100%
-    ),
-    #edeef2;
+  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
   width: fit-content;
   position: relative;
   cursor: pointer;
@@ -302,10 +288,7 @@ export function ButtonConfirmed({
   }
 }
 
-export function ButtonError({
-  error,
-  ...rest
-}: { error?: boolean } & ButtonProps) {
+export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps & { borderRadius?: string }) {
   if (error) {
     return <ButtonErrorStyle {...rest} />;
   } else {
@@ -313,11 +296,7 @@ export function ButtonError({
   }
 }
 
-export function ButtonDropdown({
-  disabled = false,
-  children,
-  ...rest
-}: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdown({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
   return (
     <ButtonPrimary {...rest} disabled={disabled}>
       <RowBetween>
@@ -328,11 +307,7 @@ export function ButtonDropdown({
   );
 }
 
-export function ButtonDropdownGrey({
-  disabled = false,
-  children,
-  ...rest
-}: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdownGrey({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
   return (
     <ButtonGray {...rest} disabled={disabled} style={{ borderRadius: "20px" }}>
       <RowBetween>
@@ -343,11 +318,7 @@ export function ButtonDropdownGrey({
   );
 }
 
-export function ButtonDropdownLight({
-  disabled = false,
-  children,
-  ...rest
-}: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdownLight({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
   return (
     <ButtonOutlined {...rest} disabled={disabled}>
       <RowBetween>
@@ -358,10 +329,7 @@ export function ButtonDropdownLight({
   );
 }
 
-export function ButtonRadio({
-  active,
-  ...rest
-}: { active?: boolean } & ButtonProps) {
+export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps) {
   if (!active) {
     return <ButtonWhite {...rest} />;
   } else {

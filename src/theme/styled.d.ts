@@ -1,7 +1,4 @@
-import {
-  FlattenSimpleInterpolation,
-  ThemedCssFunction,
-} from "styled-components";
+import { FlattenSimpleInterpolation, ThemedCssFunction } from "styled-components";
 
 export type Color = string;
 export interface Colors {
@@ -59,6 +56,32 @@ export interface Grids {
 declare module "styled-components" {
   export interface DefaultTheme extends Colors {
     grids: Grids;
+
+    // Extras
+    backgroundTable: string;
+    backgroundSurface: string;
+    backgroundOutline: string;
+    hoverDefault: string;
+
+    transition: {
+      duration: {
+        slow: string;
+        medium: string;
+        fast: string;
+      };
+      timing: {
+        ease: string;
+        in: string;
+        out: string;
+        inOut: string;
+      };
+    };
+    opacity: {
+      hover: number;
+      click: number;
+      disabled: number;
+      enabled: number;
+    };
 
     // shadows
     shadow1: string;

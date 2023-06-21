@@ -1,9 +1,8 @@
-import { useMemo } from "react";
 import { ChainId, Token } from "@bolt-dex/sdk";
 import { Tags, TokenInfo, TokenList } from "@uniswap/token-lists";
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import sortByListPriority from "utils/listSort";
-
 import DEFAULT_TOKEN_LIST from "../../constants/DEFAULT_TOKEN_LIST.json";
 import UNSUPPORTED_TOKEN_LIST from "../../constants/tokenLists/uniswap-v2-unsupported.tokenlist.json";
 import { AppState } from "../index";
@@ -21,13 +20,7 @@ export class WrappedTokenInfo extends Token {
   public readonly tokenInfo: TokenInfo;
   public readonly tags: TagInfo[];
   constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
-    super(
-      tokenInfo.chainId,
-      tokenInfo.address,
-      tokenInfo.decimals,
-      tokenInfo.symbol,
-      tokenInfo.name,
-    );
+    super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name);
     this.tokenInfo = tokenInfo;
     this.tags = tags;
   }
@@ -57,9 +50,7 @@ const EMPTY_LIST: TokenAddressMap = {
 };
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
-  typeof WeakMap !== "undefined"
-    ? new WeakMap<TokenList, TokenAddressMap>()
-    : null;
+  typeof WeakMap !== "undefined" ? new WeakMap<TokenList, TokenAddressMap>() : null;
 
 export function listToTokenMap(list: TokenList): TokenAddressMap {
   const result = listCache?.get(list);
@@ -104,15 +95,10 @@ export function useAllLists(): {
     readonly error: string | null;
   };
 } {
-  return useSelector<AppState, AppState["lists"]["byUrl"]>(
-    (state) => state.lists.byUrl,
-  );
+  return useSelector<AppState, AppState["lists"]["byUrl"]>((state) => state.lists.byUrl);
 }
 
-function combineMaps(
-  map1: TokenAddressMap,
-  map2: TokenAddressMap,
-): TokenAddressMap {
+function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
   return {
     1: { ...map1[1], ...map2[1] },
     3: { ...map1[3], ...map2[3] },
@@ -126,9 +112,7 @@ function combineMaps(
 }
 
 // merge tokens contained within lists from urls
-function useCombinedTokenMapFromUrls(
-  urls: string[] | undefined,
-): TokenAddressMap {
+function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMap {
   const lists = useAllLists();
   return useMemo(() => {
     if (!urls) return EMPTY_LIST;
@@ -154,18 +138,15 @@ function useCombinedTokenMapFromUrls(
 
 // filter out unsupported lists
 export function useActiveListUrls(): string[] | undefined {
-  return useSelector<AppState, AppState["lists"]["activeListUrls"]>(
-    (state) => state.lists.activeListUrls,
-  )?.filter((url) => !UNSUPPORTED_LIST_URLS.includes(url));
+  return useSelector<AppState, AppState["lists"]["activeListUrls"]>((state) => state.lists.activeListUrls)?.filter(
+    (url) => !UNSUPPORTED_LIST_URLS.includes(url),
+  );
 }
 
 export function useInactiveListUrls(): string[] {
   const lists = useAllLists();
   const allActiveListUrls = useActiveListUrls();
-  return Object.keys(lists).filter(
-    (url) =>
-      !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url),
-  );
+  return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url));
 }
 
 // get all the tokens from active lists, combine with local default tokens
@@ -173,6 +154,7 @@ export function useCombinedActiveList(): TokenAddressMap {
   const activeListUrls = useActiveListUrls();
   const activeTokens = useCombinedTokenMapFromUrls(activeListUrls);
   const defaultTokenMap = listToTokenMap(DEFAULT_TOKEN_LIST);
+  console.log(defaultTokenMap);
   return combineMaps(activeTokens, defaultTokenMap);
 }
 
@@ -193,9 +175,7 @@ export function useUnsupportedTokenList(): TokenAddressMap {
   const localUnsupportedListMap = listToTokenMap(UNSUPPORTED_TOKEN_LIST);
 
   // get any loaded unsupported tokens
-  const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(
-    UNSUPPORTED_LIST_URLS,
-  );
+  const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS);
 
   // format into one token address map
   return combineMaps(localUnsupportedListMap, loadedUnsupportedListMap);

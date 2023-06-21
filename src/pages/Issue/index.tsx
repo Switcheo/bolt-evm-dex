@@ -1,35 +1,18 @@
-import React, { useEffect } from "react";
-import {
-  ERC20Options,
-  premintPattern,
-  printERC20,
-} from "@openzeppelin/wizard/dist/erc20";
+import { ERC20Options, premintPattern, printERC20 } from "@openzeppelin/wizard/dist/erc20";
 import { AutoColumn } from "components/Column";
-import { SwapPoolTabs } from "components/NavigationTabs";
 import { RowBetween } from "components/Row";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
-import hljs from "./highlightjs";
 import { Wrapper } from "./styleds";
-
 import "highlight.js/styles/github-dark.css";
-
-import { ButtonPrimary } from "components/Button";
+import { erc20, infoDefaults, KindedOptions } from "@openzeppelin/wizard";
+import { UserRejectedRequestError } from "@web3-react/injected-connector";
+import { ButtonError, ButtonLight } from "components/Button";
 import Loader from "components/Loader";
 import { AutoRow } from "components/Row";
 import { ethers } from "ethers";
 import { useActiveWeb3React } from "hooks";
-import { useAppDispatch, useAppSelector } from "state/issue/hooks";
-import {
-  codeSet,
-  compilingSet,
-  highlightedCodeSet,
-  optsSet,
-  selectCode,
-  selectCompiling,
-  selectHighlightedCode,
-  selectOpts,
-} from "state/issue/issueSlice";
+import { useWalletModalToggle } from "state/application/hooks";
 import { useTransactionAdder } from "state/transactions/hooks";
 import { getCompilerInput } from "utils/issueUtils";
 import { Solc } from "utils/solidity-compiler/wrapper";
@@ -40,8 +23,8 @@ const IssueBody = styled.div`
   // margin: 0 5rem;
   width: 100%;
   background: ${({ theme }) => theme.bg1};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
   /* padding: 1rem; */
   margin-top: -50px;
@@ -207,10 +190,7 @@ const SpinnerContainer = styled.div`
   gap: 10px;
 `;
 
-type ERC20OptionKeys = Exclude<
-  keyof ERC20Options,
-  "name" | "symbol" | "access" | "upgradeable" | "info"
->;
+type ERC20OptionKeys = Exclude<keyof ERC20Options, "name" | "symbol" | "access" | "upgradeable" | "info">;
 
 interface ERC20Feature {
   id: ERC20OptionKeys;
@@ -270,48 +250,52 @@ interface CompilerOutput {
 }
 
 export default function Issue() {
-  const { library } = useActiveWeb3React();
+  const { library, account } = useActiveWeb3React();
+  const toggleWalletModal = useWalletModalToggle(); // toggle wallet when disconnected
 
-  const opts = useAppSelector(selectOpts);
-  const code = useAppSelector(selectCode);
-  const highlightedCode = useAppSelector(selectHighlightedCode);
-  const compiling = useAppSelector(selectCompiling);
-  const dispatch = useAppDispatch();
+  const [opts, setOpts] = useState<Required<KindedOptions["ERC20"]>>({
+    kind: "ERC20",
+    ...erc20.defaults,
+    premint: "",
+    info: { ...infoDefaults },
+  });
+  const [rawCode, setRawCode] = useState<string>(printERC20(opts));
+
+  const [compiling, setCompiling] = useState<boolean>(false);
+  const [deployError, setDeployError] = useState<string | null>(null);
 
   const addTransaction = useTransactionAdder();
 
-  /*
-  The dispatch function reference will be stable as long as the same store instance is being passed to the <Provider>. Normally, that store instance never changes in an application.
-  However, the React hooks lint rules do not know that dispatch should be stable, and will warn that the dispatch variable should be added to dependency arrays for useEffect and useCallback.
-  */
+  // Effects
   useEffect(() => {
-    dispatch(codeSet(printERC20(opts)));
-  }, [opts, dispatch]);
+    setRawCode(printERC20(opts));
+  }, [opts]);
 
-  useEffect(() => {
-    dispatch(
-      highlightedCodeSet(hljs.highlight(code, { language: "solidity" }).value),
-    );
-  }, [code, dispatch]);
+  // Effects for code changes
 
   const handleDeployment = async () => {
-    dispatch(compilingSet(true));
+    if (!library) {
+      setDeployError("Wallet client is not available");
+      return;
+    }
+
+    setCompiling(true);
+    setDeployError(null);
     const compiler = new Solc();
-    const input = getCompilerInput(code, opts.name);
+    const input = getCompilerInput(rawCode, opts.name);
 
     const output: CompilerOutput = await compiler.compile(input);
 
     // Contract name is opts.name. if theres' space, remove it
     const contractName = opts.name.replace(/\s/g, "");
-    const compiledContractOutput =
-      output.contracts?.[opts.name]?.[contractName];
 
-    if (!compiledContractOutput || output.errors) {
-      console.error(output.errors ?? "No compiled contract output");
-      dispatch(compilingSet(false));
+    if (!output.contracts?.[opts.name]?.[contractName] || output.errors) {
+      setDeployError(output.errors?.join(", ") ?? "No compiled contract output");
+      setCompiling(false);
       return;
     }
 
+    const compiledContractOutput = output.contracts[opts.name][contractName];
     const bytecode = compiledContractOutput.evm.bytecode.object;
     const abi = compiledContractOutput.abi;
 
@@ -327,51 +311,57 @@ export default function Issue() {
 
       await newContract.deployed();
     } catch (error) {
-      console.error(error);
+      if (error instanceof UserRejectedRequestError) {
+        setDeployError(error.message);
+      }
     } finally {
-      dispatch(compilingSet(false));
+      setCompiling(false);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    dispatch(optsSet({ ...opts, [name]: value }));
+    setOpts({ ...opts, [name]: value });
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-
-    dispatch(optsSet({ ...opts, [name]: checked }));
+    setOpts({ ...opts, [name]: checked });
   };
 
   return (
     <>
-      <SwapPoolTabs active={"issue"} />
       <IssueBody>
         <Wrapper id="issue-page">
           <AutoColumn gap="1rem">
             <AutoRow justify="end" width="100%">
-              <ButtonPrimary
-                padding="10px 16px"
-                width="unset"
-                borderRadius="10px"
-                onClick={async () => {
-                  await handleDeployment();
-                }}
-                disabled={compiling}
-              >
-                {compiling ? (
-                  <SpinnerContainer>
-                    <Loader />
-                    <span>Deploying ERC20...</span>
-                  </SpinnerContainer>
-                ) : (
-                  "Deploy ERC20"
-                )}
-              </ButtonPrimary>
+              {library && account ? (
+                <ButtonError
+                  padding="10px 16px"
+                  width="unset"
+                  onClick={handleDeployment}
+                  disabled={compiling}
+                  borderRadius="10px"
+                  error={!!deployError}
+                >
+                  {compiling ? (
+                    <SpinnerContainer>
+                      <Loader />
+                      <span>Deploying Token...</span>
+                    </SpinnerContainer>
+                  ) : deployError ? (
+                    deployError
+                  ) : (
+                    "Deploy Token"
+                  )}
+                </ButtonError>
+              ) : (
+                <ButtonLight padding="10px 16px" width="unset" borderRadius="10px" onClick={toggleWalletModal}>
+                  Connect Wallet
+                </ButtonLight>
+              )}
             </AutoRow>
-            <IssueRow minWidth="32rem">
+            <IssueRow>
               <SettingsSection>
                 <div>
                   <ControlSection>
@@ -399,7 +389,6 @@ export default function Issue() {
                           autoCorrect="off"
                           autoCapitalize="off"
                           spellCheck="false"
-                          // error={error}
                           onChange={handleInputChange}
                           name="symbol"
                           value={opts.symbol}
@@ -415,7 +404,6 @@ export default function Issue() {
                         autoCapitalize="off"
                         spellCheck="false"
                         placeholder="0"
-                        // error={error}
                         pattern={premintPattern.source}
                         onChange={handleInputChange}
                         name="premint"
@@ -429,11 +417,7 @@ export default function Issue() {
                       return (
                         <CheckboxGroup key={`features-${feature.id}`}>
                           <label>
-                            <input
-                              type="checkbox"
-                              name={feature.id}
-                              onChange={handleCheckboxChange}
-                            />
+                            <input type="checkbox" name={feature.id} onChange={handleCheckboxChange} />
                             {feature.label}
                           </label>
                         </CheckboxGroup>
@@ -445,9 +429,7 @@ export default function Issue() {
 
               <OutputSection>
                 <OutputPreSection>
-                  <OutputCodeSection
-                    dangerouslySetInnerHTML={{ __html: highlightedCode ?? "" }}
-                  />
+                  <OutputCodeSection dangerouslySetInnerHTML={{ __html: rawCode ?? "" }} />
                 </OutputPreSection>
               </OutputSection>
             </IssueRow>

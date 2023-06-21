@@ -4,7 +4,6 @@ import application from "./application/reducer";
 import bridge from "./bridge/reducer";
 import burn from "./burn/reducer";
 import { updateVersion } from "./global/actions";
-import issue from "./issue/issueSlice";
 import lists from "./lists/reducer";
 import mint from "./mint/reducer";
 import multicall from "./multicall/reducer";
@@ -24,13 +23,9 @@ const store = configureStore({
     burn,
     multicall,
     lists,
-    issue,
     bridge,
   },
-  middleware: [
-    ...getDefaultMiddleware({ thunk: false }),
-    save({ states: PERSISTED_KEYS }),
-  ],
+  middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),
   devTools: process.env.NODE_ENV !== "production",
 });

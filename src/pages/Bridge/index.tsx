@@ -3,7 +3,6 @@ import BridgeCurrencyInputPanel from "components/BridgeCurrencyInputPanel";
 import { ButtonError, ButtonLight } from "components/Button";
 import ChainLogo from "components/ChainLogo";
 import { AutoColumn } from "components/Column";
-import { SwapPoolTabs } from "components/NavigationTabs";
 import NetworkMenu from "components/NetworkMenu";
 import { ArrowWrapper } from "components/swap/styleds";
 import { useActiveWeb3React } from "hooks";
@@ -225,7 +224,6 @@ export default function Bridge() {
 
   return (
     <>
-      <SwapPoolTabs active={"bridge"} />
       <BridgeBody>
         <Wrapper id="bridge-page">
           <ConfirmBridgeModal

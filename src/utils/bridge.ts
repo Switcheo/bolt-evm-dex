@@ -113,7 +113,7 @@ export const getBridgeableTokens = (bridgeableTokens: Token[], networkFrom: stri
     let wrappedChain = Number(wrappedToken?.chain_id);
     let sourceChain = Number(sourceToken?.chain_id);
 
-    // Check if the chain is bridgeable
+    // if wrappedChain is not present or
     if (
       !wrappedChain ||
       !bridgeableIncludes(wrappedChain) ||

@@ -1,14 +1,9 @@
-import React, { HTMLProps, useCallback } from "react";
 import { darken } from "polished";
-import {
-  ArrowLeft,
-  ExternalLink as LinkIconFeather,
-  Trash,
-  X,
-} from "react-feather";
+import React, { HTMLProps, useCallback } from "react";
+import { ArrowLeft, ExternalLink as LinkIconFeather, Trash, X } from "react-feather";
 import ReactGA from "react-ga";
 import { Link } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 export const ButtonText = styled.button`
   outline: none;
@@ -28,10 +23,7 @@ export const ButtonText = styled.button`
   }
 `;
 
-export const Button = styled.button.attrs<
-  { warning: boolean },
-  { backgroundColor: string }
->(({ warning, theme }) => ({
+export const Button = styled.button.attrs<{ warning: boolean }, { backgroundColor: string }>(({ warning, theme }) => ({
   backgroundColor: warning ? theme.red1 : theme.primary1,
 }))`
   padding: 1rem 2rem 1rem 2rem;
@@ -238,15 +230,7 @@ export function ExternalLink({
     },
     [href, target],
   );
-  return (
-    <StyledLink
-      target={target}
-      rel={rel}
-      href={href}
-      onClick={handleClick}
-      {...rest}
-    />
-  );
+  return <StyledLink target={target} rel={rel} href={href} onClick={handleClick} {...rest} />;
 }
 
 export function ExternalLinkIcon({
@@ -275,13 +259,7 @@ export function ExternalLinkIcon({
     [href, target],
   );
   return (
-    <LinkIconWrapper
-      target={target}
-      rel={rel}
-      href={href}
-      onClick={handleClick}
-      {...rest}
-    >
+    <LinkIconWrapper target={target} rel={rel} href={href} onClick={handleClick} {...rest}>
       <LinkIcon />
     </LinkIconWrapper>
   );
@@ -335,4 +313,17 @@ export const ExtraSmallOnly = styled.span`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: block;
   `};
+`;
+
+export const ClickableStyle = css`
+  text-decoration: none;
+  cursor: pointer;
+  transition-duration: ${({ theme }) => theme.transition.duration.fast};
+
+  :hover {
+    opacity: ${({ theme }) => theme.opacity.hover};
+  }
+  :active {
+    opacity: ${({ theme }) => theme.opacity.click};
+  }
 `;

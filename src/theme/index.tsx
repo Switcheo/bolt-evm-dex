@@ -1,5 +1,5 @@
+import { opacify, transparentize } from "polished";
 import React, { useMemo } from "react";
-import { transparentize } from "polished";
 import { Text, TextProps } from "rebass";
 import styled, {
   createGlobalStyle,
@@ -7,7 +7,6 @@ import styled, {
   DefaultTheme,
   ThemeProvider as StyledComponentsThemeProvider,
 } from "styled-components";
-
 import { useIsDarkMode } from "../state/user/hooks";
 import { Colors } from "./styled";
 
@@ -88,9 +87,44 @@ export function colors(darkMode: boolean): Colors {
   };
 }
 
+export enum TRANSITION_DURATIONS {
+  slow = 500,
+  medium = 250,
+  fast = 125,
+}
+
+const transitions = {
+  duration: {
+    slow: `${TRANSITION_DURATIONS.slow}ms`,
+    medium: `${TRANSITION_DURATIONS.medium}ms`,
+    fast: `${TRANSITION_DURATIONS.fast}ms`,
+  },
+  timing: {
+    ease: "ease",
+    in: "ease-in",
+    out: "ease-out",
+    inOut: "ease-in-out",
+  },
+};
+
+const opacities = {
+  hover: 0.6,
+  click: 0.4,
+  disabled: 0.5,
+  enabled: 1,
+};
+
 export function theme(darkMode: boolean): DefaultTheme {
   return {
     ...colors(darkMode),
+
+    backgroundTable: "#0D111C",
+    backgroundSurface: colors(true).bg1,
+    backgroundOutline: opacify(24, "#98A1C0"),
+    hoverDefault: opacify(8, "#98A1C0"),
+
+    transition: transitions,
+    opacity: opacities,
 
     grids: {
       sm: 8,
@@ -116,20 +150,12 @@ export function theme(darkMode: boolean): DefaultTheme {
   };
 }
 
-export default function ThemeProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const darkMode = useIsDarkMode();
 
   const themeObject = useMemo(() => theme(darkMode), [darkMode]);
 
-  return (
-    <StyledComponentsThemeProvider theme={themeObject}>
-      {children}
-    </StyledComponentsThemeProvider>
-  );
+  return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>;
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
@@ -150,9 +176,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} color={"white"} {...props} />;
   },
   body(props: TextProps) {
-    return (
-      <TextWrapper fontWeight={400} fontSize={16} color={"text1"} {...props} />
-    );
+    return <TextWrapper fontWeight={400} fontSize={16} color={"text1"} {...props} />;
   },
   largeHeader(props: TextProps) {
     return <TextWrapper fontWeight={600} fontSize={24} {...props} />;
@@ -179,24 +203,10 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} color={"bg3"} {...props} />;
   },
   italic(props: TextProps) {
-    return (
-      <TextWrapper
-        fontWeight={500}
-        fontSize={12}
-        fontStyle={"italic"}
-        color={"text2"}
-        {...props}
-      />
-    );
+    return <TextWrapper fontWeight={500} fontSize={12} fontStyle={"italic"} color={"text2"} {...props} />;
   },
   error({ error, ...props }: { error: boolean } & TextProps) {
-    return (
-      <TextWrapper
-        fontWeight={500}
-        color={error ? "red1" : "text2"}
-        {...props}
-      />
-    );
+    return <TextWrapper fontWeight={500} color={error ? "red1" : "text2"} {...props} />;
   },
 };
 
@@ -218,7 +228,7 @@ body {
 }
 
  a {
-   color: ${colors(false).blue1}; 
+   color: ${colors(false).blue1};
  }
 
 * {
@@ -236,7 +246,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv03' on;
-  
+
 }
 `;
 
@@ -251,9 +261,9 @@ body {
   background-position: 0 -30vh;
   background-repeat: no-repeat;
   background-image: ${({ theme }) =>
-    `radial-gradient(50% 50% at 50% 50%, ${transparentize(
-      0.9,
-      theme.primary1,
-    )} 0%, ${transparentize(1, theme.bg1)} 100%)`};
+    `radial-gradient(50% 50% at 50% 50%, ${transparentize(0.9, theme.primary1)} 0%, ${transparentize(
+      1,
+      theme.bg1,
+    )} 100%)`};
 }
 `;
