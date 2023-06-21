@@ -1,9 +1,7 @@
-import React, { CSSProperties, forwardRef, ReactNode, useContext } from "react";
+import React, { CSSProperties, forwardRef, ReactNode } from "react";
 import { ChevronRight } from "react-feather";
-import { Link } from "react-router-dom";
-import styled, { css, ThemeContext } from "styled-components";
+import styled, { css } from "styled-components";
 import { formatTransactionHash } from "utils/format";
-import { ClickableStyle } from "../../theme";
 import {
   LARGE_MEDIA_BREAKPOINT,
   MAX_WIDTH_MEDIA_BREAKPOINT,
@@ -70,18 +68,18 @@ const MoreDetailsCell = styled(Cell)`
   gap: 8px;
 `;
 
-const HeaderCellWrapper = styled.span<{ onClick?: () => void }>`
-  align-items: center;
-  cursor: ${({ onClick }) => (onClick ? "pointer" : "unset")};
-  display: flex;
-  gap: 4px;
-  justify-content: flex-end;
-  width: 100%;
+// const HeaderCellWrapper = styled.span<{ onClick?: () => void }>`
+//   align-items: center;
+//   cursor: ${({ onClick }) => (onClick ? "pointer" : "unset")};
+//   display: flex;
+//   gap: 4px;
+//   justify-content: flex-end;
+//   width: 100%;
 
-  &:hover {
-    ${ClickableStyle}
-  }
-`;
+//   &:hover {
+//     ${ClickableStyle}
+//   }
+// `;
 
 const StyledTokenRow = styled.div<{
   first?: boolean;
@@ -167,28 +165,28 @@ const StyledHeaderRow = styled(StyledTokenRow)`
   }
 `;
 
-const InfoIconContainer = styled.div`
-  margin-left: 2px;
-  display: flex;
-  align-items: center;
-  cursor: help;
-`;
+// const InfoIconContainer = styled.div`
+//   margin-left: 2px;
+//   display: flex;
+//   align-items: center;
+//   cursor: help;
+// `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
+// const StyledLink = styled(Link)`
+//   text-decoration: none;
+// `;
 
-const ClickableContent = styled.div`
-  display: flex;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text1};
-  align-items: center;
-  cursor: pointer;
-`;
-const ClickableName = styled(ClickableContent)`
-  gap: 8px;
-  max-width: 100%;
-`;
+// const ClickableContent = styled.div`
+//   display: flex;
+//   text-decoration: none;
+//   color: ${({ theme }) => theme.text1};
+//   align-items: center;
+//   cursor: pointer;
+// `;
+// const ClickableName = styled(ClickableContent)`
+//   gap: 8px;
+//   max-width: 100%;
+// `;
 
 const TokenInfoCell = styled(Cell)`
   gap: 8px;
@@ -227,27 +225,27 @@ const TokenSymbol = styled(Cell)`
   }
 `;
 
-/* Get singular header cell for header row */
-function HeaderCell({
-  category,
-}: {
-  category: any; // TODO: change this to make it work for trans
-}) {
-  const theme = useContext(ThemeContext);
+// /* Get singular header cell for header row */
+// function HeaderCell({
+//   category,
+// }: {
+//   category: any; // TODO: change this to make it work for trans
+// }) {
+//   const theme = useContext(ThemeContext);
 
-  return (
-    <HeaderCellWrapper>
-      {category}
-      {/* {description && (
-        // <MouseoverTooltip text={description} placement="right">
-        <InfoIconContainer>
-          <Info size={14} />
-        </InfoIconContainer>
-        //</MouseoverTooltip>
-      )} */}
-    </HeaderCellWrapper>
-  );
-}
+//   return (
+//     <HeaderCellWrapper>
+//       {category}
+//       {/* {description && (
+//         // <MouseoverTooltip text={description} placement="right">
+//         <InfoIconContainer>
+//           <Info size={14} />
+//         </InfoIconContainer>
+//         //</MouseoverTooltip>
+//       )} */}
+//     </HeaderCellWrapper>
+//   );
+// }
 
 interface TokenRowProps {
   first?: boolean;
@@ -347,7 +345,7 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: any) => {
     destinationTransactionHash,
     bridgeTransactionHash,
     status,
-    moreDetails,
+    // moreDetails,
   } = props;
 
   return (
