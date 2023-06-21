@@ -58,7 +58,7 @@ workflows:
   deploy-project:
     jobs:
       - deploy:
-          context: org-switcheo
+          context: org-boltchain
           filters:
             branches:
               only:
