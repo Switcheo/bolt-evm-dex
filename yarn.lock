@@ -1453,9 +1453,9 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
-"@bolt-dex/sdk@https://github.com/Switcheo/bolt-evm-dex-sdk":
+"@bolt-dex/sdk@https://github.com/Switcheo/bolt-evm-dex-sdk#master":
   version "3.0.3"
-  resolved "https://github.com/Switcheo/bolt-evm-dex-sdk#b6003c30d152434676de88ddf9231943977a135f"
+  resolved "https://github.com/Switcheo/bolt-evm-dex-sdk#e02c3e014e498f9c2f6b6d7ca0a10ffe080b463b"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
