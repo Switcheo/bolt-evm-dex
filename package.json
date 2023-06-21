@@ -106,7 +106,7 @@
   ],
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@bolt-dex/sdk": "file:../bolt-evm-dex-sdk",
+    "@bolt-dex/sdk": "https://github.com/Switcheo/bolt-evm-dex-sdk",
     "@openzeppelin/contracts": "^4.9.0",
     "@openzeppelin/wizard": "^0.3.0",
     "@uniswap/default-token-list": "^2.0.0",
