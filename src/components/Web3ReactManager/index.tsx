@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { network } from "../../connectors";
 import { NetworkContextName } from "../../constants";
 import { useEagerConnect, useInactiveListener } from "../../hooks";
-import Loader from "../Loader";
+// import Loader from "../Loader";
 
 const MessageWrapper = styled.div`
   display: flex;
@@ -45,7 +45,7 @@ export default function Web3ReactManager({
   useInactiveListener(!triedEager);
 
   // handle delayed loader state
-  const [showLoader, setShowLoader] = useState(false);
+  const [, setShowLoader] = useState(false);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShowLoader(true);
@@ -57,9 +57,9 @@ export default function Web3ReactManager({
   }, []);
 
   // on page load, do nothing until we've tried to connect to the injected connector
-  if (!triedEager) {
-    return null;
-  }
+  // if (!triedEager) {
+  //   return null;
+  // }
 
   // if the account context isn't active, and there's an error on the network context, it's an irrecoverable error
   if (!active && networkError) {
@@ -71,13 +71,13 @@ export default function Web3ReactManager({
   }
 
   // if neither context is active, spin
-  if (!active && !networkActive) {
-    return showLoader ? (
-      <MessageWrapper>
-        <Loader />
-      </MessageWrapper>
-    ) : null;
-  }
+  // if (!active && !networkActive) {
+  //   return showLoader ? (
+  //     <MessageWrapper>
+  //       <Loader />
+  //     </MessageWrapper>
+  //   ) : null;
+  // }
 
   return children;
 }
