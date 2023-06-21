@@ -155,7 +155,7 @@ export default function WalletModal({
       chainId: "0xA455",
       rpcUrls: ["https://rpc.bolt-dev.switcheo.network"],
       chainName: "Boltchain",
-      nativeCurrency: { name: "Ethereum", decimals: 18, symbol: "ETH" },
+      nativeCurrency: { name: "Bolt", decimals: 18, symbol: "BOLT" },
       blockExplorerUrls: ["https://blockscout.bolt.switcheo.network/"],
       iconUrls: ["https://harmonynews.one/wp-content/uploads/2019/11/slfdjs.png"],
     },
@@ -186,18 +186,19 @@ export default function WalletModal({
   }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious]);
 
   const handleNetworkOnClick = async () => {
+    console.log(library, (await pendingWallet?.getProvider()))
+    
     try {
-      await library.provider.request({
+      await (library?.provider ?? (await pendingWallet?.getProvider())).request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: toHex("42069") }],
       });
     } catch (switchError) {
       if (switchError.code === 4902) {
         try {
-          await library.provider.request({
+          await (library?.provider ?? (await pendingWallet?.getProvider())).request({
             method: "wallet_addEthereumChain",
-            // @ts-ignore
-            params: [networkParams[toHex("42069")]],
+            params: [networkParams["0xA455"]],
           });
         } catch (error) {
           console.error(error);
