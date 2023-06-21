@@ -14,10 +14,7 @@ import { injected } from "../../connectors";
 import { SUPPORTED_WALLETS } from "../../constants";
 import usePrevious from "../../hooks/usePrevious";
 import { ApplicationModal } from "../../state/application/actions";
-import {
-  useModalOpen,
-  useWalletModalToggle,
-} from "../../state/application/hooks";
+import { useModalOpen, useWalletModalToggle } from "../../state/application/hooks";
 import { ExternalLink } from "../../theme";
 import AccountDetails from "../AccountDetails";
 import Modal from "../Modal";
@@ -51,8 +48,7 @@ const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
   font-weight: 500;
-  color: ${(props) =>
-    props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit"};
+  color: ${(props) => (props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit")};
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
   `};
@@ -135,14 +131,11 @@ export default function WalletModal({
   ENSName?: string;
 }) {
   // important that these are destructed from the account-specific web3-react context
-  const { library, active, account, connector, activate, error } =
-    useWeb3React();
+  const { library, active, account, connector, activate, error } = useWeb3React();
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
 
-  const [pendingWallet, setPendingWallet] = useState<
-    AbstractConnector | undefined
-  >();
+  const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>();
 
   const [pendingError, setPendingError] = useState<boolean>();
 
@@ -160,13 +153,11 @@ export default function WalletModal({
   const networkParams = {
     "0xA455": {
       chainId: "0xA455",
-      rpcUrls: ["https://rpc.bolt.switcheo.network"],
+      rpcUrls: ["https://rpc.bolt-dev.switcheo.network"],
       chainName: "Boltchain",
       nativeCurrency: { name: "Ethereum", decimals: 18, symbol: "ETH" },
       blockExplorerUrls: ["https://blockscout.bolt.switcheo.network/"],
-      iconUrls: [
-        "https://harmonynews.one/wp-content/uploads/2019/11/slfdjs.png",
-      ],
+      iconUrls: ["https://harmonynews.one/wp-content/uploads/2019/11/slfdjs.png"],
     },
   };
 
@@ -189,22 +180,10 @@ export default function WalletModal({
   const activePrevious = usePrevious(active);
   const connectorPrevious = usePrevious(connector);
   useEffect(() => {
-    if (
-      walletModalOpen &&
-      ((active && !activePrevious) ||
-        (connector && connector !== connectorPrevious && !error))
-    ) {
+    if (walletModalOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
       setWalletView(WALLET_VIEWS.ACCOUNT);
     }
-  }, [
-    setWalletView,
-    active,
-    error,
-    connector,
-    walletModalOpen,
-    activePrevious,
-    connectorPrevious,
-  ]);
+  }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious]);
 
   const handleNetworkOnClick = async () => {
     try {
@@ -245,10 +224,7 @@ export default function WalletModal({
     setWalletView(WALLET_VIEWS.PENDING);
 
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
-    if (
-      connector instanceof WalletConnectConnector &&
-      connector.walletConnectProvider?.wc?.uri
-    ) {
+    if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined;
     }
 
@@ -285,9 +261,7 @@ export default function WalletModal({
           return (
             <Option
               onClick={() => {
-                option.connector !== connector &&
-                  !option.href &&
-                  tryActivation(option.connector);
+                option.connector !== connector && !option.href && tryActivation(option.connector);
               }}
               id={`connect-${key}`}
               key={key}
@@ -364,18 +338,12 @@ export default function WalletModal({
           <CloseIcon onClick={toggleWalletModal}>
             <CloseColor />
           </CloseIcon>
-          <HeaderRow>
-            {error instanceof UnsupportedChainIdError
-              ? "Wrong Network"
-              : "Error connecting"}
-          </HeaderRow>
+          <HeaderRow>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error connecting"}</HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
               <>
                 <h5>Please connect to the appropriate Boltchain network.</h5>
-                <ChangeNetworkButton onClick={handleNetworkOnClick}>
-                  Change Network
-                </ChangeNetworkButton>
+                <ChangeNetworkButton onClick={handleNetworkOnClick}>Change Network</ChangeNetworkButton>
               </>
             ) : (
               "Error connecting. Try refreshing the page."
@@ -430,9 +398,7 @@ export default function WalletModal({
           {walletView !== WALLET_VIEWS.PENDING && (
             <Blurb>
               <span>New to Ethereum? &nbsp;</span>{" "}
-              <ExternalLink href="https://ethereum.org/wallets/">
-                Learn more about wallets
-              </ExternalLink>
+              <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
             </Blurb>
           )}
         </ContentWrapper>
@@ -441,12 +407,7 @@ export default function WalletModal({
   }
 
   return (
-    <Modal
-      isOpen={walletModalOpen}
-      onDismiss={toggleWalletModal}
-      minHeight={false}
-      maxHeight={90}
-    >
+    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   );

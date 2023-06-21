@@ -1,0 +1,65 @@
+version: 2.1
+jobs:
+  deploy:
+    resource_class: xlarge
+    docker:
+      # image with node, npm and yarn installed
+      - image: circleci/node:16.8.0-buster
+    steps:
+      # checkout workspace to repo code
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: yarn install
+          command: yarn install --frozen-lockfile --network-concurrency 1 --ignore-engines
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: build ReactJS project
+          command: |
+            if [ "${CIRCLE_BRANCH}" = "master" ]; then
+              yarn build
+            else
+              yarn build
+            fi
+
+      - run:
+          name: install AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install awscli
+
+      - run:
+          name: deploy to aws
+          command: |
+            aws configure set preview.cloudfront true
+            aws configure set region ap-southeast-1
+            if [ "${CIRCLE_BRANCH}" = "staging" ]; then
+              aws s3 sync build s3://bolt-dex-ui/staging/ --delete
+              aws cloudfront create-invalidation --distribution-id="E3MU3FAXMP8SBQ" --paths=/*
+            elif [ "${CIRCLE_BRANCH}" = "master" ]; then
+              aws s3 sync build s3://bolt-dex-ui/master/ --delete
+              aws cloudfront create-invalidation --distribution-id="E3MU3FAXMP8SBQ" --paths=/*
+            else
+              echo "Not master or staging branch, dry run only"
+            fi
+
+workflows:
+  deploy-project:
+    jobs:
+      - deploy:
+          context: org-switcheo
+          filters:
+            branches:
+              only:
+                - master

@@ -2,9 +2,7 @@ import { SupportedChainId } from "./chains";
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY;
 if (typeof INFURA_KEY === "undefined") {
-  throw new Error(
-    `REACT_APP_INFURA_KEY must be a defined environment variable`,
-  );
+  throw new Error(`REACT_APP_INFURA_KEY must be a defined environment variable`);
 }
 
 /**
@@ -49,7 +47,7 @@ export const FALLBACK_URLS = {
   ],
   [SupportedChainId.BOLTCHAIN]: [
     // "Safe" URLs
-    "https://rpc.bolt.switcheo.network",
+    "https://rpc.bolt-dev.switcheo.network",
   ],
 };
 
