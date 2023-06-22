@@ -1,0 +1,15 @@
+import { ONE_BIPS } from "../../constants/utils";
+import { Percent } from "../../utils/entities/fractions/percent";
+import { warningSeverity } from "../../utils/prices";
+import { ErrorText } from "./styleds";
+
+/**
+ * Formatted version of price impact text with warning colors
+ */
+export default function FormattedPriceImpact({ priceImpact }: { priceImpact?: Percent }) {
+  return (
+    <ErrorText fontWeight={500} fontSize={14} severity={warningSeverity(priceImpact)}>
+      {priceImpact ? (priceImpact.lessThan(ONE_BIPS) ? "<0.01%" : `${priceImpact.toFixed(2)}%`) : "-"}
+    </ErrorText>
+  );
+}
