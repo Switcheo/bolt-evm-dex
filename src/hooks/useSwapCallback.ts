@@ -1,5 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
+import JSBI from "jsbi";
 import { useMemo } from "react";
 import { getAddress, isAddress } from "viem";
 import { Address, useAccount, useNetwork } from "wagmi";
@@ -72,7 +73,7 @@ function useSwapCallArguments(
     swapMethods.push(
       Router.swapCallParameters(trade, {
         feeOnTransfer: false,
-        allowedSlippage: new Percent(BigInt(allowedSlippage), BIPS_BASE),
+        allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
         recipient,
         deadline: deadline.toNumber(),
       }),
@@ -82,7 +83,7 @@ function useSwapCallArguments(
       swapMethods.push(
         Router.swapCallParameters(trade, {
           feeOnTransfer: true,
-          allowedSlippage: new Percent(BigInt(allowedSlippage), BIPS_BASE),
+          allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
           recipient,
           deadline: deadline.toNumber(),
         }),

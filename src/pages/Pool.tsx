@@ -171,12 +171,12 @@ export default function Pool() {
 
   // const hasV1Liquidity = useUserHasLiquidityInAllTokens();
 
-  // show liquidity even if its deposited in rewards contract
+  // // show liquidity even if its deposited in rewards contract
   // const stakingInfo = useStakingInfo();
   // const stakingInfosWithBalance = stakingInfo?.filter((pool) => JSBI.greaterThan(pool.stakedAmount.raw, BIG_INT_ZERO));
   // const stakingPairs = usePairs(stakingInfosWithBalance?.map((stakingInfo) => stakingInfo.tokens));
 
-  // remove any pairs that also are included in pairs with stake in mining pool
+  // // remove any pairs that also are included in pairs with stake in mining pool
   // const v2PairsWithoutStakedAmount = allV2PairsWithLiquidity.filter((v2Pair) => {
   //   return (
   //     stakingPairs

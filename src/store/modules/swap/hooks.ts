@@ -83,8 +83,8 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
     const typedValueParsed = parseUnits(value as `${number}`, currency.decimals).toString();
     if (typedValueParsed !== "0") {
       return currency instanceof Token
-        ? new TokenAmount(currency, BigInt(typedValueParsed))
-        : CurrencyAmount.ether(BigInt(typedValueParsed));
+        ? new TokenAmount(currency, typedValueParsed)
+        : CurrencyAmount.ether(typedValueParsed);
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)

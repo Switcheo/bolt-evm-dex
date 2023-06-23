@@ -177,7 +177,7 @@ export const PINNED_PAIRS: { readonly [chainId in SupportedChainId]?: [Token, To
         "Compound USD Coin",
       ),
     ],
-    [USDT_MAINNET_TOKEN, USDT_MAINNET_TOKEN],
+    [USDC_MAINNET_TOKEN, USDT_MAINNET_TOKEN],
     [DAI_MAINNET_TOKEN, USDT_MAINNET_TOKEN],
   ],
 };

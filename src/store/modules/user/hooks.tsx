@@ -1,3 +1,4 @@
+import { flatMap } from "lodash";
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Address } from "viem";
@@ -177,8 +178,7 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
  * Returns all the pairs of tokens that are tracked by the user for the current chain ID.
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
   const tokens = useAllTokens();
 
   // pinned pairs
@@ -188,7 +188,7 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   const generatedPairs: [Token, Token][] = useMemo(
     () =>
       chainId
-        ? Object.keys(tokens).flatMap((tokenAddress) => {
+        ? flatMap(Object.keys(tokens), (tokenAddress) => {
             const token = tokens[tokenAddress];
             // for each token on the current chain,
             return (
@@ -210,7 +210,7 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   );
 
   // pairs saved by users
-  const savedSerializedPairs = useAppSelector(({ user: { pairs } }) => pairs);
+  const savedSerializedPairs = useAppSelector((state) => state.user.pairs);
 
   const userPairs: [Token, Token][] = useMemo(() => {
     if (!chainId || !savedSerializedPairs) return [];
@@ -218,9 +218,9 @@ export function useTrackedTokenPairs(): [Token, Token][] {
     if (!forChain) return [];
 
     return Object.keys(forChain).map((pairId) => {
-      return [deserializeToken(forChain[pairId].token0), deserializeToken(forChain[pairId].token1)] as [Token, Token];
+      return [deserializeToken(forChain[pairId].token0), deserializeToken(forChain[pairId].token1)];
     });
-  }, [savedSerializedPairs, chainId]);
+  }, [savedSerializedPairs, chainId]).filter(([tokenA, tokenB]) => tokenA && tokenB) as [Token, Token][];
 
   const combinedList = useMemo(
     () => userPairs.concat(generatedPairs).concat(pinnedPairs),
