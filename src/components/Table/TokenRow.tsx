@@ -182,12 +182,12 @@ const TokenInfoCell = styled(Cell)`
   }
 `;
 
-const TokenName = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-`;
+// const TokenName = styled.div`
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+//   max-width: 100%;
+// `;
 
 const TokenSymbol = styled(Cell)`
   color: ${({ theme }) => theme.textTertiary};

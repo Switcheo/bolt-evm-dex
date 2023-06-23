@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useAccount } from "wagmi";
 import { useGetRelaysQuery } from "../../store/modules/bridgeHistory/services/bridgeHistory";
 import { HeaderRow, LoadedRow } from "./TokenRow";
 
@@ -27,7 +26,7 @@ const TokenDataContainer = styled.div`
 `;
 
 const BridgeHistoryTable = () => {
-  const { address } = useAccount();
+  // const { address } = useAccount();
   const { data, isLoading } = useGetRelaysQuery(
     {
       bridgeType: "polynetwork",
