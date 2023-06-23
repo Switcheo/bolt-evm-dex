@@ -36,8 +36,7 @@ export class Token extends Currency {
    */
   public sortsBefore(other: Token): boolean {
     invariant(this.chainId === other.chainId, "CHAIN_IDS");
-    invariant(this.address !== other.address, "ADDRESSES");
-    console.warn(this.address !== other.address ? "Address conflict" : null);
+    invariant(this.address.toLowerCase() !== other.address.toLowerCase(), "ADDRESSES");
     return this.address.toLowerCase() < other.address.toLowerCase();
   }
 }

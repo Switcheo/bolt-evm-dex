@@ -63,7 +63,7 @@ interface WrapCallbackArgs {
   ) => void;
 }
 
-const wrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
+const wrapEther = async ({ inputAmount, chainId }: WrapCallbackArgs) => {
   const data = await prepareWriteContract({
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
@@ -79,7 +79,7 @@ const wrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackA
   // addTransaction(hash, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
 };
 
-const unwrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
+const unwrapEther = async ({ inputAmount, chainId }: WrapCallbackArgs) => {
   const data = await prepareWriteContract({
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
@@ -87,8 +87,8 @@ const unwrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbac
     args: [BigInt(inputAmount.raw.toString())],
   });
   const { hash } = await writeContract(data.request);
-  // data.
-  const transactionReceipt = await waitForTransaction({
+
+  await waitForTransaction({
     hash,
     chainId,
   });

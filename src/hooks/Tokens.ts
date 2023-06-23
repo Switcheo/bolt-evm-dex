@@ -198,7 +198,7 @@ export function useCurrency(currencyId: string | undefined): Currency | null | u
 // returns undefined if input token is undefined, or fails to get token contract,
 // or contract total supply cannot be fetched
 export function useTotalSupply(token?: Token): TokenAmount | undefined {
-  const contract = useTokenContract(token?.address, false);
+  const contract = useTokenContract(token?.address as Address, false);
 
   const totalSupply = useSingleCallResult(contract, "totalSupply")?.result?.[0];
 

@@ -14,7 +14,7 @@ const Tabs = styled.div`
   justify-content: space-evenly;
 `;
 
-const StyledNavLink = styled(NavLink)`
+const StyledNavLink = styled(NavLink)<{ $active: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
   border-radius: 3rem;
@@ -27,11 +27,13 @@ const StyledNavLink = styled(NavLink)`
   margin: 0 12px;
   font-weight: 500;
 
-  &.active {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
+  ${({ $active, theme }) =>
+    $active &&
+    `
+      border-radius: 12px;
+      font-weight: 600;
+      color: ${theme.text1};
+    `}
 
   &:hover,
   &:focus {
@@ -51,10 +53,10 @@ const StyledArrowLeft = styled(ArrowLeft)`
 export function SwapPoolTabs({ $active }: { $active: "swap" | "pool" }) {
   return (
     <Tabs style={{ marginBottom: "20px", display: "none" }}>
-      <StyledNavLink id={`swap-nav-link`} to={"/swap"}>
+      <StyledNavLink id={`swap-nav-link`} to={"/swap"} $active={$active === "swap"}>
         Swap
       </StyledNavLink>
-      <StyledNavLink id={`pool-nav-link`} to={"/pool"}>
+      <StyledNavLink id={`pool-nav-link`} to={"/pool"} $active={$active === "pool"}>
         Pool
       </StyledNavLink>
     </Tabs>

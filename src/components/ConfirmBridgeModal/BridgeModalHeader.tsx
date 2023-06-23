@@ -31,7 +31,7 @@ export default function BridgeModalHeader({
             style={{ marginRight: "12px" }}
           /> */}
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
-            {bridgeTx.amount}
+            {bridgeTx.amount.toString()}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
@@ -47,7 +47,7 @@ export default function BridgeModalHeader({
         <RowFixed gap={"0px"}>
           <CurrencyLogo currency={bridgeTx.destToken} size={"24px"} style={{ marginRight: "12px" }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
-            {bridgeTx.amount}
+            {bridgeTx.amount.toString()}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>

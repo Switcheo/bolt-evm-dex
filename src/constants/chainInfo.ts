@@ -103,6 +103,25 @@ const CHAIN_INFO: Record<SupportedChainId, ChainInfo> = {
       feeAddress: "0x08d8f59e475830d9a1bb97d74285c4d34c6dac08", // swth1prv0t8j8tqcdngdmjlt59pwy6dxxmtqgycy2h7
     },
   },
+  [SupportedChainId.CARBON]: {
+    explorer: "https://polygonscan.com",
+    infoLink: "https://docs.matic.network/docs/develop/network-details/network",
+    logoUrl: polygonLogo,
+    label: "Polygon",
+    nativeCurrency: {
+      name: "Swth",
+      symbol: "SWTH",
+      decimals: 8,
+    },
+    color: "#8247e5",
+    backgroundColor: "#8247e5",
+    bridgeInfo: {
+      bridgeEntranceAddr: BRIDGE_ENTRANCE_ADDRESSES[SupportedChainId.CARBON],
+      lockProxyAddr: LOCK_PROXY_ADDRESSES[SupportedChainId.CARBON],
+      balanceReader: BALANCE_READER_ADDRESSES[SupportedChainId.CARBON],
+      feeAddress: "0x08d8f59e475830d9a1bb97d74285c4d34c6dac08", // swth1prv0t8j8tqcdngdmjlt59pwy6dxxmtqgycy2h7
+    },
+  },
 };
 
 export const getChainInfo = (chainId: SupportedChainId) => {

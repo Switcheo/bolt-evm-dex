@@ -214,14 +214,16 @@ const Bridge = () => {
         bridgeErrorMessage: undefined,
         txHash: hash,
       });
-    } catch (error) {
-      setBridgeState({
-        attemptingTxn: false,
-        bridgeToConfirm,
-        showConfirm,
-        bridgeErrorMessage: error.message,
-        txHash: undefined,
-      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setBridgeState({
+          attemptingTxn: false,
+          bridgeToConfirm,
+          showConfirm,
+          bridgeErrorMessage: error.message,
+          txHash: undefined,
+        });
+      }
     }
   }, [bridgeCallback, pendingBridgeTx, showConfirm, bridgeErrorMessage, bridgeToConfirm]);
 

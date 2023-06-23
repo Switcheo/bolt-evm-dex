@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { getAddress, isAddress } from "viem";
+import { Field } from "../../store/modules/swap/swapSlice";
 import { TYPE } from "../../theme";
 import { TradeType } from "../../utils/entities/constants";
 import { Trade } from "../../utils/entities/trade";
@@ -43,7 +44,7 @@ export default function SwapModalHeader({
           <TruncatedText
             fontSize={24}
             fontWeight={500}
-            color={showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT ? theme.primary1 : ""}
+            color={showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT ? theme?.primary1 : ""}
           >
             {trade.inputAmount.toSignificant(6)}
           </TruncatedText>

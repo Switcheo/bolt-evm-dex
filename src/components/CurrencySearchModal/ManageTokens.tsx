@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useMemo, useRef, useState } from "react";
+import { ChangeEvent, RefObject, useCallback, useMemo, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { isAddress } from "viem";
 import { useNetwork } from "wagmi";
@@ -49,7 +49,7 @@ export default function ManageTokens({
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>();
-  const handleInput = useCallback((event) => {
+  const handleInput = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
     const checksummedInput = isAddress(input) ? input : undefined;
     setSearchQuery(checksummedInput || input);

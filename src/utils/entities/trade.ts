@@ -3,6 +3,7 @@ import { SupportedChainId } from "../../constants/chains";
 import { WETH_TOKENS } from "../../constants/tokens";
 import { ONE, TradeType, ZERO } from "./constants";
 import { Currency, ETHER } from "./currency";
+import { InsufficientInputAmountError, InsufficientReservesError } from "./errors";
 import { CurrencyAmount } from "./fractions/currencyAmount";
 import { Fraction } from "./fractions/fraction";
 import { Percent } from "./fractions/percent";
@@ -282,8 +283,10 @@ export class Trade {
         [amountOut] = pair.getOutputAmount(amountIn);
       } catch (error) {
         // input too low
-        if (error.isInsufficientInputAmountError) {
-          continue;
+        if (error instanceof InsufficientInputAmountError) {
+          if (error.isInsufficientInputAmountError) {
+            continue;
+          }
         }
         throw error;
       }
@@ -369,10 +372,13 @@ export class Trade {
       try {
         [amountIn] = pair.getInputAmount(amountOut);
       } catch (error) {
-        // not enough liquidity in this pair
-        if (error.isInsufficientReservesError) {
-          continue;
+        if (error instanceof InsufficientReservesError) {
+          if (error.isInsufficientReservesError) {
+            continue;
+          }
         }
+        // not enough liquidity in this pair
+
         throw error;
       }
       // we have arrived at the input token, so this is the first trade of one of the paths

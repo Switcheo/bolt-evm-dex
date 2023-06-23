@@ -25,7 +25,6 @@ import CurrencyLogo from "../CurrencyLogo";
 import DoubleCurrencyLogo from "../DoubleLogo";
 import { AutoRow, RowBetween, RowFixed } from "../Row";
 
-
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
 `;
@@ -295,7 +294,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
               </ExternalLink>
             </ButtonSecondary>
             {userDefaultPoolBalance && JSBI.greaterThan(userDefaultPoolBalance.raw, BIG_INT_ZERO) && (
-              <RowBetween style={{marginTop: "10px"}}>
+              <RowBetween style={{ marginTop: "10px" }}>
                 <ButtonPrimary
                   padding="8px"
                   $borderRadius="8px"

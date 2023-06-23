@@ -22,11 +22,7 @@ export const ButtonText = styled.button`
   }
 `;
 
-export const Button = styled.button.attrs<{ $warning: boolean }, { backgroundColor: string }>(
-  ({ $warning, theme }) => ({
-    backgroundColor: $warning ? theme.red1 : theme.primary1,
-  }),
-)`
+export const Button = styled.button<{ $warning: boolean }>`
   padding: 1rem 2rem 1rem 2rem;
   border-radius: 3rem;
   cursor: pointer;
@@ -34,17 +30,17 @@ export const Button = styled.button.attrs<{ $warning: boolean }, { backgroundCol
   font-size: 1rem;
   border: none;
   outline: none;
-  background-color: ${({ backgroundColor }) => backgroundColor};
+  background-color: ${({ $warning, theme }) => ($warning ? theme.red1 : theme.primary1)};
   color: ${({ theme }) => theme.white};
   width: 100%;
 
   &:hover,
   &:focus {
-    background-color: ${({ backgroundColor }) => darken(0.05, backgroundColor)};
+    background-color: ${({ $warning, theme }) => darken(0.05, $warning ? theme.red1 : theme.primary1)};
   }
 
   &:active {
-    background-color: ${({ backgroundColor }) => darken(0.1, backgroundColor)};
+    background-color: ${({ $warning, theme }) => darken(0.1, $warning ? theme.red1 : theme.primary1)};
   }
 
   &:disabled {
@@ -53,6 +49,38 @@ export const Button = styled.button.attrs<{ $warning: boolean }, { backgroundCol
     cursor: auto;
   }
 `;
+
+// export const Button = styled.button.attrs<{ $warning: boolean }, { backgroundColor: string }>(
+//   ({ $warning, theme }) => ({
+//     backgroundColor: $warning ? theme.red1 : theme.primary1,
+//   }),
+// )`
+//   padding: 1rem 2rem 1rem 2rem;
+//   border-radius: 3rem;
+//   cursor: pointer;
+//   user-select: none;
+//   font-size: 1rem;
+//   border: none;
+//   outline: none;
+//   background-color: ${({ backgroundColor }) => backgroundColor};
+//   color: ${({ theme }) => theme.white};
+//   width: 100%;
+
+//   &:hover,
+//   &:focus {
+//     background-color: ${({ backgroundColor }) => darken(0.05, backgroundColor)};
+//   }
+
+//   &:active {
+//     background-color: ${({ backgroundColor }) => darken(0.1, backgroundColor)};
+//   }
+
+//   &:disabled {
+//     background-color: ${({ theme }) => theme.bg1};
+//     color: ${({ theme }) => theme.text4};
+//     cursor: auto;
+//   }
+// `;
 
 export const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;

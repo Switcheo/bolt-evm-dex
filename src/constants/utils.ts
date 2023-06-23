@@ -3,7 +3,6 @@ import { Hash } from "viem";
 import { Percent } from "../utils/entities/fractions/percent";
 import { SupportedChainId } from "./chains";
 
-
 interface HashMap {
   [chainId: number]: Hash;
 }
@@ -19,7 +18,7 @@ export const INITIAL_ALLOWED_SLIPPAGE = 50;
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20;
 
-export const ONE_BIPS = new Percent(BigInt(1), BigInt(10000));
+export const ONE_BIPS = new Percent("1", "10000");
 
 export const INIT_CODE_HASH_MAP: HashMap = {
   [SupportedChainId.MAINNET]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",

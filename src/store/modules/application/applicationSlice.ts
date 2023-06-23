@@ -1,5 +1,5 @@
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
-import { TokenList } from "../lists/types";
+import { TokenList } from "@uniswap/token-lists";
 
 export type PopupContent =
   | {

@@ -147,7 +147,7 @@ export function CurrencySearch({
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>();
-  const handleInput = useCallback((event) => {
+  const handleInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
     const checksummedInput = isAddress(input) ? getAddress(input) : undefined;
     setSearchQuery(checksummedInput || input);
@@ -155,7 +155,7 @@ export function CurrencySearch({
   }, []);
 
   const handleEnter = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         const s = debouncedQuery.toLowerCase().trim();
         if (s === "eth") {

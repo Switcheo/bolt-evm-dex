@@ -208,7 +208,7 @@ export function useDerivedSwapInfo(): {
   };
 }
 
-function parseCurrencyFromURLParameter(urlParam: any): string {
+function parseCurrencyFromURLParameter(urlParam: string | string[] | ParsedQs | ParsedQs[] | undefined): string {
   if (typeof urlParam === "string") {
     const valid = isAddress(urlParam);
     if (valid) return getAddress(urlParam);
@@ -218,17 +218,17 @@ function parseCurrencyFromURLParameter(urlParam: any): string {
   return "ETH" ?? "";
 }
 
-function parseTokenAmountURLParameter(urlParam: any): string {
+function parseTokenAmountURLParameter(urlParam: string | string[] | ParsedQs | ParsedQs[] | undefined): string {
   return typeof urlParam === "string" && !isNaN(parseFloat(urlParam)) ? urlParam : "";
 }
 
-function parseIndependentFieldURLParameter(urlParam: any): Field {
+function parseIndependentFieldURLParameter(urlParam: string | string[] | ParsedQs | ParsedQs[] | undefined): Field {
   return typeof urlParam === "string" && urlParam.toLowerCase() === "output" ? Field.OUTPUT : Field.INPUT;
 }
 
 const ENS_NAME_REGEX = /^[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?$/;
 const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
-function validatedRecipient(recipient: any): string | null {
+function validatedRecipient(recipient: string | string[] | ParsedQs | ParsedQs[] | undefined): string | null {
   if (typeof recipient !== "string") return null;
   const address = isAddress(recipient) ? getAddress(recipient) : null;
   if (address) return address;

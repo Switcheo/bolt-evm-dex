@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Repeat } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
+import { Field } from "../../store/modules/swap/swapSlice";
 import { TYPE } from "../../theme";
 import { TradeType } from "../../utils/entities/constants";
 import { Trade } from "../../utils/entities/trade";

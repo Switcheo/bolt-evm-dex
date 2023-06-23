@@ -137,7 +137,7 @@ export function useSwapCallback(
               .then((gasEstimate) => {
                 return {
                   call,
-                  gasEstimate: gasEstimate.toBigInt(),
+                  gasEstimate: gasEstimate,
                 };
               })
               .catch((gasError) => {
@@ -214,7 +214,7 @@ export function useSwapCallback(
 
             return response.hash;
           })
-          .catch((error: Error) => {
+          .catch((error: { code: number; message: string }) => {
             // if the user rejected the tx, pass this along
             if (error?.code === 4001) {
               throw new Error("Transaction rejected.");

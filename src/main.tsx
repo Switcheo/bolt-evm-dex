@@ -16,12 +16,12 @@ import Mint from "./pages/Mint";
 import NotFound from "./pages/NotFound";
 import Pool from "./pages/Pool";
 import PoolFinder from "./pages/PoolFinder";
+import RedirectToSwap from "./pages/RedirectToSwap";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 import Swap from "./pages/Swap";
 import store from "./store";
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
 import Updaters from "./Updaters";
-
 
 const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
@@ -62,6 +62,10 @@ const router = createBrowserRouter([
     element: <BaseLayout />,
     errorElement: <NotFound />,
     children: [
+      {
+        path: "/",
+        element: <RedirectToSwap />,
+      },
       {
         path: "/swap",
         element: <Swap />,

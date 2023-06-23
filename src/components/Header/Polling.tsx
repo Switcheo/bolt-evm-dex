@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useBlockNumber, useNetwork } from "wagmi";
 import { TYPE } from "../../theme";
 import { ExternalLink } from "../../theme/components";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
-
-// import { getEtherscanLink } from "../../utils";
 
 const StyledPolling = styled.div`
   position: fixed;
