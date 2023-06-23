@@ -45,7 +45,7 @@ jobs:
             aws configure set preview.cloudfront true
             aws configure set region ap-southeast-1
             if [ "${CIRCLE_BRANCH}" = "develop" ]; then
-              aws s3 sync build s3://bolt-dex-ui/develop/ --delete
+              aws s3 sync build s3://bolt-dex-ui/staging/ --delete
               aws cloudfront create-invalidation --distribution-id="E1OAHUIJRF4E9W" --paths=/*
             elif [ "${CIRCLE_BRANCH}" = "master" ]; then
               aws s3 sync build s3://bolt-dex-ui/master/ --delete
