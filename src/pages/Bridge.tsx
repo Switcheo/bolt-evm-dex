@@ -8,6 +8,7 @@ import ChainLogo from "../components/ChainLogo";
 import { AutoColumn } from "../components/Column";
 import ConfirmBridgeModal from "../components/ConfirmBridgeModal";
 import Menus from "../components/Menu";
+import SwitchNetworkModal from "../components/SwitchNetworkModal";
 import {
   BridgingChainIdToNameRecord,
   convertToSupportedBridgingChainId,
@@ -138,6 +139,8 @@ const Bridge = () => {
     txHash: undefined,
   });
 
+  const [showSwitchNetworkModal, setShowSwitchNetworkModal] = useState(false);
+
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork, isLoading, isError } = useSwitchNetwork();
@@ -163,7 +166,6 @@ const Bridge = () => {
   const handleCurrencySelect = useCallback(
     (inputCurrency: BridgeableToken) => {
       dispatch(setSelectedCurrency(serializeBridgeableToken(inputCurrency)));
-      console.log(pendingBridgeTx?.destToken?.tokenDenom);
       dispatch(fetchHydrogenFees(pendingBridgeTx?.destToken?.tokenDenom ?? ""));
     },
     [dispatch, pendingBridgeTx?.destToken?.tokenDenom],
@@ -192,6 +194,15 @@ const Bridge = () => {
       showConfirm,
     });
   }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
+
+  const handleSwitchNetwork = useCallback(() => {
+    if (switchNetwork) {
+      switchNetwork(getOfficialChainIdFromBridgingChainId(sourceChain));
+    }
+
+    setShowSwitchNetworkModal(false);
+    dispatch(setSelectedCurrency(null));
+  }, [dispatch, sourceChain, switchNetwork]);
 
   const handleBridge = useCallback(async () => {
     if (!bridgeCallback) {
@@ -227,26 +238,29 @@ const Bridge = () => {
     }
   }, [bridgeCallback, pendingBridgeTx, showConfirm, bridgeErrorMessage, bridgeToConfirm]);
 
-  // Effects
-  // Need to fix if user manually change forom metamask instead
   useEffect(() => {
-    if (sourceChain !== chain?.id && chain?.id) {
-      if (switchNetwork) {
-        const originalChainId = getOfficialChainIdFromBridgingChainId(sourceChain);
-        switchNetwork(originalChainId);
-        dispatch(setSelectedCurrency(null));
-      }
+    if (chain?.id && sourceChain && getOfficialChainIdFromBridgingChainId(sourceChain) !== chain?.id) {
+      setShowSwitchNetworkModal(true);
     }
-  }, [chain?.id, dispatch, sourceChain, switchNetwork]);
+  }, [sourceChain, chain?.id]);
 
   // Fetch fees whenever the destination chain changes
   useEffect(() => {
+    if (!pendingBridgeTx?.destToken?.tokenDenom) {
+      return;
+    }
     dispatch(fetchHydrogenFees(pendingBridgeTx?.destToken?.tokenDenom ?? ""));
   }, [dispatch, pendingBridgeTx?.destToken?.tokenDenom]);
 
   return (
     <BridgeBody>
       <Wrapper id="bridge-page">
+        <SwitchNetworkModal
+          isOpen={showSwitchNetworkModal}
+          onDismiss={() => setShowSwitchNetworkModal(false)}
+          chainId={sourceChain}
+          onConfirm={handleSwitchNetwork}
+        />
         <ConfirmBridgeModal
           isOpen={showConfirm}
           bridgeTx={pendingBridgeTx}

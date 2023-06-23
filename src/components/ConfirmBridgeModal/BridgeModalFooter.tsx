@@ -47,8 +47,8 @@ export default function BridgeModalFooter({
               paddingLeft: "10px",
             }}
           >
-            {(BigInt(withdrawFee ?? "0") / BigInt(10) ** BigInt(bridgeTx.destToken?.decimals ?? 8)).toString(10)}
-            ETH ~$0.08
+            {(BigInt(withdrawFee ?? "0") / BigInt(10) ** BigInt(bridgeTx.destToken?.decimals ?? 8)).toString(10)}{" "}
+            {bridgeTx.destToken?.symbol} ~$0.08
           </Text>
         </RowBetween>
         <RowBetween>

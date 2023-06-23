@@ -31,7 +31,7 @@ const BridgeHistoryTable = () => {
   const { data, isLoading } = useGetRelaysQuery(
     {
       bridgeType: "polynetwork",
-      searchTerm: address,
+      // searchTerm: address,
     },
     {
       refetchOnFocus: false,

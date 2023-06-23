@@ -22,11 +22,11 @@ export const ChainIdToNameRecord: Record<SupportedChainId, string> = {
 };
 
 // Create Bridging ChainId To Name
-export const BridgingChainIdToNameRecord: Record<SupportedBridgingChainId, string> = {
+export const BridgingChainIdToNameRecord: Partial<Record<SupportedBridgingChainId, string>> = {
   [SupportedBridgingChainId.MAINNET]: "Ethereum",
   [SupportedBridgingChainId.POLYGON]: "Polygon",
   [SupportedBridgingChainId.BSC]: "Binance Smart Chain",
-  [SupportedBridgingChainId.CARBON]: "Carbon",
+  // [SupportedBridgingChainId.CARBON]: "Carbon",
 };
 
 export function recordEntries<K extends PropertyKey, T>(object: Record<K, T>) {

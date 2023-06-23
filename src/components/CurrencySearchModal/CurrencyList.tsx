@@ -22,7 +22,8 @@ import { RowBetween, RowFixed } from "../Row";
 import { MouseoverTooltip } from "../Tooltip";
 import ImportRow from "./ImportRow";
 
-function currencyKey(currency: Currency): string {
+function currencyKey(currency: Currency | undefined): string {
+  if (!currency) return "";
   return currency instanceof Token ? currency.address : currency === ETHER ? "ETHER" : "";
 }
 
@@ -260,7 +261,7 @@ export default function CurrencyList({
     ],
   );
 
-  const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), []);
+  const itemKey = useCallback((index: number, data: (Currency | undefined)[]) => currencyKey(data[index]), []);
 
   return (
     <FixedSizeList

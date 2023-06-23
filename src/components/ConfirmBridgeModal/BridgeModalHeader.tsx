@@ -2,6 +2,10 @@ import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { isAddress } from "viem";
+import {
+  getChainNameFromBridgingId,
+  SupportedBridgingChainId,
+} from "../../constants/chains";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { TYPE } from "../../theme";
 import { shortenString } from "../../utils/format";
@@ -35,9 +39,14 @@ export default function BridgeModalHeader({
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
-          <Text fontSize={24} fontWeight={500} style={{ marginLeft: "10px" }}>
-            {bridgeTx.srcToken?.symbol}
-          </Text>
+          <AutoColumn justify="flex-end">
+            <Text fontSize={16} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
+              {bridgeTx.srcToken?.name}
+            </Text>
+            <Text fontSize={12} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
+              {getChainNameFromBridgingId(bridgeTx.srcToken?.bridgeChainId as SupportedBridgingChainId)}
+            </Text>
+          </AutoColumn>
         </RowFixed>
       </RowBetween>
       <RowFixed>
@@ -51,9 +60,14 @@ export default function BridgeModalHeader({
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
-          <Text fontSize={24} fontWeight={500} style={{ marginLeft: "10px" }}>
-            {bridgeTx.destToken?.symbol}
-          </Text>
+          <AutoColumn justify="flex-end">
+            <Text fontSize={16} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
+              {bridgeTx.destToken?.name}
+            </Text>
+            <Text fontSize={12} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
+              {getChainNameFromBridgingId(bridgeTx.destToken?.bridgeChainId as SupportedBridgingChainId)}
+            </Text>
+          </AutoColumn>
         </RowFixed>
       </RowBetween>
       {/* {showAcceptChanges ? (

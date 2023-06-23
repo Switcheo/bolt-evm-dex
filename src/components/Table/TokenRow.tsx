@@ -291,7 +291,7 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HT
   const {
     id,
     date,
-    assetName,
+    // assetName,
     assetSymbol,
     sourceChain,
     destinationChain,
@@ -307,10 +307,10 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HT
       {/* <StyledLink to={"#"}> */}
       <TokenRow
         header={false}
-        date={date}
+        date={new Date(date).toLocaleDateString()}
         tokenInfo={
           <TokenInfoCell>
-            <TokenName data-cy="token-name">{assetName}</TokenName>
+            {/* <TokenName data-cy="token-name">{assetName}</TokenName> */}
             <TokenSymbol>{assetSymbol}</TokenSymbol>
           </TokenInfoCell>
         }

@@ -13,7 +13,6 @@ import Column, { AutoColumn } from "../Column";
 import Row, { RowBetween } from "../Row";
 import BridgeableTokensList from "./BridgeableTokensList";
 
-
 const ContentWrapper = styled(Column)`
   width: 100%;
   flex: 1 1;
@@ -72,7 +71,7 @@ const BridgeCurrencySearch = ({ selectedCurrency, onCurrencySelect, onDismiss, i
   const [filteredTokens, setFilteredTokens] = useState<BridgeableToken[]>([]);
 
   // refs for fixed size lists
- const fixedList = useRef<FixedSizeList<(BridgeableToken | undefined)[]>>();
+  const fixedList = useRef<FixedSizeList<(BridgeableToken | undefined)[]>>();
   const inputRef = useRef<HTMLInputElement>();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
