@@ -7,6 +7,7 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
   build: {
     target: "es2020",
+    outDir: "./build",
   },
   plugins: [react(), svgr(), Inspect()],
 });
