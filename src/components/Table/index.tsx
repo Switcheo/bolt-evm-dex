@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import { useAccount } from "wagmi";
 import { useGetRelaysQuery } from "../../store/modules/bridgeHistory/services/bridgeHistory";
 import { HeaderRow, LoadedRow } from "./TokenRow";
-import { useAccount } from "wagmi";
 
 const GridContainer = styled.div`
   display: flex;
@@ -28,12 +28,15 @@ const TokenDataContainer = styled.div`
 
 const BridgeHistoryTable = () => {
   const { address } = useAccount();
-  const { data, error, isLoading } = useGetRelaysQuery({
-    bridgeType: "polynetwork",
-    searchTerm: address,
-  }, {
-    refetchOnFocus: false,
-  });
+  const { data, isLoading } = useGetRelaysQuery(
+    {
+      bridgeType: "polynetwork",
+      searchTerm: address,
+    },
+    {
+      refetchOnFocus: false,
+    },
+  );
 
   if (isLoading || !data) {
     return <div>Loading...</div>;
@@ -59,9 +62,7 @@ const BridgeHistoryTable = () => {
             moreDetails={transaction.status}
           />
         ))}
-        {data.data.length === 0 && (
-          <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>
-        )}
+        {data.data.length === 0 && <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>}
       </TokenDataContainer>
     </GridContainer>
   );

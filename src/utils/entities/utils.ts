@@ -1,9 +1,7 @@
-
 import JSBI from "jsbi";
 import invariant from "tiny-invariant";
-import warning from "tiny-warning";
-import { BigintIsh, ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from "./constants";
 import { getAddress } from "viem";
+import { BigintIsh, ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from "./constants";
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
   invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`);
@@ -77,6 +75,6 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
       }
     }
     items.splice(lo, 0, add);
-    return isFull ? items.pop()! : null;
+    return isFull ? items.pop() : null;
   }
 }

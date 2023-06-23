@@ -78,7 +78,7 @@ const bridgeSlice = createSlice({
         state.status = "rejected";
         state.error = action.error.message ? action.error.message : null;
         state.bridgeFees = "0";
-      })
+      });
   },
 });
 

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { TYPE } from "../../theme";
 import { RowBetween } from "../Row";
+import Settings from "../Settings";
 
 // import Settings from "../Settings";
 
@@ -17,7 +18,7 @@ export default function SwapHeader() {
     <StyledSwapHeader>
       <RowBetween>
         <TYPE.black fontWeight={500}>Swap</TYPE.black>
-        {/* <Settings /> */}
+        <Settings />
       </RowBetween>
     </StyledSwapHeader>
   );

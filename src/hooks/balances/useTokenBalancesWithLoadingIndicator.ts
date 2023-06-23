@@ -1,5 +1,6 @@
+import JSBI from "jsbi";
 import { useMemo } from "react";
-import { Address } from "viem";
+import { isAddress } from "viem";
 import { ERC20_INTERFACE } from "../../constants/abis";
 import { useMultipleContractSingleData } from "../../store/modules/multicall/hooks";
 import { TokenAmount } from "../../utils/entities/fractions/tokenAmount";
@@ -9,30 +10,34 @@ import { Token } from "../../utils/entities/token";
  * Returns a map of token addresses to their eventually consistent token balances for a single account.
  */
 export function useTokenBalancesWithLoadingIndicator(
-  userAddress: Address | undefined,
-  tokens: (Token | undefined)[],
+  address?: string,
+  tokens?: (Token | undefined)[],
 ): [{ [tokenAddress: string]: TokenAmount | undefined }, boolean] {
-  const tokenAddresses = useMemo(() => tokens.map((vt) => vt?.address), [tokens]);
+  const validatedTokens: Token[] = useMemo(
+    () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address ?? "") !== false) ?? [],
+    [tokens],
+  );
 
-  const balances = useMultipleContractSingleData(tokenAddresses, ERC20_INTERFACE, "balanceOf", [userAddress]);
+  const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens]);
+
+  const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, "balanceOf", [address]);
 
   const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances]);
 
   return [
     useMemo(
       () =>
-        userAddress && tokens.length > 0
-          ? tokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
-              if (!token) return memo;
+        address && validatedTokens.length > 0
+          ? validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
               const value = balances?.[i]?.result?.[0];
-              const amount = value ? BigInt(value.toString()) : undefined;
+              const amount = value ? JSBI.BigInt(value.toString()) : undefined;
               if (amount) {
                 memo[token.address] = new TokenAmount(token, amount);
               }
               return memo;
             }, {})
           : {},
-      [userAddress, tokens, balances],
+      [address, validatedTokens, balances],
     ),
     anyLoading,
   ];

@@ -1,12 +1,15 @@
 import { darken } from "polished";
 import { useCallback, useState } from "react";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { ReactComponent as DropDown } from "../../assets/images/dropdown.svg";
-import { Token } from "../../constants/tokens";
+import { useCurrencyBalance } from "../../hooks/balances/useCurrencyBalance";
 import { TYPE } from "../../theme";
 import { Currency } from "../../utils/entities/currency";
+import { Pair } from "../../utils/entities/pair";
+import CurrencyLogo from "../CurrencyLogo";
 import CurrencySearchModal from "../CurrencySearchModal";
+import DoubleCurrencyLogo from "../DoubleLogo";
 import NumericalInput from "../NumericalInput";
 import { RowBetween } from "../Row";
 
@@ -111,49 +114,43 @@ const LabelRow = styled.div`
 
 interface CurrencyInputPanelProps {
   value: string;
-  showMaxButton: boolean;
-  id: string;
-  hideBalance?: boolean;
-  customBalanceText?: string;
-  label?: string;
-  currency?: Token | null;
-  showCommonBases?: boolean;
-  disableCurrencySelect?: boolean;
-  otherCurrency?: Currency | null;
   onUserInput: (value: string) => void;
-  onCurrencySelect?: (currency: Token) => void;
   onMax?: () => void;
+  showMaxButton: boolean;
+  label?: string;
+  onCurrencySelect?: (currency: Currency) => void;
+  currency?: Currency | null;
+  disableCurrencySelect?: boolean;
+  hideBalance?: boolean;
+  pair?: Pair | null;
+  hideInput?: boolean;
+  otherCurrency?: Currency | null;
+  id: string;
+  showCommonBases?: boolean;
+  customBalanceText?: string;
 }
 
-const CurrencyInputPanel = ({
+export default function CurrencyInputPanel({
   value,
-  showMaxButton,
-  id,
-  hideBalance = false,
-  customBalanceText,
-  label = "Input",
-  currency,
   onUserInput,
-  onCurrencySelect,
-  showCommonBases,
-  disableCurrencySelect = false,
-  otherCurrency,
   onMax,
-}: CurrencyInputPanelProps) => {
+  showMaxButton,
+  label = "Input",
+  onCurrencySelect,
+  currency,
+  disableCurrencySelect = false,
+  hideBalance = false,
+  pair = null, // used for double token logo
+  hideInput = false,
+  otherCurrency,
+  id,
+  showCommonBases,
+  customBalanceText,
+}: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false);
-
   const { address } = useAccount();
+  const selectedCurrencyBalance = useCurrencyBalance(address ?? undefined, currency ?? undefined);
   const theme = useTheme();
-  const { chain } = useNetwork();
-  const {
-    data: selectedCurrencyBalance,
-    isError,
-    isLoading,
-  } = useBalance({
-    address,
-    chainId: chain?.id,
-    token: currency?.address,
-  });
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false);
@@ -161,38 +158,44 @@ const CurrencyInputPanel = ({
 
   return (
     <InputPanel id={id}>
-      <Container $hideInput={false}>
-        <LabelRow>
-          <RowBetween>
-            <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>
-              {label}
-            </TYPE.body>
-            {address && (
-              <TYPE.body
-                onClick={onMax}
-                color={theme?.text2}
-                fontWeight={500}
-                fontSize={14}
-                style={{ display: "inline", cursor: "pointer" }}
-              >
-                {!hideBalance && !!currency && selectedCurrencyBalance && !isError && !isLoading
-                  ? (customBalanceText ?? "Balance: ") + selectedCurrencyBalance.formatted
-                  : " -"}
+      <Container $hideInput={hideInput}>
+        {!hideInput && (
+          <LabelRow>
+            <RowBetween>
+              <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>
+                {label}
               </TYPE.body>
-            )}
-          </RowBetween>
-        </LabelRow>
-        <InputRow $selected>
-          <>
-            <NumericalInput
-              className="token-amount-input"
-              value={value}
-              onUserInput={(val) => {
-                onUserInput(val);
-              }}
-            />
-            {address && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>}
-          </>
+              {address && (
+                <TYPE.body
+                  onClick={onMax}
+                  color={theme?.text2}
+                  fontWeight={500}
+                  fontSize={14}
+                  style={{ display: "inline", cursor: "pointer" }}
+                >
+                  {!hideBalance && !!currency && selectedCurrencyBalance
+                    ? (customBalanceText ?? "Balance: ") + selectedCurrencyBalance?.toSignificant(6)
+                    : " -"}
+                </TYPE.body>
+              )}
+            </RowBetween>
+          </LabelRow>
+        )}
+        <InputRow style={hideInput ? { padding: "0", borderRadius: "8px" } : {}} $selected={disableCurrencySelect}>
+          {!hideInput && (
+            <>
+              <NumericalInput
+                className="token-amount-input"
+                value={value}
+                onUserInput={(val) => {
+                  onUserInput(val);
+                }}
+              />
+              {address && currency && showMaxButton && label !== "To" && (
+                <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+              )}
+            </>
+          )}
           <CurrencySelect
             $selected={!!currency}
             className="open-currency-select-button"
@@ -203,14 +206,25 @@ const CurrencyInputPanel = ({
             }}
           >
             <Aligner>
-              <StyledTokenName className="token-symbol-container" $active={Boolean(currency && currency.symbol)}>
-                {(currency && currency.symbol && currency.symbol.length > 20
-                  ? currency.symbol.slice(0, 4) +
-                    "..." +
-                    currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                  : currency?.symbol) || "Select Token"}
-              </StyledTokenName>
-              <StyledDropDown $selected={!!currency} />
+              {pair ? (
+                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+              ) : currency ? (
+                <CurrencyLogo currency={currency} size={"24px"} />
+              ) : null}
+              {pair ? (
+                <StyledTokenName className="pair-name-container">
+                  {pair?.token0.symbol}:{pair?.token1.symbol}
+                </StyledTokenName>
+              ) : (
+                <StyledTokenName className="token-symbol-container" $active={Boolean(currency && currency.symbol)}>
+                  {(currency && currency.symbol && currency.symbol.length > 20
+                    ? currency.symbol.slice(0, 4) +
+                      "..." +
+                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                    : currency?.symbol) || "Select a token"}
+                </StyledTokenName>
+              )}
+              {!disableCurrencySelect && <StyledDropDown $selected={!!currency} />}
             </Aligner>
           </CurrencySelect>
         </InputRow>
@@ -227,6 +241,4 @@ const CurrencyInputPanel = ({
       )}
     </InputPanel>
   );
-};
-
-export default CurrencyInputPanel;
+}

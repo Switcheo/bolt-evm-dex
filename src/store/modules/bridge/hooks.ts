@@ -9,7 +9,8 @@ export function useBridgeState() {
 
 // From the current bridging Inputs, we get the bridge trade details
 export function useDerivedBridgeInfo() {
-  const { sourceChain, destinationChain, selectedCurrency, sourceAmount, bridgeableTokens, bridgeFees } = useBridgeState();
+  const { sourceChain, destinationChain, selectedCurrency, sourceAmount, bridgeableTokens, bridgeFees } =
+    useBridgeState();
 
   const { address } = useAccount();
 

@@ -6,7 +6,6 @@ import { SupportedChainId } from "../constants/chains";
 import { Token } from "../utils/entities/token";
 import uriToHttp from "../utils/uriToHttp";
 
-
 async function getColorFromToken(token: Token): Promise<string | null> {
   if (token.chainId === SupportedChainId.BOLTCHAIN) {
     return Promise.resolve("#FAAB14");

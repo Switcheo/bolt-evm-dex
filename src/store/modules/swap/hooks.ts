@@ -1,11 +1,12 @@
+import { ParsedQs } from "qs";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { getAddress, isAddress, parseUnits } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useCurrencyBalances } from "../../../hooks/balances/useCurrencyBalance";
 import { useCurrency } from "../../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../../hooks/Trades";
 import useENS from "../../../hooks/useENS";
+import useParsedQueryString from "../../../hooks/useParsedQueryString";
 import { Currency, ETHER } from "../../../utils/entities/currency";
 import { CurrencyAmount } from "../../../utils/entities/fractions/currencyAmount";
 import { TokenAmount } from "../../../utils/entities/fractions/tokenAmount";
@@ -236,20 +237,18 @@ function validatedRecipient(recipient: any): string | null {
   return null;
 }
 
-export function queryParametersToSwapState(...args: string[]): SwapState {
-  const currencyInput = args[0];
-  const currencyOutput = args[1];
-  let inputCurrency = parseCurrencyFromURLParameter(currencyInput);
-  let outputCurrency = parseCurrencyFromURLParameter(currencyOutput);
+export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
+  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency);
+  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency);
   if (inputCurrency === outputCurrency) {
-    if (typeof currencyOutput === "string") {
+    if (typeof parsedQs.outputCurrency === "string") {
       inputCurrency = "";
     } else {
       outputCurrency = "";
     }
   }
 
-  const recipient = validatedRecipient(args[2]);
+  const recipient = validatedRecipient(parsedQs.recipient);
 
   return {
     [Field.INPUT]: {
@@ -266,41 +265,30 @@ export function queryParametersToSwapState(...args: string[]): SwapState {
 
 // updates the swap state to use the defaults for a given network
 export function useDefaultsFromURLSearch():
-  | {
-      inputCurrencyId: string | undefined;
-      outputCurrencyId: string | undefined;
-    }
+  | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
   | undefined {
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
   const dispatch = useAppDispatch();
-  const { currencyIdA, currencyIdB } = useParams();
+  const parsedQs = useParsedQueryString();
   const [result, setResult] = useState<
-    | {
-        inputCurrencyId: string | undefined;
-        outputCurrencyId: string | undefined;
-      }
-    | undefined
+    { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined
   >();
 
   useEffect(() => {
     if (!chainId) return;
-    const parsed = queryParametersToSwapState(currencyIdA, currencyIdB);
+    const parsed = queryParametersToSwapState(parsedQs);
 
     dispatch(
       replaceSwapState({
         typedValue: parsed.typedValue,
         field: parsed.independentField,
-        inputCurrencyId: currencyIdA,
-        outputCurrencyId: currencyIdB,
+        inputCurrencyId: parsed[Field.INPUT].currencyId,
+        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
         recipient: parsed.recipient,
       }),
     );
 
-    setResult({
-      inputCurrencyId: parsed[Field.INPUT].currencyId,
-      outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-    });
+    setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId: parsed[Field.OUTPUT].currencyId });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, chainId]);
 

@@ -1,10 +1,10 @@
-import { ChangeEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Edit } from "react-feather";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { isAddress } from "viem";
+import { getAddress, isAddress } from "viem";
 import { useNetwork } from "wagmi";
 import { useAllTokens, useFoundOnInactiveList, useIsUserAddedToken, useToken } from "../../hooks/Tokens";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -98,8 +98,7 @@ export function CurrencySearch({
   showImportView,
   setImportToken,
 }: CurrencySearchProps) {
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
   const theme = useTheme();
 
   // refs for fixed size lists
@@ -110,10 +109,9 @@ export function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false);
 
-  const allTokens = useAllTokens();
+  const allTokens = useAllTokens(); // This gives all the tokens on the current chain
 
   // if they input an address, use it
-  const isAddressSearch = isAddress(debouncedQuery);
   const searchToken = useToken(debouncedQuery);
   const searchTokenIsAdded = useIsUserAddedToken(searchToken);
 
@@ -149,9 +147,9 @@ export function CurrencySearch({
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>();
-  const handleInput = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+  const handleInput = useCallback((event) => {
     const input = event.target.value;
-    const checksummedInput = isAddress(input) ? input : undefined;
+    const checksummedInput = isAddress(input) ? getAddress(input) : undefined;
     setSearchQuery(checksummedInput || input);
     fixedList.current?.scrollTo(0);
   }, []);
@@ -177,8 +175,8 @@ export function CurrencySearch({
 
   // menu ui
   const [open, toggle] = useToggle(false);
-  const node = useRef<HTMLDivElement | null>(null);
-  useOnClickOutside(node, toggle);
+  const node = useRef<HTMLDivElement>();
+  useOnClickOutside(node, open ? toggle : undefined);
 
   // if no results on main list, show option to expand into inactive
   const inactiveTokens = useFoundOnInactiveList(debouncedQuery);

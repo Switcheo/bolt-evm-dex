@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { ReactComponent as BoltchainLogo } from "../../assets/svg/bridge-assets-list/bolt-logo.svg";
 import { ReactComponent as BSCLogo } from "../../assets/svg/bridge-assets-list/bsc-logo.svg";
 import { ReactComponent as EthereumLogo } from "../../assets/svg/bridge-assets-list/ethereum-logo.svg";
@@ -6,7 +7,7 @@ import { SupportedChainId } from "../../constants/chains";
 
 interface Props {
   chain: SupportedChainId;
-  style?: any;
+  style?: CSSProperties;
 }
 
 const ChainLogo = (props: Props) => {

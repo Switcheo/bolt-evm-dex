@@ -1,10 +1,13 @@
 import { CSSProperties, ForwardedRef, forwardRef, ReactNode } from "react";
 import { ChevronRight } from "react-feather";
 import styled, { css } from "styled-components";
-import { ClickableStyle } from "../../theme";
 import { formatTransactionHash } from "../../utils/format";
-import { LARGE_MEDIA_BREAKPOINT, MAX_WIDTH_MEDIA_BREAKPOINT, MEDIUM_MEDIA_BREAKPOINT, SMALL_MEDIA_BREAKPOINT } from "./constants";
-
+import {
+  LARGE_MEDIA_BREAKPOINT,
+  MAX_WIDTH_MEDIA_BREAKPOINT,
+  MEDIUM_MEDIA_BREAKPOINT,
+  SMALL_MEDIA_BREAKPOINT,
+} from "./constants";
 
 export enum TokenSortMethod {
   PRICE = "Price",
@@ -75,19 +78,6 @@ const MoreDetailsCell = styled(Cell)`
   padding: 0px 8px;
   /* min-width: 240px; */
   gap: 8px;
-`;
-
-const HeaderCellWrapper = styled.span<{ onClick?: () => void }>`
-  align-items: center;
-  cursor: ${({ onClick }) => (onClick ? "pointer" : "unset")};
-  display: flex;
-  gap: 4px;
-  justify-content: flex-end;
-  width: 100%;
-
-  &:hover {
-    ${ClickableStyle}
-  }
 `;
 
 const StyledTokenRow = styled.div<{

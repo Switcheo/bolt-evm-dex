@@ -1,10 +1,9 @@
-import { AlertTriangle, ArrowUpCircle, Circle } from "react-feather";
+import { AlertTriangle, ArrowUpCircle } from "react-feather";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useNetwork } from "wagmi";
+import { useNetwork } from "wagmi";
+import Circle from "../../assets/images/blue-loader.svg";
 import { SupportedChainId } from "../../constants/chains";
-import { useAppDispatch } from "../../store/hooks";
-import { fetchHydrogenFees } from "../../store/modules/bridge/services/api";
 import { CloseIcon, CustomLightSpinner, ExternalLink } from "../../theme";
 import { Currency } from "../../utils/entities/currency";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
@@ -28,12 +27,6 @@ const BottomSection = styled(Section)`
 
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
-`;
-
-const StyledLogo = styled.img`
-  height: 16px;
-  width: 16px;
-  margin-left: 6px;
 `;
 
 function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
@@ -69,7 +62,6 @@ function TransactionSubmittedContent({
   onDismiss,
   chainId,
   hash,
-  currencyToAdd,
 }: {
   onDismiss: () => void;
   hash: string | undefined;
@@ -78,7 +70,9 @@ function TransactionSubmittedContent({
 }) {
   const theme = useTheme();
 
-  // const { addToken, success } = useAddTokenToMetamask(currencyToAdd);
+  // const { library } = useActiveWeb3React()
+
+  // const { addToken, success } = useAddTokenToMetamask(currencyToAdd)
 
   return (
     <Wrapper>
@@ -109,8 +103,8 @@ function TransactionSubmittedContent({
                 </RowFixed>
               ) : (
                 <RowFixed>
-                  Added {currencyToAdd.symbol}{" "}
-                  <CheckCircle size={"16px"} stroke={theme.green1} style={{ marginLeft: "6px" }} />
+                  Added {currencyToAdd.symbol}{' '}
+                  <CheckCircle size={'16px'} stroke={theme.green1} style={{ marginLeft: '6px' }} />
                 </RowFixed>
               )}
             </ButtonLight>
@@ -197,8 +191,7 @@ export default function TransactionConfirmationModal({
   content,
   currencyToAdd,
 }: ConfirmationModalProps) {
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
 
   if (!chainId) return null;
 

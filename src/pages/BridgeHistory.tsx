@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { ButtonPrimary } from "../components/Button";
-import { RowBetween, RowFixed } from "../components/Row";
-import BridgeHistoryTable from "../components/Table";
 import { Plus } from "react-feather";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { ButtonPrimary } from "../components/Button";
+import { RowBetween } from "../components/Row";
+import BridgeHistoryTable from "../components/Table";
 
 const ActiveText = styled.div`
   font-weight: 500;
@@ -38,7 +38,10 @@ const BridgeHistory = () => {
       <TitleContainer>
         <RowBetween>
           <ActiveText>Bridging History</ActiveText>
-          <ButtonPrimary as={Link} to="/bridge" width="unset" padding="10px 16px" $borderRadius="16px"><Plus size={16} style={{marginRight: 8}} />New Transfer</ButtonPrimary>
+          <ButtonPrimary as={Link} to="/bridge" width="unset" padding="10px 16px" $borderRadius="16px">
+            <Plus size={16} style={{ marginRight: 8 }} />
+            New Transfer
+          </ButtonPrimary>
         </RowBetween>
       </TitleContainer>
 

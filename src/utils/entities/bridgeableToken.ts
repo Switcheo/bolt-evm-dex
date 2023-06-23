@@ -2,7 +2,6 @@ import { SupportedBridgingChainId, SupportedChainId } from "../../constants/chai
 import { Token } from "./token";
 import { validateAndParseAddress } from "./utils";
 
-
 export class BridgeableToken extends Token {
   public readonly bridgeChainId: SupportedBridgingChainId | 4;
   public readonly bridgeAddress: string; // essentially the lockProxy address

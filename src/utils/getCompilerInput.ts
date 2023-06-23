@@ -15,7 +15,7 @@ const findNestedImports = (filepath: string, processedFiles: Set<string>): strin
   const fileContent = COMPILED_LIBRARIES[modifiedFilePath].content;
   let imports = extractImports(fileContent);
 
-  imports.forEach((importFile, i) => {
+  imports.forEach((importFile) => {
     imports = imports.concat(findNestedImports(importFile, processedFiles));
   });
 

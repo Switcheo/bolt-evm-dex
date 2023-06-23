@@ -1,11 +1,12 @@
-import JSBI from "jsbi";
+import { TransactionResponse } from "@ethersproject/providers";
 import { useMemo } from "react";
-import { Hash, parseUnits } from "viem";
+import { parseUnits } from "viem";
 import { useAccount, useNetwork } from "wagmi";
-import { prepareWriteContract, writeContract } from "wagmi/actions";
+import { prepareWriteContract, waitForTransaction, writeContract } from "wagmi/actions";
 import { wethABI } from "../constants/abis";
 import { WETH_ADDRESSES } from "../constants/addresses";
 import { WETH_TOKENS } from "../constants/tokens";
+import { useTransactionAdder } from "../store/modules/transactions/hooks";
 import { Currency, ETHER } from "../utils/entities/currency";
 import { CurrencyAmount } from "../utils/entities/fractions/currencyAmount";
 import { TokenAmount } from "../utils/entities/fractions/tokenAmount";
@@ -16,18 +17,6 @@ export enum WrapType {
   NOT_APPLICABLE,
   WRAP,
   UNWRAP,
-}
-
-interface WrapCallbackProps {
-  inputCurrency: Token;
-  outputCurrency: Token;
-  typedValue: string;
-}
-
-interface WrapCallbackResponse {
-  wrapType: WrapType;
-  execute?: undefined | (() => Promise<Hash>);
-  inputError?: string;
 }
 
 // try to parse a user entered amount for a given token
@@ -50,29 +39,64 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
   return undefined;
 }
 
-const wrapEther = async (inputAmount: JSBI, outputCurrency: Token, address: string, chainId: number) => {
+interface WrapCallbackArgs {
+  inputAmount: CurrencyAmount;
+  chainId: number;
+  addTransaction: (
+    response: TransactionResponse,
+    customData?:
+      | {
+          summary?: string | undefined;
+          approval?:
+            | {
+                tokenAddress: string;
+                spender: string;
+              }
+            | undefined;
+          claim?:
+            | {
+                recipient: string;
+              }
+            | undefined;
+        }
+      | undefined,
+  ) => void;
+}
+
+const wrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
   const data = await prepareWriteContract({
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
     functionName: "deposit",
-    value: BigInt(inputAmount.toString()),
+    value: BigInt(inputAmount.raw.toString()),
   });
   const { hash } = await writeContract(data.request);
 
-  return hash;
+  await waitForTransaction({
+    hash,
+    chainId,
+  });
+  // addTransaction(hash, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
 };
 
-const unwrapEther = async (inputAmount: JSBI, outputCurrency: Token, address: string, chainId: number) => {
+const unwrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
   const data = await prepareWriteContract({
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
     functionName: "withdraw",
-    args: [BigInt(inputAmount.toString())],
+    args: [BigInt(inputAmount.raw.toString())],
   });
   const { hash } = await writeContract(data.request);
+  // data.
+  const transactionReceipt = await waitForTransaction({
+    hash,
+    chainId,
+  });
 
-  return hash;
+  // addTransaction(transactionResponse, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
 };
+
+const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE };
 
 /**
  * Given the selected input and output currency, return a wrap callback
@@ -80,47 +104,44 @@ const unwrapEther = async (inputAmount: JSBI, outputCurrency: Token, address: st
  * @param outputCurrency the selected output currency
  * @param typedValue the user input value
  */
-export const useWrapCallback = ({
-  inputCurrency,
-  outputCurrency,
-  typedValue,
-}: WrapCallbackProps): WrapCallbackResponse => {
+export default function useWrapCallback(
+  inputCurrency: Currency | undefined,
+  outputCurrency: Currency | undefined,
+  typedValue: string | undefined,
+): { wrapType: WrapType; execute?: undefined | (() => Promise<void>); inputError?: string } {
   const { address } = useAccount();
-  const { chain } = useNetwork();
-  // const { data: balanceData } = useBalance({ address, chainId: chain?.id, token: inputCurrency.address });
-  // const { data: balanceData } = useBalance({ address, chainId: chain?.id, token: inputCurrency.address });
+  const chainId = useNetwork()?.chain?.id;
+
   const balance = useCurrencyBalance(address ?? undefined, inputCurrency);
-
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
-  const inputAmount = useMemo(
-    () => tryParseAmount(typedValue as `${number}`, inputCurrency),
-    [inputCurrency, typedValue],
-  );
+  const inputAmount = useMemo(() => tryParseAmount(typedValue, inputCurrency), [inputCurrency, typedValue]);
+  const addTransaction = useTransactionAdder();
 
-  if (!chain?.id || !inputCurrency || !outputCurrency || !address) return { wrapType: WrapType.NOT_APPLICABLE };
+  return useMemo(() => {
+    if (!chainId || !inputCurrency || !outputCurrency || !address) return NOT_APPLICABLE;
 
-  const sufficientBalance = inputAmount && balance && !balance.lessThan(inputAmount);
+    const sufficientBalance = inputAmount && balance && !balance.lessThan(inputAmount);
 
-  // If inputCurrency is Ether
-  if (inputCurrency === ETHER && currencyEquals(WETH_TOKENS[chain.id], outputCurrency)) {
-    return {
-      wrapType: WrapType.WRAP,
-      execute:
-        sufficientBalance && inputAmount
-          ? async () => await wrapEther(inputAmount.raw, outputCurrency, address, chain.id)
-          : undefined,
-      inputError: sufficientBalance ? undefined : "Insufficient ETH balance",
-    };
-  } else if (currencyEquals(WETH_TOKENS[chain.id], inputCurrency) && outputCurrency === ETHER) {
-    return {
-      wrapType: WrapType.UNWRAP,
-      execute:
-        sufficientBalance && inputAmount
-          ? async () => await unwrapEther(inputAmount.raw, outputCurrency, address, chain.id)
-          : undefined,
-      inputError: sufficientBalance ? undefined : "Insufficient WETH balance",
-    };
-  } else {
-    return { wrapType: WrapType.NOT_APPLICABLE };
-  }
-};
+    if (inputCurrency === ETHER && currencyEquals(WETH_TOKENS[chainId], outputCurrency)) {
+      return {
+        wrapType: WrapType.WRAP,
+        execute:
+          sufficientBalance && inputAmount
+            ? async () => await wrapEther({ inputAmount: inputAmount, chainId, addTransaction })
+            : undefined,
+        inputError: sufficientBalance ? undefined : "Insufficient ETH balance",
+      };
+    } else if (currencyEquals(WETH_TOKENS[chainId], inputCurrency) && outputCurrency === ETHER) {
+      return {
+        wrapType: WrapType.UNWRAP,
+        execute:
+          sufficientBalance && inputAmount
+            ? async () => await unwrapEther({ inputAmount: inputAmount, chainId, addTransaction })
+            : undefined,
+        inputError: sufficientBalance ? undefined : "Insufficient WETH balance",
+      };
+    } else {
+      return NOT_APPLICABLE;
+    }
+  }, [chainId, inputCurrency, outputCurrency, address, inputAmount, balance, addTransaction]);
+}

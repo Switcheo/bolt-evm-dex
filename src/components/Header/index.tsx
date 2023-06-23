@@ -252,7 +252,9 @@ const Header = () => {
         <HeaderElement>
           <HideSmall>
             {chain && NETWORK_LABELS[chain.id] && (
-              <NetworkCard title={NETWORK_LABELS[chain.id]}>{NETWORK_LABELS[chain.id]}</NetworkCard>
+              <NetworkCard title={NETWORK_LABELS[chain.id]}>
+                <Text style={{ whiteSpace: "nowrap" }}>{NETWORK_LABELS[chain.id]}</Text>
+              </NetworkCard>
             )}
           </HideSmall>
           <AccountElement $active={isConnected} style={{ pointerEvents: "auto" }}>

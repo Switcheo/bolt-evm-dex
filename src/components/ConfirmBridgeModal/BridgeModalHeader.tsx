@@ -2,13 +2,13 @@ import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { isAddress } from "viem";
+import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { TYPE } from "../../theme";
 import { shortenString } from "../../utils/format";
 import { AutoColumn } from "../Column";
+import CurrencyLogo from "../CurrencyLogo";
 import { RowBetween, RowFixed } from "../Row";
 import { TruncatedText } from "./styleds";
-import CurrencyLogo from "../CurrencyLogo";
-import { BridgeTx } from "../../hooks/useBridgeCallback";
 
 export default function BridgeModalHeader({
   bridgeTx,
@@ -45,11 +45,7 @@ export default function BridgeModalHeader({
       </RowFixed>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
-          <CurrencyLogo
-            currency={bridgeTx.destToken}
-            size={"24px"}
-            style={{ marginRight: "12px" }}
-          />
+          <CurrencyLogo currency={bridgeTx.destToken} size={"24px"} style={{ marginRight: "12px" }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
             {bridgeTx.amount}
           </TruncatedText>

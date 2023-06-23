@@ -9,7 +9,7 @@ const Base = styled(RebassButton)<{
   padding?: string;
   width?: string;
   $borderRadius?: string;
-  altDisabledStyle?: boolean;
+  $altDisabledStyle?: boolean;
 }>`
   padding: ${({ padding }) => (padding ? padding : "18px")};
   width: ${({ width }) => (width ? width : "100%")};
@@ -52,15 +52,15 @@ export const ButtonPrimary = styled(Base)`
     background-color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
   &:disabled {
-    background-color: ${({ theme, altDisabledStyle, disabled }) =>
-      altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
-    color: ${({ theme, altDisabledStyle, disabled }) =>
-      altDisabledStyle ? (disabled ? theme.text3 : "white") : theme.text3};
+    background-color: ${({ theme, $altDisabledStyle, disabled }) =>
+      $altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
+    color: ${({ theme, $altDisabledStyle, disabled }) =>
+      $altDisabledStyle ? (disabled ? theme.text3 : "white") : theme.text3};
     cursor: auto;
     box-shadow: none;
     border: 1px solid transparent;
     outline: none;
-    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? "0.5" : "1")};
+    opacity: ${({ $altDisabledStyle }) => ($altDisabledStyle ? "0.5" : "1")};
   }
 `;
 
@@ -278,13 +278,13 @@ const ButtonErrorStyle = styled(Base)`
 
 export function ButtonConfirmed({
   confirmed,
-  altDisabledStyle,
+  $altDisabledStyle,
   ...rest
-}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
+}: { confirmed?: boolean; $altDisabledStyle?: boolean } & ButtonProps) {
   if (confirmed) {
     return <ButtonConfirmedStyle {...rest} />;
   } else {
-    return <ButtonPrimary {...rest} altDisabledStyle={altDisabledStyle} />;
+    return <ButtonPrimary {...rest} $altDisabledStyle={$altDisabledStyle} />;
   }
 }
 
@@ -295,7 +295,7 @@ export function ButtonError({
     padding?: string | undefined;
     width?: string | undefined;
     $borderRadius?: string | undefined;
-    altDisabledStyle?: boolean | undefined;
+    $altDisabledStyle?: boolean | undefined;
   }) {
   if ($error) {
     return <ButtonErrorStyle {...rest} />;
@@ -312,7 +312,7 @@ export function ButtonDropdown({
     padding?: string;
     width?: string;
     $borderRadius?: string;
-    altDisabledStyle?: boolean;
+    $altDisabledStyle?: boolean;
   }) {
   return (
     <ButtonPrimary {...rest} disabled={disabled}>
@@ -343,7 +343,7 @@ export function ButtonDropdownLight({
     padding?: string;
     width?: string;
     $borderRadius?: string;
-    altDisabledStyle?: boolean;
+    $altDisabledStyle?: boolean;
   }) {
   return (
     <ButtonOutlined {...rest} disabled={disabled}>
@@ -369,7 +369,7 @@ export function ConnectKitLightButton({
   padding?: string | undefined;
   width?: string | undefined;
   $borderRadius?: string | undefined;
-  altDisabledStyle?: boolean | undefined;
+  $altDisabledStyle?: boolean | undefined;
 }) {
   return (
     <ConnectKitButton.Custom>

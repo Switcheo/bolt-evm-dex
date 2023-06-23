@@ -178,4 +178,4 @@ export type EVMVersion =
 export type Language = "Solidity" | "Yul";
 
 export type CompilerCallback = (compiler: Solc) => void;
-export type ImportCallback = (path: string) => any;
+export type ImportCallback = (path: string) => void;

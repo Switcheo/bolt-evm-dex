@@ -1,7 +1,8 @@
+import { flatMap } from "lodash";
 import { useMemo } from "react";
 import { useNetwork } from "wagmi";
 import { SupportedChainId } from "../constants/chains";
-import { BASES_TO_CHECK_TRADES_AGAINST } from "../constants/tokens";
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from "../constants/tokens";
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from "../constants/utils";
 import { PairState } from "../pages/PoolFinder";
 import { useUserSingleHopOnly } from "../store/modules/user/hooks";
@@ -16,8 +17,7 @@ import { usePairs } from "./pairs/usePairs";
 import { useUnsupportedTokens } from "./Tokens";
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
 
   const [tokenA, tokenB] = chainId
     ? [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)]
@@ -27,14 +27,14 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
     if (!chainId) return [];
 
     const common = BASES_TO_CHECK_TRADES_AGAINST[chainId as SupportedChainId] ?? [];
-    // const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : [];
-    // const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : [];
+    const additionalA = tokenA ? ADDITIONAL_BASES[chainId as SupportedChainId]?.[tokenA.address] ?? [] : [];
+    const additionalB = tokenB ? ADDITIONAL_BASES[chainId as SupportedChainId]?.[tokenB.address] ?? [] : [];
 
-    return [...common];
-  }, [chainId]);
+    return [...common, ...additionalA, ...additionalB];
+  }, [chainId, tokenA, tokenB]);
 
   const basePairs: [Token, Token][] = useMemo(
-    () => bases.flatMap((base): [Token, Token][] => bases.map((otherBase) => [base, otherBase])),
+    () => flatMap(bases, (base): [Token, Token][] => bases.map((otherBase) => [base, otherBase])),
     [bases],
   );
 
@@ -53,22 +53,22 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
           ]
             .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
             .filter(([t0, t1]) => t0.address !== t1.address)
-        : // .filter(([tokenA, tokenB]) => {
-          //   if (!chainId) return true;
-          //   // const customBases = CUSTOM_BASES[chainId];
+            .filter(([tokenA, tokenB]) => {
+              if (!chainId) return true;
+              const customBases = CUSTOM_BASES[chainId as SupportedChainId];
 
-          //   // const customBasesA: Token[] | undefined = customBases?.[tokenA.address];
-          //   // const customBasesB: Token[] | undefined = customBases?.[tokenB.address];
+              const customBasesA: Token[] | undefined = customBases?.[tokenA.address];
+              const customBasesB: Token[] | undefined = customBases?.[tokenB.address];
 
-          //   // if (!customBasesA && !customBasesB) return true;
+              if (!customBasesA && !customBasesB) return true;
 
-          //   // if (customBasesA && !customBasesA.find((base) => tokenB.equals(base))) return false;
-          //   // if (customBasesB && !customBasesB.find((base) => tokenA.equals(base))) return false;
+              if (customBasesA && !customBasesA.find((base) => tokenB.equals(base))) return false;
+              if (customBasesB && !customBasesB.find((base) => tokenA.equals(base))) return false;
 
-          //   return true;
-          // })
-          [],
-    [tokenA, tokenB, bases, basePairs],
+              return true;
+            })
+        : [],
+    [tokenA, tokenB, bases, basePairs, chainId],
   );
 
   const allPairs = usePairs(allPairCombinations);

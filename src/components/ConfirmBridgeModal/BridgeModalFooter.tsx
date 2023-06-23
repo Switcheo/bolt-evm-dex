@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { Repeat } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { BridgeTx } from "../../hooks/useBridgeCallback";

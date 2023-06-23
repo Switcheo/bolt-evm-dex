@@ -1,6 +1,7 @@
+import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowDown } from "react-feather";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useAccount } from "wagmi";
@@ -21,24 +22,24 @@ import SwapHeader from "../components/Swap/SwapHeader";
 import TokenWarningModal from "../components/TokenWarningModal";
 import TradePrice from "../components/TradePrice";
 import UnsupportedCurrencyFooter from "../components/UnsupportedCurrencyFooter";
-import {
-  ALLOWED_PRICE_IMPACT_HIGH,
-  INITIAL_ALLOWED_SLIPPAGE,
-  PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN,
-} from "../constants/utils";
+import { INITIAL_ALLOWED_SLIPPAGE } from "../constants/utils";
 import { useAllTokens, useCurrency } from "../hooks/Tokens";
 import { useIsTransactionUnsupported } from "../hooks/Trades";
 import { ApprovalState, useApproveCallbackFromTrade } from "../hooks/useApproveCallback";
-import useENSAddress from "../hooks/useENSAddress";
 import { useSwapCallback } from "../hooks/useSwapCallback";
-import { useWrapCallback, WrapType } from "../hooks/useWrapCallback";
-import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from "../store/modules/swap/hooks";
+import useWrapCallback, { WrapType } from "../hooks/useWrapCallback";
+import {
+  useDefaultsFromURLSearch,
+  useDerivedSwapInfo,
+  useSwapActionHandlers,
+  useSwapState,
+} from "../store/modules/swap/hooks";
 import { Field } from "../store/modules/swap/swapSlice";
 import { useExpertModeManager, useUserSingleHopOnly, useUserSlippageTolerance } from "../store/modules/user/hooks";
 import { LinkStyledButton, TYPE } from "../theme";
+import confirmPriceImpactWithoutFee from "../utils/confirmPriceImpactWithoutFee";
 import { Currency } from "../utils/entities/currency";
 import { CurrencyAmount } from "../utils/entities/fractions/currencyAmount";
-import { Percent } from "../utils/entities/fractions/percent";
 import { Token } from "../utils/entities/token";
 import { Trade } from "../utils/entities/trade";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
@@ -61,34 +62,15 @@ export const BottomGrouping = styled.div`
   margin-top: 1rem;
 `;
 
-/**
- * Given the price impact, get user confirmation.
- *
- * @param priceImpactWithoutFee price impact of the trade without the fee.
- */
-export function confirmPriceImpactWithoutFee(priceImpactWithoutFee: Percent): boolean {
-  if (!priceImpactWithoutFee.lessThan(PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN)) {
-    return (
-      window.prompt(
-        `This swap has a price impact of at least ${PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN.toFixed(
-          0,
-        )}%. Please type the word "confirm" to continue with this swap.`,
-      ) === "confirm"
-    );
-  } else if (!priceImpactWithoutFee.lessThan(ALLOWED_PRICE_IMPACT_HIGH)) {
-    return window.confirm(
-      `This swap has a price impact of at least ${ALLOWED_PRICE_IMPACT_HIGH.toFixed(
-        0,
-      )}%. Please confirm that you would like to continue with this swap.`,
-    );
-  }
-  return true;
-}
+export default function Swap() {
+  const loadedUrlParams = useDefaultsFromURLSearch();
+  const navigate = useNavigate();
 
-const Swap = () => {
-  const { currencyIdA, currencyIdB } = useParams();
   // token warning stuff
-  const [loadedInputCurrency, loadedOutputCurrency] = [useCurrency(currencyIdA), useCurrency(currencyIdB)];
+  const [loadedInputCurrency, loadedOutputCurrency] = [
+    useCurrency(loadedUrlParams?.inputCurrencyId),
+    useCurrency(loadedUrlParams?.outputCurrencyId),
+  ];
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false);
   const urlLoadedTokens: Token[] = useMemo(
     () => [loadedInputCurrency, loadedOutputCurrency]?.filter((c): c is Token => c instanceof Token) ?? [],
@@ -110,7 +92,8 @@ const Swap = () => {
   const theme = useTheme();
 
   // for expert mode
-  const [settingsMenu, setSettingsMenu] = useState(false);
+  // const toggleSettings = useToggleSettingsMenu();
+  const [, setToggleSettingsMenu] = useState(false);
   const [isExpertMode] = useExpertModeManager();
 
   // get custom setting values for user
@@ -124,16 +107,15 @@ const Swap = () => {
     wrapType,
     execute: onWrap,
     inputError: wrapInputError,
-  } = useWrapCallback({
-    inputCurrency: currencies[Field.INPUT],
-    outputCurrency: currencies[Field.OUTPUT],
-    typedValue: typedValue,
-  });
+  } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue);
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE;
-  const { address: recipientAddress } = useENSAddress(recipient);
+  // const { address: recipientAddress } = useENSAddress(recipient);
 
   const trade = showWrap ? undefined : v2Trade;
-  const defaultTrade = showWrap ? undefined : v2Trade;
+  // const defaultTrade = showWrap ? undefined : v2Trade;
+
+  // const betterTradeLinkV2: Version | undefined =
+  //   toggledVersion === Version.v1 && isTradeBetter(v1Trade, v2Trade) ? Version.v2 : undefined;
 
   const parsedAmounts = showWrap
     ? {
@@ -165,8 +147,8 @@ const Swap = () => {
   // reset if they close warning without tokens in params
   const handleDismissTokenWarning = useCallback(() => {
     setDismissTokenWarning(true);
-    history.push("/swap/");
-  }, [history]);
+    navigate("/swap/");
+  }, [navigate]);
 
   // modal and loading
   const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
@@ -192,7 +174,7 @@ const Swap = () => {
 
   const route = trade?.route;
   const userHasSpecifiedInputOutput = Boolean(
-    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(BigInt(0)),
+    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0)),
   );
   const noRoute = !route;
 
@@ -226,22 +208,10 @@ const Swap = () => {
     if (!swapCallback) {
       return;
     }
-    setSwapState({
-      attemptingTxn: true,
-      tradeToConfirm,
-      showConfirm,
-      swapErrorMessage: undefined,
-      txHash: undefined,
-    });
+    setSwapState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined });
     swapCallback()
       .then((hash) => {
-        setSwapState({
-          attemptingTxn: false,
-          tradeToConfirm,
-          showConfirm,
-          swapErrorMessage: undefined,
-          txHash: hash,
-        });
+        setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash });
       })
       .catch((error) => {
         setSwapState({
@@ -270,13 +240,7 @@ const Swap = () => {
     !(priceImpactSeverity > 3 && !isExpertMode);
 
   const handleConfirmDismiss = useCallback(() => {
-    setSwapState({
-      showConfirm: false,
-      tradeToConfirm,
-      attemptingTxn,
-      swapErrorMessage,
-      txHash,
-    });
+    setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash });
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onUserInput(Field.INPUT, "");
@@ -284,13 +248,7 @@ const Swap = () => {
   }, [attemptingTxn, onUserInput, swapErrorMessage, tradeToConfirm, txHash]);
 
   const handleAcceptChanges = useCallback(() => {
-    setSwapState({
-      tradeToConfirm: trade,
-      swapErrorMessage,
-      txHash,
-      attemptingTxn,
-      showConfirm,
-    });
+    setSwapState({ tradeToConfirm: trade, swapErrorMessage, txHash, attemptingTxn, showConfirm });
   }, [attemptingTxn, showConfirm, swapErrorMessage, trade, txHash]);
 
   const handleInputSelect = useCallback(
@@ -415,7 +373,7 @@ const Swap = () => {
                         fontWeight={500}
                         fontSize={14}
                         color={theme?.text2}
-                        // onClick={toggleSettings}
+                        onClick={() => setToggleSettingsMenu((toggleSettingsMenu) => !toggleSettingsMenu)}
                       >
                         Slippage Tolerance
                       </ClickableText>
@@ -423,7 +381,7 @@ const Swap = () => {
                         fontWeight={500}
                         fontSize={14}
                         color={theme?.text2}
-                        // onClick={toggleSettings}
+                        onClick={() => setToggleSettingsMenu((toggleSettingsMenu) => !toggleSettingsMenu)}
                       >
                         {allowedSlippage / 100}%
                       </ClickableText>
@@ -439,7 +397,9 @@ const Swap = () => {
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !address ? (
-              <ConnectKitLightButton />
+              <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+                Connect Wallet
+              </ConnectKitLightButton>
             ) : showWrap ? (
               <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
                 {wrapInputError ??
@@ -456,7 +416,7 @@ const Swap = () => {
                   onClick={approveCallback}
                   disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
                   width="48%"
-                  altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
+                  $altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
                   confirmed={approval === ApprovalState.APPROVED}
                 >
                   {approval === ApprovalState.PENDING ? (
@@ -531,9 +491,7 @@ const Swap = () => {
               </Column>
             )}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-            {/* {
-            !swapIsUnsupported &&
-            toggledVersion === Version.v1 ? (
+            {/* {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
               <BetterTradeLink version={betterTradeLinkV2} />
             ) : toggledVersion !== DEFAULT_VERSION && defaultTrade ? (
               <DefaultVersionLink />
@@ -548,6 +506,4 @@ const Swap = () => {
       )}
     </>
   );
-};
-
-export default Swap;
+}

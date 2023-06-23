@@ -3,7 +3,6 @@ import {
   BASE_CARBON_API_URL,
   BASE_HYDROGEN_API_URL,
   CARBON_TOKENS_API_URL,
-  HYDROGEN_BRIDGE_RELAY_API_URL,
   HYDROGEN_FEES_API_URL,
 } from "../../../../constants/utils";
 import { TokenResponse } from "./types";

@@ -1,7 +1,7 @@
+import { TokenList } from "@uniswap/token-lists";
 import { useCallback, useEffect, useState } from "react";
 import useLast from "../../hooks/useLast";
 import usePrevious from "../../hooks/usePrevious";
-import { TokenList } from "../../store/modules/lists/types";
 import { Currency } from "../../utils/entities/currency";
 import { Token } from "../../utils/entities/token";
 import Modal from "../Modal";
@@ -26,14 +26,14 @@ export enum CurrencyModalView {
   importList,
 }
 
-const CurrencySearchModal = ({
+export default function CurrencySearchModal({
   isOpen,
   onDismiss,
   onCurrencySelect,
   selectedCurrency,
   otherSelectedCurrency,
   showCommonBases = false,
-}: CurrencySearchModalProps) => {
+}: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
 
@@ -102,6 +102,4 @@ const CurrencySearchModal = ({
       )}
     </Modal>
   );
-};
-
-export default CurrencySearchModal;
+}

@@ -6,7 +6,6 @@ import Circle from "../../assets/images/blue-loader.svg";
 import { SupportedBridgingChainId } from "../../constants/chains";
 import { ExternalLink } from "../../theme";
 import { CloseIcon, CustomLightSpinner } from "../../theme/components";
-import { BridgeableToken } from "../../utils/entities/bridgeableToken";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
 import { ButtonPrimary } from "../Button";
 import { AutoColumn, ColumnCenter } from "../Column";
@@ -28,12 +27,6 @@ const BottomSection = styled(Section)`
 
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
-`;
-
-const StyledLogo = styled.img`
-  height: 16px;
-  width: 16px;
-  margin-left: 6px;
 `;
 
 function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
@@ -69,18 +62,12 @@ function TransactionSubmittedContent({
   onDismiss,
   chainId,
   hash,
-  currencyToAdd,
 }: {
   onDismiss: () => void;
   hash: string | undefined;
   chainId: SupportedBridgingChainId;
-  currencyToAdd?: BridgeableToken | undefined;
 }) {
   const theme = useTheme();
-
-  // const { library } = useActiveWeb3React();
-
-  // const { addToken, success } = useAddTokenToMetamask(currencyToAdd);
 
   return (
     <Wrapper>
@@ -103,30 +90,6 @@ function TransactionSubmittedContent({
               </Text>
             </ExternalLink>
           )}
-          {/* {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonLight
-              mt="12px"
-              padding="6px 12px"
-              width="fit-content"
-              onClick={addToken}
-            >
-              {!success ? (
-                <RowFixed>
-                  Add {currencyToAdd.symbol} to Metamask{" "}
-                  <StyledLogo src={MetaMaskLogo} />
-                </RowFixed>
-              ) : (
-                <RowFixed>
-                  Added {currencyToAdd.symbol}{" "}
-                  <CheckCircle
-                    size={"16px"}
-                    stroke={theme.green1}
-                    style={{ marginLeft: "6px" }}
-                  />
-                </RowFixed>
-              )}
-            </ButtonLight>
-          )} */}
           <ButtonPrimary onClick={onDismiss} style={{ margin: "20px 0 0 0" }}>
             <Text fontWeight={500} fontSize={20}>
               Close
@@ -197,7 +160,6 @@ interface ConfirmationModalProps {
   content: () => React.ReactNode;
   attemptingTxn: boolean;
   pendingText: string;
-  currencyToAdd?: BridgeableToken | undefined;
 }
 
 export default function TransactionConfirmationModal({
@@ -207,7 +169,6 @@ export default function TransactionConfirmationModal({
   hash,
   pendingText,
   content,
-  currencyToAdd,
 }: ConfirmationModalProps) {
   const { chain } = useNetwork();
   const chainId = chain?.id;
@@ -220,12 +181,7 @@ export default function TransactionConfirmationModal({
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
-        <TransactionSubmittedContent
-          chainId={chainId}
-          hash={hash}
-          onDismiss={onDismiss}
-          currencyToAdd={currencyToAdd}
-        />
+        <TransactionSubmittedContent chainId={chainId} hash={hash} onDismiss={onDismiss} />
       ) : (
         content()
       )}

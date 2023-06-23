@@ -1,3 +1,4 @@
+import JSBI from "jsbi";
 import { useCallback, useEffect, useState } from "react";
 import { Plus } from "react-feather";
 import { Text } from "rebass";
@@ -73,11 +74,14 @@ export default function PoolFinder() {
   const validPairNoLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
     Boolean(
-      pairState === PairState.EXISTS && pair && pair.reserve0.raw === BigInt(0) && pair.reserve1.raw === BigInt(0),
+      pairState === PairState.EXISTS &&
+        pair &&
+        JSBI.equal(pair.reserve0.raw, JSBI.BigInt(0)) &&
+        JSBI.equal(pair.reserve1.raw, JSBI.BigInt(0)),
     );
 
   const position: TokenAmount | undefined = useTokenBalance(address ?? undefined, pair?.liquidityToken);
-  const hasPosition = Boolean(position && position.raw > 0);
+  const hasPosition = Boolean(position && JSBI.greaterThan(position.raw, JSBI.BigInt(0)));
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {

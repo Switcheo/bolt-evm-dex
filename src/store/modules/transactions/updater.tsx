@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNetwork } from "wagmi";
 import { getEthersProvider } from "../../../utils/evm";
 import { useAppDispatch, useAppSelector } from "../../hooks";
@@ -36,7 +36,9 @@ export default function Updater(): null {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.transactions);
 
-  const transactions = chainId ? state[chainId] ?? {} : {};
+  const transactions = useMemo(() => {
+    return chainId ? state[chainId] ?? {} : {};
+  }, [chainId, state]);
 
   // show popup on confirm
   const addPopup = useAddPopup();

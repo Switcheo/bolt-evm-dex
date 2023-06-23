@@ -9,6 +9,7 @@ import { ButtonPrimary, ButtonSecondary } from "../components/Button";
 import Card from "../components/Card";
 import { AutoColumn } from "../components/Column";
 import { SwapPoolTabs } from "../components/NavigationTabs";
+import FullPositionCard from "../components/PositionCard";
 import { RowBetween, RowFixed } from "../components/Row";
 import { useTokenBalancesWithLoadingIndicator } from "../hooks/balances/useTokenBalancesWithLoadingIndicator";
 import { usePairs } from "../hooks/pairs/usePairs";
@@ -139,11 +140,7 @@ export default function Pool() {
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs();
   const tokenPairsWithLiquidityTokens = useMemo(
-    () =>
-      trackedTokenPairs.map((tokens) => ({
-        liquidityToken: toV2LiquidityToken(tokens),
-        tokens,
-      })),
+    () => trackedTokenPairs.map((tokens) => ({ liquidityToken: toV2LiquidityToken(tokens), tokens })),
     [trackedTokenPairs],
   );
   const liquidityTokens = useMemo(
@@ -159,7 +156,7 @@ export default function Pool() {
   const liquidityTokensWithBalances = useMemo(
     () =>
       tokenPairsWithLiquidityTokens.filter(({ liquidityToken }) =>
-        v2PairsBalances[liquidityToken.address]?.greaterThan(BigInt(0)),
+        v2PairsBalances[liquidityToken.address]?.greaterThan("0"),
       ),
     [tokenPairsWithLiquidityTokens, v2PairsBalances],
   );
@@ -176,10 +173,10 @@ export default function Pool() {
 
   // show liquidity even if its deposited in rewards contract
   // const stakingInfo = useStakingInfo();
-  // const stakingInfosWithBalance = stakingInfo?.filter((pool) => pool.stakedAmount.raw > 0);
+  // const stakingInfosWithBalance = stakingInfo?.filter((pool) => JSBI.greaterThan(pool.stakedAmount.raw, BIG_INT_ZERO));
   // const stakingPairs = usePairs(stakingInfosWithBalance?.map((stakingInfo) => stakingInfo.tokens));
 
-  // // remove any pairs that also are included in pairs with stake in mining pool
+  // remove any pairs that also are included in pairs with stake in mining pool
   // const v2PairsWithoutStakedAmount = allV2PairsWithLiquidity.filter((v2Pair) => {
   //   return (
   //     stakingPairs
@@ -266,10 +263,10 @@ export default function Pool() {
                     <span> ↗</span>
                   </RowBetween>
                 </ButtonSecondary>
-                {/* {v2PairsWithoutStakedAmount.map((v2Pair) => (
+                {allV2PairsWithLiquidity.map((v2Pair) => (
                   <FullPositionCard key={v2Pair.liquidityToken.address} pair={v2Pair} />
                 ))}
-                {stakingPairs.map(
+                {/* {stakingPairs.map(
                   (stakingPair, i) =>
                     stakingPair[1] && ( // skip pairs that arent loaded
                       <FullPositionCard
@@ -288,6 +285,7 @@ export default function Pool() {
               </EmptyProposals>
             )}
 
+            {/* This part is modified such that the migrate text is gone */}
             <AutoColumn justify={"center"} gap="md">
               <Text textAlign="center" fontSize={14} style={{ padding: ".5rem 0 .5rem 0" }}>
                 {"Don't see a pool you joined?"}{" "}

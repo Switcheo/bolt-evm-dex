@@ -124,6 +124,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [SupportedChainId.POLYGON]: [WETH_TOKENS[SupportedChainId.POLYGON]],
   [SupportedChainId.BSC]: [WETH_TOKENS[SupportedChainId.BSC]],
   [SupportedChainId.BOLTCHAIN]: [WETH_TOKENS[SupportedChainId.BOLTCHAIN]],
+  [SupportedChainId.CARBON]: [],
 };
 
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
@@ -136,6 +137,19 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   [SupportedChainId.POLYGON]: [WETH_TOKENS[SupportedChainId.POLYGON]],
   [SupportedChainId.BSC]: [WETH_TOKENS[SupportedChainId.BSC]],
   [SupportedChainId.BOLTCHAIN]: [WETH_TOKENS[SupportedChainId.BOLTCHAIN]],
+  [SupportedChainId.CARBON]: [],
+};
+
+export const ADDITIONAL_BASES: { [chainId in SupportedChainId]?: { [tokenAddress: string]: Token[] } } = {
+  [SupportedChainId.MAINNET]: {},
+};
+
+/**
+ * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
+ * tokens.
+ */
+export const CUSTOM_BASES: { [chainId in SupportedChainId]?: { [tokenAddress: string]: Token[] } } = {
+  [SupportedChainId.MAINNET]: {},
 };
 
 export const SUGGESTED_BASES: ChainTokenList = {
@@ -148,6 +162,7 @@ export const SUGGESTED_BASES: ChainTokenList = {
   [SupportedChainId.POLYGON]: [WETH_TOKENS[SupportedChainId.POLYGON]],
   [SupportedChainId.BSC]: [WETH_TOKENS[SupportedChainId.BSC]],
   [SupportedChainId.BOLTCHAIN]: [WETH_TOKENS[SupportedChainId.BOLTCHAIN]],
+  [SupportedChainId.CARBON]: [],
 };
 
 export const PINNED_PAIRS: { readonly [chainId in SupportedChainId]?: [Token, Token][] } = {

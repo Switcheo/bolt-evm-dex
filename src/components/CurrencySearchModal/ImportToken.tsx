@@ -3,7 +3,9 @@ import { useState } from "react";
 import { AlertTriangle, ArrowLeft } from "react-feather";
 import styled, { useTheme } from "styled-components";
 import { useNetwork } from "wagmi";
+import { SupportedChainId } from "../../constants/chains";
 import { useCombinedInactiveList } from "../../store/modules/lists/hooks";
+import { useAddUserToken } from "../../store/modules/user/hooks";
 import { CloseIcon, ExternalLink, TYPE } from "../../theme";
 import { Currency } from "../../utils/entities/currency";
 import { Token } from "../../utils/entities/token";
@@ -12,6 +14,7 @@ import { ButtonPrimary } from "../Button";
 import Card from "../Card";
 import { AutoColumn } from "../Column";
 import CurrencyLogo from "../CurrencyLogo";
+import ListLogo from "../ListLogo";
 import { AutoRow, RowBetween, RowFixed } from "../Row";
 import { PaddedColumn } from "./CurrencySearch";
 import { Checkbox, SectionBreak } from "./ImportList";
@@ -46,8 +49,7 @@ interface ImportProps {
 export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }: ImportProps) {
   const theme = useTheme();
 
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
 
   const [confirmed, setConfirmed] = useState(false);
 
@@ -58,8 +60,8 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
 
   // higher warning severity if either is not on a list
   const fromLists =
-    (chainId && inactiveTokenList?.[chainId]?.[tokens[0]?.address]?.list) ||
-    (chainId && inactiveTokenList?.[chainId]?.[tokens[1]?.address]?.list);
+    (chainId && inactiveTokenList?.[chainId as SupportedChainId]?.[tokens[0]?.address]?.list) ||
+    (chainId && inactiveTokenList?.[chainId as SupportedChainId]?.[tokens[1]?.address]?.list);
 
   return (
     <Wrapper>
@@ -73,7 +75,7 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
       <SectionBreak />
       <PaddedColumn gap="md">
         {tokens.map((token) => {
-          const list = chainId && inactiveTokenList?.[chainId]?.[token.address]?.list;
+          const list = chainId && inactiveTokenList?.[chainId as SupportedChainId]?.[token.address]?.list;
           return (
             <Card backgroundColor={theme?.bg2} key={"import" + token.address} className=".token-warning-container">
               <AutoColumn gap="10px">
@@ -89,7 +91,7 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
                     <AddressText>{token.address}</AddressText>
                   </ExternalLink>
                 )}
-                {list !== undefined ? (
+                {list !== undefined && list !== 0 ? (
                   <RowFixed>
                     {list.logoURI && <ListLogo logoURI={list.logoURI} size="12px" />}
                     <TYPE.small ml="6px" color={theme?.text3}>
@@ -114,8 +116,8 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
         <Card
           style={{
             backgroundColor: fromLists
-              ? transparentize(0.8, theme?.yellow2 ?? "")
-              : transparentize(0.8, theme?.red1 ?? ""),
+              ? transparentize(0.8, theme?.yellow2 ?? "#F3841E")
+              : transparentize(0.8, theme?.red1 ?? "#FD4040"),
           }}
         >
           <AutoColumn justify="center" style={{ textAlign: "center", gap: "16px", marginBottom: "12px" }}>
@@ -149,7 +151,7 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
         </Card>
         <ButtonPrimary
           disabled={!confirmed}
-          altDisabledStyle={true}
+          $altDisabledStyle={true}
           $borderRadius="20px"
           padding="10px 1rem"
           onClick={() => {

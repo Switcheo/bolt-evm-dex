@@ -1,13 +1,11 @@
 import { bech32 } from "bech32";
 import { Address, bytesToHex, parseEther, stringToBytes } from "viem";
-import { useAccount } from "wagmi";
-import { getAccount, getPublicClient, getWalletClient, prepareWriteContract, writeContract } from "wagmi/actions";
+import { getPublicClient, getWalletClient, prepareWriteContract } from "wagmi/actions";
 import { BRIDGE_ENTRANCE_ABI } from "../constants/abis";
 import { MAIN_DEV_RECOVERY_ADDRESS, NATIVE_TOKEN_ADDRESS } from "../constants/addresses";
 import { getChainInfo } from "../constants/chainInfo";
 import { getOfficialChainIdFromBridgingChainId, SupportedBridgingChainId } from "../constants/chains";
 import { BridgeableToken } from "../utils/entities/bridgeableToken";
-
 
 export enum BridgeCallbackState {
   INVALID,
@@ -29,13 +27,13 @@ export interface BridgeTx {
 export const getEvmGasLimit = (evmChain: SupportedBridgingChainId) => {
   switch (evmChain) {
     case SupportedBridgingChainId.MAINNET:
-      return 250000
+      return 250000;
     case SupportedBridgingChainId.BSC:
-      return 200000
+      return 200000;
     default:
-      return 250000
+      return 250000;
   }
-}
+};
 
 export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
   if (!bridgeTx)

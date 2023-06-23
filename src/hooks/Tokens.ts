@@ -149,8 +149,7 @@ export function useDefaultTokens(): { [address: string]: Token } {
 }
 
 export function useAllTokens(): { [address: string]: Token } {
-  const allTokens = useCombinedActiveList(); // error here 3
-  // return useTokensFromMap(allTokens, true);
+  const allTokens = useCombinedActiveList();
   return useTokensFromMap(allTokens, true);
 }
 
@@ -204,4 +203,14 @@ export function useTotalSupply(token?: Token): TokenAmount | undefined {
   const totalSupply = useSingleCallResult(contract, "totalSupply")?.result?.[0];
 
   return token && totalSupply ? new TokenAmount(token, totalSupply.toString()) : undefined;
+}
+
+export function useIsTokenActive(token: Token | undefined | null): boolean {
+  const activeTokens = useAllTokens();
+
+  if (!activeTokens || !token) {
+    return false;
+  }
+
+  return !!activeTokens[token.address];
 }

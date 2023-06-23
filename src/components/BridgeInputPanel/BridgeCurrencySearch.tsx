@@ -1,10 +1,8 @@
 import { ChangeEvent, RefObject, useCallback, useEffect, useRef, useState } from "react";
-import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { getAddress, isAddress } from "viem";
-import { useDebounce } from "../../hooks/useDebounce";
 import { useOnClickOutside } from "../../hooks/useOnOutsideClick";
 import useToggle from "../../hooks/useToggle";
 import { useAppSelector } from "../../store/hooks";
@@ -63,16 +61,9 @@ interface BridgeCurrencySearchProps {
   onDismiss: () => void;
   selectedCurrency?: BridgeableToken | null;
   onCurrencySelect: (currency: BridgeableToken) => void;
-  setImportToken: (token: BridgeableToken) => void;
 }
 
-const BridgeCurrencySearch = ({
-  selectedCurrency,
-  onCurrencySelect,
-  onDismiss,
-  isOpen,
-  setImportToken,
-}: BridgeCurrencySearchProps) => {
+const BridgeCurrencySearch = ({ selectedCurrency, onCurrencySelect, onDismiss, isOpen }: BridgeCurrencySearchProps) => {
   const theme = useTheme();
   const bridgeableTokens = useAppSelector((state) => state.bridge.bridgeableTokens);
   const sourceChain = useAppSelector((state) => state.bridge.sourceChain);
@@ -84,7 +75,7 @@ const BridgeCurrencySearch = ({
   const inputRef = useRef<HTMLInputElement>();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const debouncedQuery = useDebounce(searchQuery, 200);
+  // const debouncedQuery = useDebounce(searchQuery, 200);
 
   // Handlers
 
@@ -122,7 +113,7 @@ const BridgeCurrencySearch = ({
   }, [bridgeableTokens, sourceChain, setFilteredTokens]);
 
   // menu ui
-  const [open, toggle] = useToggle(false);
+  const [, toggle] = useToggle(false);
   const node = useRef<HTMLDivElement | null>(null);
   useOnClickOutside(node, toggle);
 
@@ -163,12 +154,12 @@ const BridgeCurrencySearch = ({
             )}
           </AutoSizer> */}
           <BridgeableTokensList
-                height={500}
-                currencies={filteredTokens}
-                onCurrencySelect={handleCurrencySelect}
-                selectedCurrency={selectedCurrency}
-                fixedListRef={fixedList}
-              />
+            height={500}
+            currencies={filteredTokens}
+            onCurrencySelect={handleCurrencySelect}
+            selectedCurrency={selectedCurrency}
+            fixedListRef={fixedList}
+          />
         </div>
       ) : (
         <Column style={{ padding: "20px", height: "100%" }}>

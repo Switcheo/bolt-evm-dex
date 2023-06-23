@@ -42,6 +42,7 @@ const EMPTY_LIST: TokenAddressMap = {
   [SupportedChainId.BOLTCHAIN]: {},
   [SupportedChainId.BSC]: {},
   [SupportedChainId.POLYGON]: {},
+  [SupportedChainId.CARBON]: {},
 };
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
@@ -110,6 +111,7 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     [SupportedChainId.BOLTCHAIN]: { ...map1[SupportedChainId.BOLTCHAIN], ...map2[SupportedChainId.BOLTCHAIN] },
     [SupportedChainId.BSC]: { ...map1[SupportedChainId.BSC], ...map2[SupportedChainId.BSC] },
     [SupportedChainId.POLYGON]: { ...map1[SupportedChainId.POLYGON], ...map2[SupportedChainId.POLYGON] },
+    [SupportedChainId.CARBON]: { ...map1[SupportedChainId.CARBON], ...map2[SupportedChainId.CARBON] },
   };
 }
 
@@ -149,7 +151,7 @@ export function useInactiveListUrls(): string[] {
   return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url));
 }
 
-// get all the tokens from active lists, combine with local default tokens
+// get all the tokens from active lists state, combine with local default tokens
 export function useCombinedActiveList(): TokenAddressMap {
   const activeListUrls = useActiveListUrls(); // selector
   const activeTokens = useCombinedTokenMapFromUrls(activeListUrls);

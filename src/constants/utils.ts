@@ -1,3 +1,4 @@
+import JSBI from "jsbi";
 import { Hash } from "viem";
 import { Percent } from "../utils/entities/fractions/percent";
 import { SupportedChainId } from "./chains";
@@ -22,7 +23,7 @@ export const ONE_BIPS = new Percent(BigInt(1), BigInt(10000));
 
 export const INIT_CODE_HASH_MAP: HashMap = {
   [SupportedChainId.MAINNET]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
-  [SupportedChainId.BOLTCHAIN]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+  [SupportedChainId.BOLTCHAIN]: "0x44143914e8635a0469aba189b8de6b2de637056633de24e05952c535e6eefae6",
   // [SupportedChainId.POLYGON]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
   // [SupportedChainId.BSC]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
 };
@@ -39,8 +40,9 @@ export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(BigInt(
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(BigInt(50), BigInt(10000));
 export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(BigInt(1500), BIPS_BASE); // 15%
 
-export const ZERO_PERCENT = new Percent(BigInt(0));
-export const ONE_HUNDRED_PERCENT = new Percent(BigInt(1));
+export const ZERO_PERCENT = new Percent("0");
+export const ONE_HUNDRED_PERCENT = new Percent("1");
+export const BIG_INT_ZERO = JSBI.BigInt(0);
 
 // URLS
 export const BASE_CARBON_API_URL = "https://api.carbon.network/";

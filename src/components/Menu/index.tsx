@@ -5,7 +5,6 @@ import { getBridgingChainIdFromName, getOfficialChainIdFromBridgingChainId } fro
 import { TYPE } from "../../theme";
 import { ButtonDropdownLight } from "../Button";
 
-
 const StyledMenu = styled.div`
   display: flex;
   justify-content: center;
@@ -125,7 +124,7 @@ interface ListProps {
 }
 
 const List = (props: ListProps) => {
-  const { openId, close } = useContext(MenusContext);
+  const { openId } = useContext(MenusContext);
 
   // useOnClickOutside(typeof ref !== "function" ? ref : null, () => close());
 

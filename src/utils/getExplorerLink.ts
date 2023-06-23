@@ -13,7 +13,7 @@ export function getEtherscanLink(
 ): string {
   const prefix =
     chainId === 42069
-      ? "https://blockscout.bolt.switcheo.network"
+      ? "https://blockscout.bolt-dev.switcheo.network"
       : `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;
 
   switch (type) {

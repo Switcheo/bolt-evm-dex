@@ -151,7 +151,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
           <StyledListUrlText $active={isActive} mr="6px">
             {list.tokens.length} tokens
           </StyledListUrlText>
-          <StyledMenu ref={node as any}>
+          <StyledMenu ref={node}>
             <ButtonEmpty onClick={toggle} ref={setReferenceElement} padding="0">
               <Settings stroke={isActive ? theme?.bg1 : theme?.text1} size={12} />
             </ButtonEmpty>
@@ -173,7 +173,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       </Column>
       <ListToggle
         $isActive={isActive}
-        $bgColor={listColor}
+        bgColor={listColor}
         toggle={() => {
           isActive ? handleDisableList() : handleEnableList();
         }}

@@ -5,7 +5,6 @@ import { Address, useAccount, useBalance, useNetwork } from "wagmi";
 import { ReactComponent as DropDown } from "../../assets/images/dropdown.svg";
 import { TYPE } from "../../theme";
 import { BridgeableToken } from "../../utils/entities/bridgeableToken";
-import { Token } from "../../utils/entities/token";
 import NumericalInput from "../NumericalInput";
 import { RowBetween } from "../Row";
 import BridgeCurrencyModal from "./BridgeCurrencyModal";

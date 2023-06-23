@@ -3,6 +3,9 @@ import { Contract } from "@ethersproject/contracts";
 import { getPublicClient, getWalletClient, type PublicClient, type WalletClient } from "@wagmi/core";
 import { providers } from "ethers";
 import { isAddress, type HttpTransport } from "viem";
+import { UNISWAP_V2_ROUTER_ABI } from "../constants/abis";
+import { V2_ROUTER_ADDRESSES } from "../constants/addresses";
+import { SupportedChainId } from "../constants/chains";
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -63,4 +66,19 @@ export function getContract(
   }
 
   return new Contract(contractAddress, ABI, getProviderOrSigner(walletClient, publicClient, account));
+}
+
+export function getRouterContract(
+  walletClient: WalletClient,
+  publicClient: PublicClient,
+  account?: string,
+  chainId?: number,
+): Contract {
+  return getContract(
+    V2_ROUTER_ADDRESSES[chainId ?? SupportedChainId.MAINNET],
+    UNISWAP_V2_ROUTER_ABI,
+    walletClient,
+    publicClient,
+    account,
+  );
 }

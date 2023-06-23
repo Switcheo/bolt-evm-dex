@@ -18,7 +18,7 @@ export const ChainIdToNameRecord: Record<SupportedChainId, string> = {
   [SupportedChainId.POLYGON]: "Polygon",
   [SupportedChainId.BSC]: "Binance Smart Chain",
   [SupportedChainId.BOLTCHAIN]: "BoltChain",
-  [SupportedChainId.CARBON]: "Carbon"
+  [SupportedChainId.CARBON]: "Carbon",
 };
 
 // Create Bridging ChainId To Name
@@ -26,7 +26,7 @@ export const BridgingChainIdToNameRecord: Record<SupportedBridgingChainId, strin
   [SupportedBridgingChainId.MAINNET]: "Ethereum",
   [SupportedBridgingChainId.POLYGON]: "Polygon",
   [SupportedBridgingChainId.BSC]: "Binance Smart Chain",
-  [SupportedBridgingChainId.CARBON]: "Carbon"
+  [SupportedBridgingChainId.CARBON]: "Carbon",
 };
 
 export function recordEntries<K extends PropertyKey, T>(object: Record<K, T>) {
@@ -43,7 +43,7 @@ export const BridgingChainIdToOriginalChainId: Record<SupportedBridgingChainId, 
   [SupportedBridgingChainId.MAINNET]: SupportedChainId.MAINNET,
   [SupportedBridgingChainId.POLYGON]: SupportedChainId.POLYGON,
   [SupportedBridgingChainId.BSC]: SupportedChainId.BSC,
-  [SupportedBridgingChainId.CARBON]: SupportedChainId.CARBON
+  [SupportedBridgingChainId.CARBON]: SupportedChainId.CARBON,
 };
 
 // helper function to check if a chain is supported

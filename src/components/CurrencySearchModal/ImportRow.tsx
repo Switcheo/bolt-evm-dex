@@ -2,10 +2,15 @@ import { CSSProperties } from "react";
 import { CheckCircle } from "react-feather";
 import styled, { useTheme } from "styled-components";
 import { useNetwork } from "wagmi";
+import { SupportedChainId } from "../../constants/chains";
+import { useIsTokenActive, useIsUserAddedToken } from "../../hooks/Tokens";
+import { useCombinedInactiveList } from "../../store/modules/lists/hooks";
 import { TYPE } from "../../theme";
 import { Token } from "../../utils/entities/token";
 import { ButtonPrimary } from "../Button";
 import { AutoColumn } from "../Column";
+import CurrencyLogo from "../CurrencyLogo";
+import ListLogo from "../ListLogo";
 import { AutoRow, RowFixed } from "../Row";
 
 const TokenSection = styled.div<{ $dim?: boolean }>`
@@ -49,13 +54,12 @@ export default function ImportRow({
   setImportToken: (token: Token) => void;
 }) {
   // gloabls
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
   const theme = useTheme();
 
   // check if token comes from list
   const inactiveTokenList = useCombinedInactiveList();
-  const list = chainId && inactiveTokenList?.[chainId]?.[token.address]?.list;
+  const list = chainId && inactiveTokenList?.[chainId as SupportedChainId]?.[token.address]?.list;
 
   // check if already active on list or local storage tokens
   const isAdded = useIsUserAddedToken(token);

@@ -1,7 +1,6 @@
 import { Address } from "viem";
 import { SupportedChainId } from "./chains";
 
-
 interface AddressMap {
   [chainId: number]: Address;
 }
@@ -10,12 +9,12 @@ export const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {
   [SupportedChainId.MAINNET]: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-  [SupportedChainId.BOLTCHAIN]: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+  [SupportedChainId.BOLTCHAIN]: "0x3b9fE476d983E95D6264f9ebB1ea02cFaA6bA56c",
 };
 
 export const V2_ROUTER_ADDRESSES: AddressMap = {
   [SupportedChainId.MAINNET]: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-  [SupportedChainId.BOLTCHAIN]: "0xF74Abbf5deABaEb15186E16A8B6abB9DDDBFB757",
+  [SupportedChainId.BOLTCHAIN]: "0x8E8BD23016aD7a71Ba238ecDA489066abb6bEC8D",
 };
 
 export const LOCK_PROXY_ADDRESSES: AddressMap = {
@@ -41,7 +40,7 @@ export const BALANCE_READER_ADDRESSES: AddressMap = {
 
 export const WETH_ADDRESSES: AddressMap = {
   [SupportedChainId.MAINNET]: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  [SupportedChainId.BOLTCHAIN]: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  [SupportedChainId.BOLTCHAIN]: "0xbA6E0C8d1F8aD851B2C3C4e664E4f6a6C119A6e6",
   [SupportedChainId.POLYGON]: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
   [SupportedChainId.BSC]: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", // WBNB
 };
@@ -73,6 +72,5 @@ export const MULTICALL_ADDRESSES: AddressMap = {
   [SupportedChainId.POLYGON]: "0xa1B2b503959aedD81512C37e9dce48164ec6a94d",
   [SupportedChainId.BSC]: "0x1Ee38d535d541c55C9dae27B12edf090C608E6Fb",
 };
-
 
 export const MAIN_DEV_RECOVERY_ADDRESS = "swth1cuekk8en9zgnuv0eh4hk7xtr2kghn69x0x6u7r";

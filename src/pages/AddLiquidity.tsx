@@ -1,9 +1,11 @@
+import { BigNumber } from "@ethersproject/bignumber";
+import { TransactionResponse } from "@ethersproject/providers";
 import { useCallback, useState } from "react";
 import { Plus } from "react-feather";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useNetwork, usePublicClient, useWalletClient } from "wagmi";
 import { ConfirmAddModalBottom } from "../components/addLiquidity/ConfirmAddModalBottom";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import { BlueCard, LightCard } from "../components/Card";
@@ -32,6 +34,7 @@ import { currencyId } from "../utils/currencyId";
 import { Currency, ETHER } from "../utils/entities/currency";
 import { TokenAmount } from "../utils/entities/fractions/tokenAmount";
 import { currencyEquals } from "../utils/entities/token";
+import { getRouterContract } from "../utils/evm";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { calculateGasMargin, calculateSlippageAmount } from "../utils/prices";
 import { wrappedCurrency } from "../utils/wrappedCurrency";
@@ -61,24 +64,22 @@ const Dots = styled.span`
 `;
 
 export default function AddLiquidity() {
-  const params = useParams();
-  const location = useLocation();
+  const { currencyIdA, currencyIdB } = useParams();
   const navigate = useNavigate();
-
-  const { currencyIdA, currencyIdB } = params;
-
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const location = useLocation();
   const { address } = useAccount();
+  const chainId = useNetwork().chain?.id;
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
   const theme = useTheme();
 
   const currencyA = useCurrency(currencyIdA);
   const currencyB = useCurrency(currencyIdB);
 
   const oneCurrencyIsWETH = Boolean(
-    chain?.id &&
-      ((currencyA && currencyEquals(currencyA, WETH_TOKENS[chain.id])) ||
-        (currencyB && currencyEquals(currencyB, WETH_TOKENS[chain.id]))),
+    chainId &&
+      ((currencyA && currencyEquals(currencyA, WETH_TOKENS[chainId])) ||
+        (currencyB && currencyEquals(currencyB, WETH_TOKENS[chainId]))),
   );
 
   // const toggleWalletModal = useWalletModalToggle(); // toggle wallet when disconnected
@@ -135,7 +136,7 @@ export default function AddLiquidity() {
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? BigInt("0")),
+        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? "0"),
       };
     },
     {},
@@ -144,18 +145,18 @@ export default function AddLiquidity() {
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(
     parsedAmounts[Field.CURRENCY_A],
-    V2_ROUTER_ADDRESSES[chain?.id ?? SupportedChainId.MAINNET],
+    V2_ROUTER_ADDRESSES[chainId ?? SupportedChainId.MAINNET],
   );
   const [approvalB, approveBCallback] = useApproveCallback(
     parsedAmounts[Field.CURRENCY_B],
-    V2_ROUTER_ADDRESSES[chain?.id ?? SupportedChainId.MAINNET],
+    V2_ROUTER_ADDRESSES[chainId ?? SupportedChainId.MAINNET],
   );
 
   const addTransaction = useTransactionAdder();
 
   async function onAdd() {
-    if (!chain?.id || !library || !address) return;
-    const router = getRouterContract(chainId, library, account);
+    if (!chainId || !publicClient || !address || !walletClient) return;
+    const router = getRouterContract(walletClient, publicClient, address, chainId);
 
     const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts;
     if (!parsedAmountA || !parsedAmountB || !currencyA || !currencyB || !deadline) {
@@ -170,7 +171,7 @@ export default function AddLiquidity() {
     let estimate,
       method: (...args: any) => Promise<TransactionResponse>,
       args: Array<string | string[] | number>,
-      value: bigint | null;
+      value: BigNumber | null;
     if (currencyA === ETHER || currencyB === ETHER) {
       const tokenBIsETH = currencyB === ETHER;
       estimate = router.estimateGas.addLiquidityETH;
@@ -183,7 +184,7 @@ export default function AddLiquidity() {
         address,
         deadline.toHexString(),
       ];
-      value = BigInt((tokenBIsETH ? parsedAmountB : parsedAmountA).raw.toString());
+      value = BigNumber.from((tokenBIsETH ? parsedAmountB : parsedAmountA).raw.toString());
     } else {
       estimate = router.estimateGas.addLiquidity;
       method = router.addLiquidity;
@@ -316,7 +317,7 @@ export default function AddLiquidity() {
         navigate(`/add/${currencyIdA ? currencyIdA : "ETH"}/${newCurrencyIdB}`);
       }
     },
-    [currencyIdA, navigate, currencyIdB],
+    [currencyIdA, currencyIdB, navigate],
   );
 
   const handleDismissConfirmation = useCallback(() => {
@@ -436,7 +437,7 @@ export default function AddLiquidity() {
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !address ? (
-              <ConnectKitLightButton />
+              <ConnectKitLightButton padding="18px" width="100%" $borderRadius="20px" />
             ) : (
               <AutoColumn gap={"md"}>
                 {(approvalA === ApprovalState.NOT_APPROVED ||

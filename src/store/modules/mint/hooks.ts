@@ -1,3 +1,4 @@
+import JSBI from "jsbi";
 import { useCallback, useMemo } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { useCurrencyBalances } from "../../../hooks/balances/useCurrencyBalance";
@@ -15,7 +16,7 @@ import { wrappedCurrency, wrappedCurrencyAmount } from "../../../utils/wrappedCu
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Field, typeInput } from "./mintSlice";
 
-const ZERO = BigInt(0);
+const ZERO = JSBI.BigInt(0);
 
 export function useMintState() {
   return useAppSelector((state) => state.mint);
@@ -130,10 +131,13 @@ export function useDerivedMintInfo(
     currencyB,
     pair,
   ]);
-  const parsedAmounts: { [field in Field]: CurrencyAmount | undefined } = {
-    [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
-    [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
-  };
+
+  const parsedAmounts: { [field in Field]: CurrencyAmount | undefined } = useMemo(() => {
+    return {
+      [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
+      [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
+    };
+  }, [independentField, independentAmount, dependentAmount]);
 
   const price = useMemo(() => {
     if (noLiquidity) {

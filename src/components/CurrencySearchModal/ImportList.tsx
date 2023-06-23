@@ -1,3 +1,4 @@
+import { TokenList } from "@uniswap/token-lists";
 import { transparentize } from "polished";
 import { useCallback, useState } from "react";
 import { AlertTriangle, ArrowLeft } from "react-feather";
@@ -11,6 +12,7 @@ import { CloseIcon, ExternalLink, TYPE } from "../../theme";
 import { ButtonPrimary } from "../Button";
 import Card from "../Card";
 import { AutoColumn } from "../Column";
+import ListLogo from "../ListLogo";
 import { AutoRow, RowBetween, RowFixed } from "../Row";
 import { PaddedColumn } from "./CurrencySearch";
 
@@ -144,7 +146,7 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
 
           <ButtonPrimary
             disabled={!confirmed}
-            altDisabledStyle={true}
+            $altDisabledStyle={true}
             $borderRadius="20px"
             padding="10px 1rem"
             onClick={handleAddList}

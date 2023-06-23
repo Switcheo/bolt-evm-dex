@@ -1,7 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { BridgeableToken } from "../../utils/entities/bridgeableToken";
-import { Token } from "../../utils/entities/token";
 import Modal from "../Modal";
 import BridgeCurrencySearch from "./BridgeCurrencySearch";
 
@@ -15,8 +14,6 @@ interface BridgeCurrencyModalProps {
 const BridgeCurrencyModal = ({ isOpen, onDismiss, onCurrencySelect, selectedCurrency }: BridgeCurrencyModalProps) => {
   const { height: windowHeight } = useWindowSize();
   let modalHeight: number | undefined = 80;
-  // import token flow
-  const [importToken, setImportToken] = useState<Token | undefined>();
 
   if (windowHeight) {
     // Converts pixel units to vh for Modal component
@@ -38,7 +35,6 @@ const BridgeCurrencyModal = ({ isOpen, onDismiss, onCurrencySelect, selectedCurr
         onDismiss={onDismiss}
         onCurrencySelect={handleCurrencySelect}
         selectedCurrency={selectedCurrency}
-        setImportToken={setImportToken}
       />
     </Modal>
   );

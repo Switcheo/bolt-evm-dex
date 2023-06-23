@@ -1,7 +1,7 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
 import { useCallback, useMemo } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { Address, useAccount, useNetwork } from "wagmi";
 import { V2_ROUTER_ADDRESSES } from "../constants/addresses";
 import { SupportedChainId } from "../constants/chains";
 import { Field } from "../store/modules/swap/swapSlice";
@@ -46,7 +46,7 @@ export function useApproveCallback(
       : ApprovalState.APPROVED;
   }, [amountToApprove, currentAllowance, pendingApproval, spender]);
 
-  const tokenContract = useTokenContract(token?.address);
+  const tokenContract = useTokenContract(token?.address as Address);
   const addTransaction = useTransactionAdder();
 
   const approve = useCallback(async (): Promise<void> => {
@@ -83,7 +83,7 @@ export function useApproveCallback(
 
     return tokenContract
       .approve(spender, useExact ? amountToApprove.raw.toString() : MaxUint256, {
-        gasLimit: calculateGasMargin(estimatedGas.toBigInt()),
+        gasLimit: calculateGasMargin(estimatedGas),
       })
       .then((response: TransactionResponse) => {
         addTransaction(response, {
@@ -102,11 +102,11 @@ export function useApproveCallback(
 
 // wraps useApproveCallback in the context of a swap
 export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) {
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
   const amountToApprove = useMemo(
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
     [trade, allowedSlippage],
   );
+
   return useApproveCallback(amountToApprove, V2_ROUTER_ADDRESSES[chainId ?? SupportedChainId.MAINNET]);
 }

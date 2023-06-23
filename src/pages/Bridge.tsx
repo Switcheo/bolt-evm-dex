@@ -1,26 +1,33 @@
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
-import { bsc, polygon } from "viem/chains";
-import { mainnet, useAccount, useBalance, useNetwork, useSwitchNetwork, useWalletClient } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import BridgeInputPanel from "../components/BridgeInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
 import { AutoColumn } from "../components/Column";
 import ConfirmBridgeModal from "../components/ConfirmBridgeModal";
 import Menus from "../components/Menu";
-import { BridgingChainIdToNameRecord, convertToSupportedBridgingChainId, getBridgingChainIdFromOfficialChainId, getChainNameFromBridgingId, getOfficialChainIdFromBridgingChainId, SupportedBridgingChainId } from "../constants/chains";
+import {
+  BridgingChainIdToNameRecord,
+  convertToSupportedBridgingChainId,
+  getChainNameFromBridgingId,
+  getOfficialChainIdFromBridgingChainId,
+  SupportedBridgingChainId,
+} from "../constants/chains";
 import { BridgeTx, useBridgeCallback } from "../hooks/useBridgeCallback";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setDestinationChain, setSelectedCurrency, setSourceAmount, setSourceChain } from "../store/modules/bridge/bridgeSlice";
+import {
+  setDestinationChain,
+  setSelectedCurrency,
+  setSourceAmount,
+  setSourceChain,
+} from "../store/modules/bridge/bridgeSlice";
 import { useDerivedBridgeInfo } from "../store/modules/bridge/hooks";
 import { fetchHydrogenFees, fetchTokens } from "../store/modules/bridge/services/api";
-import { deserializeToken } from "../store/modules/user/hooks";
 import { TYPE } from "../theme";
-import { deserializeBridgeableToken, getBridgeableTokens, serializeBridgeableToken } from "../utils/bridge";
+import { deserializeBridgeableToken, serializeBridgeableToken } from "../utils/bridge";
 import { BridgeableToken } from "../utils/entities/bridgeableToken";
-import { Token } from "../utils/entities/token";
-
 
 export const Wrapper = styled.div`
   position: relative;
@@ -133,17 +140,9 @@ const Bridge = () => {
 
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const { error, switchNetwork } = useSwitchNetwork();
-  const {
-    data: selectedCurrencyData,
-    isError,
-    isLoading,
-  } = useBalance({
-    address,
-    chainId: chain?.id,
-  });
+  const { switchNetwork, isLoading, isError } = useSwitchNetwork();
 
-  const { state, callback: bridgeCallback, error: bridgeCallbackError } = useBridgeCallback(pendingBridgeTx);
+  const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
 
   // const maxAmountInput: bigint = getMaxAmountInput(selectedCurrency, selectedCurrencyData?.value ?? BigInt(0));
 
@@ -226,12 +225,6 @@ const Bridge = () => {
     }
   }, [bridgeCallback, pendingBridgeTx, showConfirm, bridgeErrorMessage, bridgeToConfirm]);
 
-  // Debugging
-  // console.log("Chains from switchnetwork", chains);
-  // console.log("Error from switchnetwork", error);
-  // console.log("isSwitchNetworkLoading from switchnetwork", isSwitchNetworkLoading);
-  // console.log("Pending chain id from switchnetwork", pendingChainId);
-
   // Effects
   // Need to fix if user manually change forom metamask instead
   useEffect(() => {
@@ -247,16 +240,7 @@ const Bridge = () => {
   // Fetch fees whenever the destination chain changes
   useEffect(() => {
     dispatch(fetchHydrogenFees(pendingBridgeTx?.destToken?.tokenDenom ?? ""));
-  }, [dispatch, pendingBridgeTx?.destToken?.tokenDenom])
-  
-
-  // // TODO: Have a better solution but right now just dispatch the network to the current chainId (This is for when user rejects)
-  // useEffect(() => {
-  //   if (chain && chain?.id !== sourceChain) {
-  //     const bridgingChainId = getBridgingChainIdFromOfficialChainId(chain.id);
-  //     dispatch(setSourceChain(bridgingChainId));
-  //   }
-  // }, [chain, dispatch, sourceChain]);
+  }, [dispatch, pendingBridgeTx?.destToken?.tokenDenom]);
 
   return (
     <BridgeBody>

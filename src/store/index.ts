@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { load, save } from "redux-localstorage-simple";
 import application from "./modules/application/applicationSlice";
 import bridge from "./modules/bridge/bridgeSlice";
+import { bridgeHistoryApi } from "./modules/bridgeHistory/services/bridgeHistory";
 import burn from "./modules/burn/burnSlice";
 import { updateVersion } from "./modules/global/actions";
 import lists from "./modules/lists/reducer";
@@ -10,8 +12,6 @@ import multicall from "./modules/multicall/reducer";
 import swap from "./modules/swap/swapSlice";
 import transactions from "./modules/transactions/transactionsSlice";
 import user from "./modules/user/reducer";
-import { bridgeHistoryApi } from "./modules/bridgeHistory/services/bridgeHistory";
-import { setupListeners } from "@reduxjs/toolkit/dist/query";
 
 const PERSISTED_KEYS: string[] = ["user", "transactions", "lists"];
 
@@ -28,7 +28,10 @@ const store = configureStore({
     lists,
     [bridgeHistoryApi.reducerPath]: bridgeHistoryApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: true }).concat(save({ states: PERSISTED_KEYS })).concat(bridgeHistoryApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ thunk: true })
+      .concat(save({ states: PERSISTED_KEYS }))
+      .concat(bridgeHistoryApi.middleware),
   preloadedState: load({ states: PERSISTED_KEYS }),
   devTools: process.env.NODE_ENV !== "production",
 });

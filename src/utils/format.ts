@@ -15,9 +15,9 @@ export const formatTransactionHash = (hash: string): string => {
 // function that shortens long strings
 export const shortenString = (str: string, length: number): string => {
   return `${str.slice(0, length)}...${str.slice(-length)}`;
-}
+};
 
 // function that put ellipsis after a certain number of characters
 export const ellipsisAfterChars = (str: string, length: number): string => {
   return `${str.slice(0, length)}...`;
-}
+};

@@ -14,8 +14,6 @@ export enum Rounding {
   ROUND_UP,
 }
 
-export const INIT_CODE_HASH = "0x44143914e8635a0469aba189b8de6b2de637056633de24e05952c535e6eefae6";
-
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000);
 
 // exports for internal consumption

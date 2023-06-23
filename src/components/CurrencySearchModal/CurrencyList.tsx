@@ -188,8 +188,7 @@ export default function CurrencyList({
     return formatted;
   }, [breakIndex, currencies, showETH]);
 
-  const { chain } = useNetwork();
-  const chainId = chain?.id;
+  const chainId = useNetwork().chain?.id;
   const theme = useTheme();
 
   const inactiveTokens: {

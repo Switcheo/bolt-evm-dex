@@ -22,6 +22,7 @@ import store from "./store";
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
 import Updaters from "./Updaters";
 
+
 const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
 
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/remove/:currencyIdA",
+        element: <RemoveLiquidity />,
+      },
+      {
+        path: "/remove/:currencyIdA/:currencyIdB",
         element: <RemoveLiquidity />,
       },
       {

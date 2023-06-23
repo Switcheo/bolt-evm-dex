@@ -5,7 +5,6 @@ import BridgeConfirmationModal from "./BridgeConfirmationModal";
 import BridgeModalFooter from "./BridgeModalFooter";
 import BridgeModalHeader from "./BridgeModalHeader";
 
-
 export default function ConfirmBridgeModal({
   bridgeTx,
   onConfirm,

@@ -48,8 +48,7 @@ const transactionsSlice = createSlice({
   name: "transactions",
   initialState,
   reducers: {
-    addTransaction: (state, action: PayloadAction<TransactionPayload>) => {
-      const { chainId, from, hash, approval, summary, claim } = action.payload;
+    addTransaction: (state, { payload: { chainId, from, hash, approval, summary, claim } }) => {
       if (state[chainId]?.[hash]) {
         throw Error("Attempted to add existing transaction.");
       }
