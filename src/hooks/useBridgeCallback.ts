@@ -1,6 +1,6 @@
 import { bech32 } from "bech32";
-import { Address, bytesToHex, parseEther, stringToBytes } from "viem";
-import { getPublicClient, getWalletClient, prepareWriteContract } from "wagmi/actions";
+import { Address, bytesToHex, stringToBytes } from "viem";
+import { getNetwork, getPublicClient, getWalletClient, prepareWriteContract } from "wagmi/actions";
 import { BRIDGE_ENTRANCE_ABI } from "../constants/abis";
 import { MAIN_DEV_RECOVERY_ADDRESS, NATIVE_TOKEN_ADDRESS } from "../constants/addresses";
 import { getChainInfo } from "../constants/chainInfo";
@@ -55,21 +55,22 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
 
   const bridgeCallback = async () => {
     const publicClient = await getPublicClient();
-    const walletClient = await getWalletClient();
+    const chainId = await getNetwork();
+    const walletClient = await getWalletClient({ chainId: chainId.chain?.id });
 
     if (!walletClient) return;
 
-    const fromAssetHash = bytesToHex(stringToBytes(srcToken.address)); // need to get denom from token
-    const toAssetHash = bytesToHex(stringToBytes(destToken.address)); // need to get denom from token
+    const fromAssetHash = bytesToHex(stringToBytes(srcToken.carbonTokenId)); // need to get denom from token
+    const toAssetHash = bytesToHex(stringToBytes(destToken.tokenDenom)); // need to get denom from token
     const chainInfo = getChainInfo(getOfficialChainIdFromBridgingChainId(srcChain));
 
     const { bridgeEntranceAddr, feeAddress } = chainInfo.bridgeInfo;
-    const tokenCreator = destToken.tokenCreator;
+    const tokenCreator = srcToken.tokenCreator;
 
     // targetProxyHash
     const { words: recoveryAddressWords } = bech32.decode(MAIN_DEV_RECOVERY_ADDRESS);
     const recoveryAddressBytes = new Uint8Array(bech32.fromWords(recoveryAddressWords));
-    const recoveryAddressHex = bytesToHex(recoveryAddressBytes); // Need to convert
+    const recoveryAddressHex = bytesToHex(recoveryAddressBytes);
 
     const { words } = bech32.decode(tokenCreator);
     const addressBytes = new Uint8Array(bech32.fromWords(words));
@@ -77,16 +78,7 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
 
     const nonce = await publicClient.getTransactionCount({ address: srcAddr });
 
-    const ethAmount =
-      srcToken.address === NATIVE_TOKEN_ADDRESS ? parseEther(amount.toString() as `${number}`) : BigInt(0);
-
-    // convert amount to account for decimals
-    const amountDecimals = BigInt(srcToken.decimals);
-    const toTokenDecimals = BigInt(destToken.decimals);
-    const amountWithDecimals = amount * 10n ** amountDecimals;
-
-    // TODO: Add fee amount
-    const feeAmountWithDecimals = BigInt(feeAmount) * 10n ** toTokenDecimals;
+    const ethAmount = srcToken.address === NATIVE_TOKEN_ADDRESS ? amount : BigInt(0);
 
     // Prepare the config for the bridging
     const { request } = await prepareWriteContract({
@@ -102,7 +94,7 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
           destAddr, // _toAddress the L1 address to bridge to
           toAssetHash, // _toAssetHash
         ],
-        [amountWithDecimals, feeAmountWithDecimals, amountWithDecimals],
+        [amount, BigInt(feeAmount ?? 0.5 * 10 ** destToken.decimals), amount],
       ],
       functionName: "lock",
       value: ethAmount,

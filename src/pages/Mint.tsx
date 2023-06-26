@@ -107,7 +107,7 @@ export default function Mint() {
         <Wrapper id="mint-page">
           <AutoColumn>
             <ColumnCenter>
-              <AddressInputPanel value={typed} onChange={handleRecipientType} />
+              <AddressInputPanel id="mint-address-input-panel" value={typed} onChange={handleRecipientType} />
               {!address ? (
                 <ConnectKitLightButton padding="18px" $borderRadius="20px" width="100%" mt={BUTTON_MARGIN_TOP} />
               ) : chain?.id !== SupportedChainId.BOLTCHAIN ? (
@@ -121,6 +121,7 @@ export default function Mint() {
                 </ButtonError>
               ) : (
                 <ButtonError
+                  id="mint-button"
                   width="100%"
                   mt={BUTTON_MARGIN_TOP}
                   disabled={!!error || !isAddress(typed) || readyState !== 1 || loading}

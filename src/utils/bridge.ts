@@ -36,6 +36,7 @@ export function getBridgeableTokens(tokenResponse: TokenResponse) {
           sourceToken.bridge_id,
           sourceToken.creator,
           sourceToken.denom,
+          sourceToken.id,
           getOfficialChainIdFromBridgingChainId(sourceTokenChain),
           add0x(sourceToken.token_address),
           Number(sourceToken.decimals),
@@ -51,6 +52,7 @@ export function getBridgeableTokens(tokenResponse: TokenResponse) {
       wrappedToken.bridge_id,
       wrappedToken.creator,
       wrappedToken.denom,
+      wrappedToken.id,
       getOfficialChainIdFromBridgingChainId(wrappedTokenChain),
       add0x(wrappedToken.token_address),
       Number(wrappedToken.decimals),
@@ -72,6 +74,7 @@ export interface SerializedBridgeableToken {
   bridgeId: string;
   tokenCreator: string;
   tokenDenom: string;
+  carbonTokenId: string;
   chainId: number;
   address: string;
   decimals: number;
@@ -86,6 +89,7 @@ export function serializeBridgeableToken(bridgeableToken: BridgeableToken) {
     bridgeId: bridgeableToken.bridgeId,
     tokenCreator: bridgeableToken.tokenCreator,
     tokenDenom: bridgeableToken.tokenDenom,
+    carbonTokenId: bridgeableToken.carbonTokenId,
     chainId: bridgeableToken.chainId,
     address: bridgeableToken.address,
     decimals: bridgeableToken.decimals,
@@ -102,6 +106,7 @@ export function deserializeBridgeableToken(serializedBridgeableToken: Serialized
     serializedBridgeableToken.bridgeId,
     serializedBridgeableToken.tokenCreator,
     serializedBridgeableToken.tokenDenom,
+    serializedBridgeableToken.carbonTokenId,
     serializedBridgeableToken.chainId,
     serializedBridgeableToken.address,
     serializedBridgeableToken.decimals,

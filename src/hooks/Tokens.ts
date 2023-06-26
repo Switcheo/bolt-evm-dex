@@ -93,6 +93,8 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
   const tokenContractBytes32 = useBytes32TokenContract(address ? address : undefined, false);
   const token: Token | undefined = address ? tokens[address] : undefined;
 
+  console.log("The token is:", token);
+
   const tokenName = useSingleCallResult(token ? undefined : tokenContract, "name", undefined, NEVER_RELOAD);
   const tokenNameBytes32 = useSingleCallResult(
     token ? undefined : tokenContractBytes32,

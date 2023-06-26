@@ -26,16 +26,21 @@ export function useDerivedBridgeInfo() {
     .map((token) => deserializeBridgeableToken(token[destinationChain]))
     .find((token) => token !== undefined);
 
+  // adjust sourceamount by multiplying first then convert it to bigint
+  const sourceAmountAdjusted = BigInt(Number(sourceAmount) * 10 ** (sourceToken?.decimals ?? 0));
+
   const bridgeTx: BridgeTx = {
     srcToken: sourceToken,
     destToken: destinationToken,
     srcChain: sourceChain,
     destChain: destinationChain,
-    amount: BigInt(sourceAmount),
+    amount: sourceAmountAdjusted,
     srcAddr: address ?? ("" as Address),
     destAddr: address ?? ("" as Address),
     feeAmount: bridgeFees ?? "0",
   };
+
+  console.log(bridgeTx);
 
   return bridgeTx;
 }
