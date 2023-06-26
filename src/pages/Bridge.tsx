@@ -399,10 +399,10 @@ const Bridge = () => {
             <ButtonError
               style={{ marginTop: "1rem" }}
               disabled={
-                isLoading || isError
-                // ||
-                // BigInt(selectedCurrencyAmount) <= 0 ||
-                // BigInt(selectedCurrencyAmount) >= (selectedCurrencyData?.value ?? 0)
+                isLoading ||
+                isError ||
+                BigInt(selectedCurrencyAmount) <= 0 ||
+                selectedCurrencyAmount >= (selectedCurrencyAmount ?? 0)
               }
               onClick={() => {
                 setBridgeState({
