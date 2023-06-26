@@ -3,7 +3,7 @@ import { arrayify } from "ethers/lib/utils";
 import { useMemo } from "react";
 import { getAddress, isAddress } from "viem";
 import { Address, useNetwork } from "wagmi";
-import { SupportedChainId, isSupportedChain } from "../constants/chains";
+import { isSupportedChain, SupportedChainId } from "../constants/chains";
 import {
   TokenAddressMap,
   useCombinedActiveList,

@@ -16,6 +16,7 @@ import {
   getOfficialChainIdFromBridgingChainId,
   SupportedBridgingChainId,
 } from "../constants/chains";
+import { useCurrencyBalance } from "../hooks/balances/useCurrencyBalance";
 import { BridgeTx, useBridgeCallback } from "../hooks/useBridgeCallback";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
@@ -28,6 +29,7 @@ import { useDerivedBridgeInfo } from "../store/modules/bridge/hooks";
 import { fetchHydrogenFees, fetchTokens } from "../store/modules/bridge/services/api";
 import { TYPE } from "../theme";
 import { deserializeBridgeableToken, serializeBridgeableToken } from "../utils/bridge";
+import { getMaxAmountInput } from "../utils/calculation";
 import { BridgeableToken } from "../utils/entities/bridgeableToken";
 
 export const Wrapper = styled.div`
@@ -121,7 +123,6 @@ const Bridge = () => {
   const destChain = useAppSelector((state) => state.bridge.destinationChain);
   const selectedCurrency = useAppSelector((state) => state.bridge.selectedCurrency);
   const selectedCurrencyAmount = useAppSelector((state) => state.bridge.sourceAmount);
-
   const pendingBridgeTx = useDerivedBridgeInfo();
 
   // Local states
@@ -147,9 +148,11 @@ const Bridge = () => {
 
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
 
-  // const maxAmountInput: bigint = getMaxAmountInput(selectedCurrency, selectedCurrencyData?.value ?? BigInt(0));
+  const selectedCurrencyBalance = useCurrencyBalance(address ?? undefined, selectedCurrency ?? undefined);
 
-  // const atMaxAmountInput = Boolean(selectedCurrencyAmount && maxAmountInput === BigInt(selectedCurrencyAmount));
+  const maxAmountInput = getMaxAmountInput(selectedCurrency, selectedCurrencyBalance);
+
+  const atMaxAmountInput = Boolean(selectedCurrencyAmount && maxAmountInput.toString() === selectedCurrencyAmount);
 
   // Handlers
   const handleUserInputChange = useCallback(
@@ -159,9 +162,9 @@ const Bridge = () => {
     [dispatch],
   );
 
-  // const handleMaxInput = useCallback(() => {
-  //   dispatch(setSourceAmount(maxAmountInput.toString()));
-  // }, [dispatch, maxAmountInput]);
+  const handleMaxInput = useCallback(() => {
+    dispatch(setSourceAmount(maxAmountInput.toString()));
+  }, [dispatch, maxAmountInput]);
 
   const handleCurrencySelect = useCallback(
     (inputCurrency: BridgeableToken) => {
@@ -376,10 +379,8 @@ const Bridge = () => {
           <BridgeInputPanel
             label={"Amount"}
             value={selectedCurrencyAmount.toString()}
-            // showMaxButton={!atMaxAmountInput}
-            showMaxButton={false}
-            // onMax={handleMaxInput}
-            onMax={() => {}}
+            showMaxButton={!atMaxAmountInput}
+            onMax={handleMaxInput}
             id={"bridge-input-panel"}
             onUserInput={handleUserInputChange}
             onCurrencySelect={handleCurrencySelect}
@@ -390,6 +391,10 @@ const Bridge = () => {
             <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
               Connect Wallet
             </ConnectKitLightButton>
+          ) : getOfficialChainIdFromBridgingChainId(sourceChain) !== chain?.id ? (
+            <ButtonError style={{ marginTop: "1rem" }} $error={true} onClick={handleSwitchNetwork}>
+              Please switch your Wallet network to the source network
+            </ButtonError>
           ) : (
             <ButtonError
               style={{ marginTop: "1rem" }}

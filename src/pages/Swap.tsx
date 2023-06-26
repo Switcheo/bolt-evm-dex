@@ -4,7 +4,7 @@ import { ArrowDown } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -22,6 +22,7 @@ import SwapHeader from "../components/Swap/SwapHeader";
 import TokenWarningModal from "../components/TokenWarningModal";
 import TradePrice from "../components/TradePrice";
 import UnsupportedCurrencyFooter from "../components/UnsupportedCurrencyFooter";
+import { SupportedChainId } from "../constants/chains";
 import { INITIAL_ALLOWED_SLIPPAGE } from "../constants/utils";
 import { useAllTokens, useCurrency } from "../hooks/Tokens";
 import { useIsTransactionUnsupported } from "../hooks/Trades";
@@ -89,6 +90,8 @@ export default function Swap() {
     });
 
   const { address } = useAccount();
+  const chainId = useNetwork().chain?.id;
+  const { switchNetwork } = useSwitchNetwork();
   const theme = useTheme();
 
   // for expert mode
@@ -268,6 +271,10 @@ export default function Swap() {
     [onCurrencySelection],
   );
 
+  const handleChangeNetwork = useCallback(() => {
+    switchNetwork?.(42069);
+  }, [switchNetwork]);
+
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT);
 
   return (
@@ -400,6 +407,10 @@ export default function Swap() {
               <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
                 Connect Wallet
               </ConnectKitLightButton>
+            ) : chainId !== SupportedChainId.BOLTCHAIN ? (
+              <ButtonError $error={chainId !== SupportedChainId.BOLTCHAIN} onClick={handleChangeNetwork}>
+                Please switch to the Boltchain Network.
+              </ButtonError>
             ) : showWrap ? (
               <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
                 {wrapInputError ??

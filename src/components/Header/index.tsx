@@ -325,7 +325,7 @@ const Header = () => {
           <AccountElement $active={isConnected} style={{ pointerEvents: "auto" }}>
             {isConnected && !isLoading && !isError && data && (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {data.formatted} {data.symbol}
+                {data.formatted.slice(0, 10)} {data.symbol}
               </BalanceText>
             )}
             <ConnectKitLightButton padding="8px" width="unset" $borderRadius="12px" />
