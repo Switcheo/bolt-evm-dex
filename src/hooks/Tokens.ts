@@ -3,7 +3,7 @@ import { arrayify } from "ethers/lib/utils";
 import { useMemo } from "react";
 import { getAddress, isAddress } from "viem";
 import { Address, useNetwork } from "wagmi";
-import { SupportedChainId } from "../constants/chains";
+import { SupportedChainId, isSupportedChain } from "../constants/chains";
 import {
   TokenAddressMap,
   useCombinedActiveList,
@@ -26,7 +26,7 @@ function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean):
   const userAddedTokens = useUserAddedTokens();
 
   return useMemo(() => {
-    if (!chainId) return {};
+    if (!chainId || !isSupportedChain(chainId)) return {};
 
     // reduce to just tokens
     const mapWithoutUrls = Object.keys(tokenMap[chainId as SupportedChainId]).reduce<{
