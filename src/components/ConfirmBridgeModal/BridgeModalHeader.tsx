@@ -2,10 +2,7 @@ import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { isAddress } from "viem";
-import {
-  getChainNameFromBridgingId,
-  SupportedBridgingChainId,
-} from "../../constants/chains";
+import { getChainNameFromBridgingId, SupportedBridgingChainId } from "../../constants/chains";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { TYPE } from "../../theme";
 import { shortenString } from "../../utils/format";

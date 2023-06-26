@@ -120,12 +120,7 @@ export default function Mint() {
                     : "Send Me ETH"}
                 </ButtonError>
               ) : (
-                <ConnectKitLightButton
-                  padding="10px 16px"
-                  mt={BUTTON_MARGIN_TOP}
-                  width="100%"
-                  $borderRadius="0.75rem"
-                />
+                <ConnectKitLightButton padding="18px" $borderRadius="20px" width="100%" mt={BUTTON_MARGIN_TOP} />
               )}
 
               {successMessage && (

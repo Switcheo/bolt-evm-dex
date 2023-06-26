@@ -397,7 +397,7 @@ export default function Swap() {
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !address ? (
-              <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+              <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
                 Connect Wallet
               </ConnectKitLightButton>
             ) : showWrap ? (

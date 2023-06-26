@@ -313,7 +313,7 @@ const Bridge = () => {
                 </Menus.Menu>
 
                 {!address && (
-                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="12px" $borderRadius="16px" width="100%">
                     Connect Wallet
                   </ConnectKitLightButton>
                 )}
@@ -365,7 +365,7 @@ const Bridge = () => {
                 </Menus.Menu>
 
                 {!address && (
-                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="12px" $borderRadius="16px" width="100%">
                     Connect Wallet
                   </ConnectKitLightButton>
                 )}
@@ -387,7 +387,7 @@ const Bridge = () => {
           />
 
           {!address ? (
-            <ConnectKitLightButton style={{ marginTop: "1rem" }} $borderRadius="0.75rem">
+            <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
               Connect Wallet
             </ConnectKitLightButton>
           ) : (
