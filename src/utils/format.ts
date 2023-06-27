@@ -22,3 +22,8 @@ export const shortenString = (str: string, length: number): string => {
 export const ellipsisAfterChars = (str: string, length: number): string => {
   return `${str.slice(0, length)}...`;
 };
+
+export const formatChainName = (chainName: string) => {
+  if (chainName === "bsc") return "Binance Smart Chain";
+  return chainName.charAt(0).toUpperCase() + chainName.slice(1);
+};

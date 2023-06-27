@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
 import { useGetRelaysQuery } from "../../store/modules/bridgeHistory/services/bridgeHistory";
@@ -39,6 +40,18 @@ const BridgeHistoryTable = () => {
     },
   );
 
+  const [filteredData, setFilteredData] = useState(data?.data);
+
+  useEffect(() => {
+    if (data) {
+      // There are duplicates of id's in the data, so we need to filter them out
+      const filteredData = data.data.filter(
+        (transaction, index, self) => index === self.findIndex((t) => t.id === transaction.id),
+      );
+      setFilteredData(filteredData);
+    }
+  }, [data]);
+
   if (isLoading || !data) {
     return <div>Loading...</div>;
   }
@@ -47,7 +60,7 @@ const BridgeHistoryTable = () => {
     <GridContainer>
       <HeaderRow />
       <TokenDataContainer>
-        {data.data.map((transaction) => (
+        {filteredData?.map((transaction) => (
           <LoadedRow
             key={transaction.id}
             id={transaction.id}
