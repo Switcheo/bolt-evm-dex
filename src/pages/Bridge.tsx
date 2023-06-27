@@ -1,10 +1,9 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import BridgeInputPanel from "../components/BridgeInputPanel";
-import { ButtonDropdownLight, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
+import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
 import { AutoColumn } from "../components/Column";
 import ConfirmBridgeModal from "../components/ConfirmBridgeModal";

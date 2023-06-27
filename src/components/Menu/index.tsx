@@ -6,7 +6,6 @@ import { getBridgingChainIdFromName, getOfficialChainIdFromBridgingChainId } fro
 import { TYPE } from "../../theme";
 import { ButtonDropdownLight } from "../Button";
 
-
 const StyledMenu = styled.div`
   display: flex;
   justify-content: center;
@@ -68,7 +67,6 @@ const MenuList = styled(DropdownMenu.Content)`
   flex-direction: column; */
   font-size: 1rem;
   z-index: 500;
-
 `;
 
 interface MenusContext {
@@ -139,7 +137,9 @@ const List = (props: ListProps) => {
 
   return (
     <DropdownMenu.Portal>
-      <MenuList sideOffset={8} loop align="end">{props.children}</MenuList>
+      <MenuList sideOffset={8} loop align="end">
+        {props.children}
+      </MenuList>
     </DropdownMenu.Portal>
   );
 };

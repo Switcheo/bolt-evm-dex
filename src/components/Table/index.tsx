@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import { useAccount } from "wagmi";
 import { useGetRelaysQuery } from "../../store/modules/bridgeHistory/services/bridgeHistory";
 import { HeaderRow, LoadedRow } from "./TokenRow";
-import { useAccount } from "wagmi";
 
 const GridContainer = styled.div`
   display: flex;

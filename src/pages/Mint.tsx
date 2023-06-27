@@ -16,7 +16,6 @@ export const Wrapper = styled.div`
   padding: 1rem;
 `;
 
-const BUTTON_PADDING = "16px 16px";
 const BUTTON_MARGIN_TOP = "1rem";
 const FONT_SIZE = 14;
 const SUCCESS_COLOR = "green1";
