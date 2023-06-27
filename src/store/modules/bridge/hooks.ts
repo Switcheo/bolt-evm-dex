@@ -1,5 +1,6 @@
 import { Address, useAccount } from "wagmi";
 import { BridgeTx } from "../../../hooks/useBridgeCallback";
+import { tryParseAmount } from "../../../hooks/useWrapCallback";
 import { deserializeBridgeableToken } from "../../../utils/bridge";
 import { useAppSelector } from "../../hooks";
 
@@ -27,14 +28,16 @@ export function useDerivedBridgeInfo() {
     .find((token) => token !== undefined);
 
   // adjust sourceamount by multiplying first then convert it to bigint
-  const sourceAmountAdjusted = BigInt(Number(sourceAmount) * 10 ** (sourceToken?.decimals ?? 0));
+  const parsedAmount = sourceAmount
+    ? BigInt(tryParseAmount((sourceAmount as `${number}`) ?? 0, sourceToken)?.raw.toString() ?? "0")
+    : 0n;
 
   const bridgeTx: BridgeTx = {
     srcToken: sourceToken,
     destToken: destinationToken,
     srcChain: sourceChain,
     destChain: destinationChain,
-    amount: sourceAmountAdjusted,
+    amount: parsedAmount,
     srcAddr: address ?? ("" as Address),
     destAddr: address ?? ("" as Address),
     feeAmount: bridgeFees ?? "0",
