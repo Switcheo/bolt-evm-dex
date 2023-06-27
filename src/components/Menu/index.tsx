@@ -1,3 +1,4 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createContext, useContext, useMemo, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { getChainInfo } from "../../constants/chainInfo";
@@ -15,7 +16,7 @@ const StyledMenu = styled.div`
   width: 100%;
 `;
 
-const MenuItem = styled.div`
+const MenuItem = styled(DropdownMenu.Item)`
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -30,6 +31,11 @@ const MenuItem = styled.div`
   }
   & > svg {
     margin-right: 8px;
+  }
+
+  &[data-highlighted] {
+    /* Remove border */
+    outline: none;
   }
 `;
 
@@ -50,24 +56,17 @@ const Logo = styled.img`
   flex-direction: row;
 `;
 
-const MenuList = styled.span`
+const MenuList = styled(DropdownMenu.Content)`
   min-width: 8.125rem;
   background-color: ${({ theme }) => theme.bg2};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 12px;
   padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   font-size: 1rem;
-  position: absolute;
-  top: 3.25rem;
-  right: 0rem;
   z-index: 500;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    top: -17.25rem;
-  `};
 `;
 
 interface MenusContext {
@@ -93,7 +92,11 @@ const Menus = ({ children }: MenusProps) => {
 };
 
 const Menu = ({ children }: MenusProps) => {
-  return <StyledMenu>{children}</StyledMenu>;
+  return (
+    <DropdownMenu.Root>
+      <StyledMenu>{children}</StyledMenu>
+    </DropdownMenu.Root>
+  );
 };
 
 interface ToggleProps {
@@ -110,11 +113,15 @@ const Toggle = ({ id, children }: ToggleProps) => {
   };
 
   return (
-    <ButtonDropdownLight padding="0.5rem" onClick={handleClick} $borderRadius="0.75rem">
-      <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>
-        {children}
-      </TYPE.body>
-    </ButtonDropdownLight>
+    <>
+      <DropdownMenu.Trigger asChild>
+        <ButtonDropdownLight padding="0.5rem" onClick={handleClick} $borderRadius="0.75rem">
+          <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>
+            {children}
+          </TYPE.body>
+        </ButtonDropdownLight>
+      </DropdownMenu.Trigger>
+    </>
   );
 };
 
@@ -126,11 +133,15 @@ interface ListProps {
 const List = (props: ListProps) => {
   const { openId } = useContext(MenusContext);
 
-  // useOnClickOutside(typeof ref !== "function" ? ref : null, () => close());
-
   if (openId !== props.id) return null;
 
-  return <MenuList>{props.children}</MenuList>;
+  return (
+    <DropdownMenu.Portal>
+      <MenuList sideOffset={8} loop align="end">
+        {props.children}
+      </MenuList>
+    </DropdownMenu.Portal>
+  );
 };
 
 interface ButtonProps {
@@ -154,7 +165,6 @@ const Button = ({ children, onClick }: ButtonProps) => {
     >
       <Logo src={chainInfo.logoUrl} alt={`${chainInfo.label}-logo`} />
       {typeof children === "string" ? <InlineText>{children}</InlineText> : children}
-      {/* {children} */}
     </MenuItem>
   );
 };

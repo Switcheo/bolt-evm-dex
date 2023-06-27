@@ -3,19 +3,25 @@ import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import BridgeInputPanel from "../components/BridgeInputPanel";
-import { ButtonError, ConnectKitLightButton } from "../components/Button";
+import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
 import { AutoColumn } from "../components/Column";
 import ConfirmBridgeModal from "../components/ConfirmBridgeModal";
+import { Dots } from "../components/ConfirmBridgeModal/styleds";
 import Menus from "../components/Menu";
 import SwitchNetworkModal from "../components/SwitchNetworkModal";
+import { getChainInfo } from "../constants/chainInfo";
 import {
   BridgingChainIdToNameRecord,
   convertToSupportedBridgingChainId,
   getChainNameFromBridgingId,
   getOfficialChainIdFromBridgingChainId,
   SupportedBridgingChainId,
+  SupportedChainId,
 } from "../constants/chains";
+import { WETH_TOKENS } from "../constants/tokens";
+import { useCurrencyBalance } from "../hooks/balances/useCurrencyBalance";
+import { ApprovalState, useApproveCallback } from "../hooks/useApproveCallback";
 import { BridgeTx, useBridgeCallback } from "../hooks/useBridgeCallback";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
@@ -29,6 +35,7 @@ import { fetchHydrogenFees, fetchTokens } from "../store/modules/bridge/services
 import { TYPE } from "../theme";
 import { deserializeBridgeableToken, serializeBridgeableToken } from "../utils/bridge";
 import { BridgeableToken } from "../utils/entities/bridgeableToken";
+import { TokenAmount } from "../utils/entities/fractions/tokenAmount";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -121,8 +128,9 @@ const Bridge = () => {
   const destChain = useAppSelector((state) => state.bridge.destinationChain);
   const selectedCurrency = useAppSelector((state) => state.bridge.selectedCurrency);
   const selectedCurrencyAmount = useAppSelector((state) => state.bridge.sourceAmount);
-
   const pendingBridgeTx = useDerivedBridgeInfo();
+
+  // const bridgingCurrency = new Token
 
   // Local states
   const [{ showConfirm, bridgeToConfirm, bridgeErrorMessage, attemptingTxn, txHash }, setBridgeState] = useState<{
@@ -147,9 +155,23 @@ const Bridge = () => {
 
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
 
-  // const maxAmountInput: bigint = getMaxAmountInput(selectedCurrency, selectedCurrencyData?.value ?? BigInt(0));
+  const selectedCurrencyBalance = useCurrencyBalance(
+    address ?? undefined,
+    deserializeBridgeableToken(selectedCurrency) ?? undefined,
+  );
+  const maxAmountInput = selectedCurrencyBalance?.quotient;
+  // const maxAmountInput = getMaxAmountInput(selectedCurrency, selectedCurrencyBalance);
 
-  // const atMaxAmountInput = Boolean(selectedCurrencyAmount && maxAmountInput === BigInt(selectedCurrencyAmount));
+  const atMaxAmountInput = Boolean(selectedCurrencyAmount && maxAmountInput?.toString() === selectedCurrencyAmount);
+
+  // check whether the user has approved the router on the tokens
+  const [approvalBridge, approveBridgeCallback] = useApproveCallback(
+    new TokenAmount(
+      deserializeBridgeableToken(selectedCurrency) ?? WETH_TOKENS[SupportedChainId.MAINNET],
+      selectedCurrencyBalance?.raw ?? BigInt(0),
+    ),
+    getChainInfo(chain?.id ?? SupportedChainId.MAINNET).bridgeInfo.bridgeEntranceAddr,
+  );
 
   // Handlers
   const handleUserInputChange = useCallback(
@@ -159,9 +181,9 @@ const Bridge = () => {
     [dispatch],
   );
 
-  // const handleMaxInput = useCallback(() => {
-  //   dispatch(setSourceAmount(maxAmountInput.toString()));
-  // }, [dispatch, maxAmountInput]);
+  const handleMaxInput = useCallback(() => {
+    dispatch(setSourceAmount(maxAmountInput?.toString() ?? "0"));
+  }, [dispatch, maxAmountInput]);
 
   const handleCurrencySelect = useCallback(
     (inputCurrency: BridgeableToken) => {
@@ -313,7 +335,7 @@ const Bridge = () => {
                 </Menus.Menu>
 
                 {!address && (
-                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="12px" $borderRadius="16px" width="100%">
                     Connect Wallet
                   </ConnectKitLightButton>
                 )}
@@ -365,7 +387,7 @@ const Bridge = () => {
                 </Menus.Menu>
 
                 {!address && (
-                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="12px" $borderRadius="16px" width="100%">
                     Connect Wallet
                   </ConnectKitLightButton>
                 )}
@@ -376,10 +398,8 @@ const Bridge = () => {
           <BridgeInputPanel
             label={"Amount"}
             value={selectedCurrencyAmount.toString()}
-            // showMaxButton={!atMaxAmountInput}
-            showMaxButton={false}
-            // onMax={handleMaxInput}
-            onMax={() => {}}
+            showMaxButton={!atMaxAmountInput}
+            onMax={handleMaxInput}
             id={"bridge-input-panel"}
             onUserInput={handleUserInputChange}
             onCurrencySelect={handleCurrencySelect}
@@ -387,17 +407,33 @@ const Bridge = () => {
           />
 
           {!address ? (
-            <ConnectKitLightButton style={{ marginTop: "1rem" }} $borderRadius="0.75rem">
+            <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
               Connect Wallet
             </ConnectKitLightButton>
+          ) : getOfficialChainIdFromBridgingChainId(sourceChain) !== chain?.id ? (
+            <ButtonError style={{ marginTop: "1rem" }} $error={true} onClick={handleSwitchNetwork}>
+              Please switch your Wallet network to the source network
+            </ButtonError>
+          ) : approvalBridge === ApprovalState.PENDING || approvalBridge === ApprovalState.NOT_APPROVED ? (
+            <ButtonPrimary
+              onClick={approveBridgeCallback}
+              disabled={approvalBridge === ApprovalState.PENDING}
+              width={"100%"}
+            >
+              {approvalBridge === ApprovalState.PENDING ? (
+                <Dots>Approving {selectedCurrency?.symbol}</Dots>
+              ) : (
+                "Approve " + selectedCurrency?.symbol
+              )}
+            </ButtonPrimary>
           ) : (
             <ButtonError
               style={{ marginTop: "1rem" }}
               disabled={
-                isLoading || isError
-                // ||
-                // BigInt(selectedCurrencyAmount) <= 0 ||
-                // BigInt(selectedCurrencyAmount) >= (selectedCurrencyData?.value ?? 0)
+                isLoading ||
+                isError ||
+                BigInt(selectedCurrencyAmount) <= 0 ||
+                Number(selectedCurrencyAmount) > Number(selectedCurrencyBalance?.toExact() ?? 0)
               }
               onClick={() => {
                 setBridgeState({

@@ -1,5 +1,6 @@
 import { ConnectKitButton } from "connectkit";
 import { darken, lighten } from "polished";
+import { forwardRef } from "react";
 import { ChevronDown } from "react-feather";
 import { ButtonProps, Button as RebassButton } from "rebass/styled-components";
 import styled from "styled-components";
@@ -335,25 +336,46 @@ export function ButtonDropdownGrey({ disabled = false, children, ...rest }: { di
   );
 }
 
-export function ButtonDropdownLight({
-  disabled = false,
-  children,
-  ...rest
-}: { disabled?: boolean } & ButtonProps & {
-    padding?: string;
-    width?: string;
-    $borderRadius?: string;
-    $altDisabledStyle?: boolean;
-  }) {
-  return (
-    <ButtonOutlined {...rest} disabled={disabled}>
-      <RowBetween>
-        <div style={{ display: "flex", alignItems: "center" }}>{children}</div>
-        <ChevronDown size={24} />
-      </RowBetween>
-    </ButtonOutlined>
-  );
+// export function ButtonDropdownLight({
+//   disabled = false,
+//   children,
+//   ...rest
+// }: { disabled?: boolean } & ButtonProps & {
+//     padding?: string;
+//     width?: string;
+//     $borderRadius?: string;
+//     $altDisabledStyle?: boolean;
+//   }) {
+//   return (
+//     <ButtonOutlined {...rest} disabled={disabled}>
+//       <RowBetween>
+//         <div style={{ display: "flex", alignItems: "center" }}>{children}</div>
+//         <ChevronDown size={24} />
+//       </RowBetween>
+//     </ButtonOutlined>
+//   );
+// }
+
+interface ButtonDropdownLightProps extends ButtonProps {
+  disabled?: boolean;
+  padding?: string;
+  width?: string;
+  $borderRadius?: string;
+  $altDisabledStyle?: boolean;
 }
+
+export const ButtonDropdownLight = forwardRef<HTMLButtonElement, ButtonDropdownLightProps>(
+  ({ disabled = false, children, ...rest }, ref) => {
+    return (
+      <ButtonOutlined ref={ref} {...rest} disabled={disabled}>
+        <RowBetween>
+          <div style={{ display: "flex", alignItems: "center" }}>{children}</div>
+          <ChevronDown size={24} />
+        </RowBetween>
+      </ButtonOutlined>
+    );
+  },
+);
 
 export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps) {
   if (!active) {

@@ -8,7 +8,8 @@
  */
 
 // Function that formats a transaction hash for display
-export const formatTransactionHash = (hash: string): string => {
+export const formatTransactionHash = (hash: string | undefined): string => {
+  if (!hash) return "";
   return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
 };
 

@@ -737,7 +737,7 @@ export default function RemoveLiquidity() {
             )}
             <div style={{ position: "relative" }}>
               {!address ? (
-                <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="0.5rem" $borderRadius="0.75rem">
+                <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
                   Connect Wallet
                 </ConnectKitLightButton>
               ) : (

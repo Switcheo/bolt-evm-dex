@@ -7,9 +7,9 @@ import { useAllTokenBalances } from "./balances/useAllTokenBalances";
 function balanceComparator(balanceA?: TokenAmount, balanceB?: TokenAmount) {
   if (balanceA && balanceB) {
     return balanceA.greaterThan(balanceB) ? -1 : balanceA.equalTo(balanceB) ? 0 : 1;
-  } else if (balanceA && balanceA.greaterThan(BigInt(0))) {
+  } else if (balanceA && balanceA.greaterThan("0")) {
     return -1;
-  } else if (balanceB && balanceB.greaterThan(BigInt(0))) {
+  } else if (balanceB && balanceB.greaterThan("0")) {
     return 1;
   }
   return 0;

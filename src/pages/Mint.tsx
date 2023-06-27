@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import styled, { useTheme } from "styled-components";
 import { isAddress } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
@@ -16,7 +16,6 @@ export const Wrapper = styled.div`
   padding: 1rem;
 `;
 
-const BUTTON_PADDING = "16px 16px";
 const BUTTON_MARGIN_TOP = "1rem";
 const FONT_SIZE = 14;
 const SUCCESS_COLOR = "green1";
@@ -37,6 +36,7 @@ export default function Mint() {
   const [error, setError] = useState<string | null>(null);
 
   const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
 
   const processMessages = useCallback(
     (event: { data: string }) => {
@@ -96,36 +96,39 @@ export default function Mint() {
     });
   }, [typed, sendJsonMessage]);
 
+  const handleChangeNetwork = useCallback(() => {
+    switchNetwork?.(42069);
+  }, [switchNetwork]);
+
   return (
     <>
       <AppBody>
         <Wrapper id="mint-page">
           <AutoColumn>
             <ColumnCenter>
-              <AddressInputPanel value={typed} onChange={handleRecipientType} />
-              {address ? (
+              <AddressInputPanel id="mint-address-input-panel" value={typed} onChange={handleRecipientType} />
+              {!address ? (
+                <ConnectKitLightButton padding="18px" $borderRadius="20px" width="100%" mt={BUTTON_MARGIN_TOP} />
+              ) : chain?.id !== SupportedChainId.BOLTCHAIN ? (
                 <ButtonError
-                  padding={BUTTON_PADDING}
+                  width="100%"
+                  mt={BUTTON_MARGIN_TOP}
+                  $error={chain?.id !== SupportedChainId.BOLTCHAIN}
+                  onClick={handleChangeNetwork}
+                >
+                  Please switch to the Boltchain Network.
+                </ButtonError>
+              ) : (
+                <ButtonError
+                  id="mint-button"
                   width="100%"
                   mt={BUTTON_MARGIN_TOP}
                   disabled={!!error || !isAddress(typed) || readyState !== 1 || loading}
-                  $error={!!error || chain?.id !== SupportedChainId.BOLTCHAIN}
+                  $error={!!error}
                   onClick={onClaim}
-                  $borderRadius="10px"
                 >
-                  {error
-                    ? error
-                    : chain?.id !== SupportedChainId.BOLTCHAIN
-                    ? "Wrong Network. Please Switch to Boltchain"
-                    : "Send Me ETH"}
+                  {error ? error : "Send Me ETH"}
                 </ButtonError>
-              ) : (
-                <ConnectKitLightButton
-                  padding="10px 16px"
-                  mt={BUTTON_MARGIN_TOP}
-                  width="100%"
-                  $borderRadius="0.75rem"
-                />
               )}
 
               {successMessage && (

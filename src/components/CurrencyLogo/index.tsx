@@ -10,6 +10,9 @@ import Logo from "../Logo";
 export const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
 
+const getTokenLogoUrlSwitcheo = (tokenId: string) =>
+  `https://raw.githubusercontent.com/Switcheo/token-icons/main/tokenIcons/${tokenId}.svg`;
+
 const StyledEthereumLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
@@ -43,7 +46,7 @@ export default function CurrencyLogo({
       if (currency instanceof WrappedTokenInfo) {
         return [...uriLocations, getTokenLogoURL(currency.address)];
       }
-      return [getTokenLogoURL(currency.address)];
+      return [getTokenLogoURL(currency.address), getTokenLogoUrlSwitcheo(currency.symbol?.toUpperCase() ?? "SWTH")];
     }
     return [];
   }, [currency, uriLocations]);

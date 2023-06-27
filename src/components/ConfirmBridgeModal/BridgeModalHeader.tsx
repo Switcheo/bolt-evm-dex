@@ -1,11 +1,9 @@
 import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
-import { isAddress } from "viem";
-import {
-  getChainNameFromBridgingId,
-  SupportedBridgingChainId,
-} from "../../constants/chains";
+import { formatUnits, isAddress } from "viem";
+import { getChainNameFromBridgingId, SupportedBridgingChainId } from "../../constants/chains";
+import { DEFAULT_CARBON_TOKEN_DECIMALS } from "../../constants/utils";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { TYPE } from "../../theme";
 import { shortenString } from "../../utils/format";
@@ -29,13 +27,9 @@ export default function BridgeModalHeader({
     <AutoColumn gap={"md"} style={{ marginTop: "20px" }}>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
-          {/* <CurrencyLogo
-            currency={trade.inputAmount.currency}
-            size={"24px"}
-            style={{ marginRight: "12px" }}
-          /> */}
+          <CurrencyLogo currency={bridgeTx.srcToken} size={"24px"} style={{ marginRight: "12px" }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
-            {bridgeTx.amount.toString()}
+            {formatUnits(bridgeTx.amount, bridgeTx.srcToken?.decimals ?? DEFAULT_CARBON_TOKEN_DECIMALS)}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
@@ -56,7 +50,7 @@ export default function BridgeModalHeader({
         <RowFixed gap={"0px"}>
           <CurrencyLogo currency={bridgeTx.destToken} size={"24px"} style={{ marginRight: "12px" }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
-            {bridgeTx.amount.toString()}
+            {formatUnits(bridgeTx.amount, bridgeTx.destToken?.decimals ?? DEFAULT_CARBON_TOKEN_DECIMALS)}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
@@ -70,51 +64,7 @@ export default function BridgeModalHeader({
           </AutoColumn>
         </RowFixed>
       </RowBetween>
-      {/* {showAcceptChanges ? (
-        <SwapShowAcceptChanges justify="flex-start" gap={"0px"}>
-          <RowBetween>
-            <RowFixed>
-              <AlertTriangle
-                size={20}
-                style={{ marginRight: "8px", minWidth: 24 }}
-              />
-              <TYPE.main color={theme.primary1}> Price Updated</TYPE.main>
-            </RowFixed>
-            <ButtonPrimary
-              style={{
-                padding: ".5rem",
-                width: "fit-content",
-                fontSize: "0.825rem",
-                borderRadius: "12px",
-              }}
-              onClick={onAcceptChanges}
-            >
-              Accept
-            </ButtonPrimary>
-          </RowBetween>
-        </SwapShowAcceptChanges>
-      ) : null} */}
-      <AutoColumn justify="flex-start" gap="sm" style={{ padding: "12px 0 0 0px" }}>
-        {/* {trade.tradeType === TradeType.EXACT_INPUT ? (
-          <TYPE.italic textAlign="left" style={{ width: "100%" }}>
-            {`Output is estimated. You will receive at least `}
-            <b>
-              {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)}{" "}
-              {trade.outputAmount.currency.symbol}
-            </b>
-            {" or the transaction will revert."}
-          </TYPE.italic>
-        ) : (
-          <TYPE.italic textAlign="left" style={{ width: "100%" }}>
-            {`Input is estimated. You will sell at most `}
-            <b>
-              {slippageAdjustedAmounts[Field.INPUT]?.toSignificant(6)}{" "}
-              {trade.inputAmount.currency.symbol}
-            </b>
-            {" or the transaction will revert."}
-          </TYPE.italic>
-        )} */}
-      </AutoColumn>
+      <AutoColumn justify="flex-start" gap="sm" style={{ padding: "12px 0 0 0px" }}></AutoColumn>
       {recipient !== null ? (
         <AutoColumn justify="flex-start" gap="sm" style={{ padding: "12px 0 0 0px" }}>
           <TYPE.main>

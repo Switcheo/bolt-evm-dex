@@ -8,6 +8,7 @@ export class BridgeableToken extends Token {
   public readonly bridgeId: string;
   public readonly tokenCreator: string;
   public readonly tokenDenom: string;
+  public readonly carbonTokenId: string;
 
   public constructor(
     bridgeChainId: SupportedBridgingChainId | 4,
@@ -15,6 +16,7 @@ export class BridgeableToken extends Token {
     bridgeId: string,
     tokenCreator: string,
     tokenDenom: string,
+    carbonTokenId: string,
     chainId: SupportedChainId,
     address: string,
     decimals: number,
@@ -27,5 +29,6 @@ export class BridgeableToken extends Token {
     this.bridgeId = bridgeId;
     this.tokenCreator = tokenCreator;
     this.tokenDenom = tokenDenom;
+    this.carbonTokenId = carbonTokenId;
   }
 }

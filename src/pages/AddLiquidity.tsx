@@ -437,7 +437,7 @@ export default function AddLiquidity() {
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !address ? (
-              <ConnectKitLightButton padding="18px" width="100%" $borderRadius="20px" />
+              <ConnectKitLightButton padding="18px" $borderRadius="20px" width="100%" />
             ) : (
               <AutoColumn gap={"md"}>
                 {(approvalA === ApprovalState.NOT_APPROVED ||
