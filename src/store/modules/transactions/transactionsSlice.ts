@@ -63,7 +63,7 @@ const transactionsSlice = createSlice({
     },
     checkedTransaction: (state, { payload: { chainId, hash, blockNumber } }) => {
       const tx = state[chainId]?.[hash];
-      if (!tx || !blockNumber) {
+      if (!tx) {
         return;
       }
       if (!tx.lastCheckedBlockNumber) {

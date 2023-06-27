@@ -11,6 +11,7 @@ import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn } from "../components/Column";
 import Loader from "../components/Loader";
 import { AutoRow, RowBetween } from "../components/Row";
+import { useTransactionAdder } from "../store/modules/transactions/hooks";
 import { getCompilerInput } from "../utils/getCompilerInput";
 import { Solc } from "../utils/solidity-compiler/wrapper";
 
@@ -248,6 +249,8 @@ const Issue = () => {
   const publicClient = usePublicClient();
   const { address } = useAccount();
 
+  const addTransaction = useTransactionAdder();
+
   const [opts, setOpts] = useState<Required<KindedOptions["ERC20"]>>({
     kind: "ERC20",
     ...erc20.defaults,
@@ -301,11 +304,11 @@ const Issue = () => {
         args: [],
       });
 
-      // addTransaction({chainId}, {
-      //   summary: `Deploy ${contractName}`,
-      // });
+      const transactionReceipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      await publicClient.waitForTransactionReceipt({ hash });
+      addTransaction(transactionReceipt, {
+        summary: `Deployed ${contractName}`,
+      });
     } catch (error) {
       if (error instanceof UserRejectedRequestError) {
         setDeployError(error.message);

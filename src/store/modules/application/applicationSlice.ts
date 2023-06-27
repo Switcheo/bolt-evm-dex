@@ -43,7 +43,7 @@ const applicationSlice = createSlice({
       }
     },
     addPopup: (state, action) => {
-      const { content, key, removeAfterMs } = action.payload;
+      const { content, key, removeAfterMs = 15000 } = action.payload;
       state.popupList = (key ? state.popupList.filter((popup) => popup.key !== key) : state.popupList).concat([
         {
           key: key || nanoid(),

@@ -1,6 +1,6 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useMemo } from "react";
-import { parseUnits } from "viem";
+import { parseUnits, TransactionReceipt } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { prepareWriteContract, waitForTransaction, writeContract } from "wagmi/actions";
 import { wethABI } from "../constants/abis";
@@ -43,7 +43,7 @@ interface WrapCallbackArgs {
   inputAmount: CurrencyAmount;
   chainId: number;
   addTransaction: (
-    response: TransactionResponse,
+    response: TransactionResponse | TransactionReceipt,
     customData?:
       | {
           summary?: string | undefined;
@@ -63,7 +63,7 @@ interface WrapCallbackArgs {
   ) => void;
 }
 
-const wrapEther = async ({ inputAmount, chainId }: WrapCallbackArgs) => {
+const wrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
   const data = await prepareWriteContract({
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
@@ -72,14 +72,17 @@ const wrapEther = async ({ inputAmount, chainId }: WrapCallbackArgs) => {
   });
   const { hash } = await writeContract(data.request);
 
-  await waitForTransaction({
+  const transactionReceipt = await waitForTransaction({
     hash,
     chainId,
   });
-  // addTransaction(hash, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
+
+  addTransaction(transactionReceipt, {
+    summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH`,
+  });
 };
 
-const unwrapEther = async ({ inputAmount, chainId }: WrapCallbackArgs) => {
+const unwrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
   const data = await prepareWriteContract({
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
@@ -88,12 +91,12 @@ const unwrapEther = async ({ inputAmount, chainId }: WrapCallbackArgs) => {
   });
   const { hash } = await writeContract(data.request);
 
-  await waitForTransaction({
+  const transactionReceipt = await waitForTransaction({
     hash,
     chainId,
   });
 
-  // addTransaction(transactionResponse, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
+  addTransaction(transactionReceipt, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
 };
 
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE };

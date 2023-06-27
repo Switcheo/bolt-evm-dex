@@ -1,3 +1,4 @@
+import JSBI from "jsbi";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
@@ -19,10 +20,10 @@ import {
   SupportedBridgingChainId,
   SupportedChainId,
 } from "../constants/chains";
-import { WETH_TOKENS } from "../constants/tokens";
 import { useCurrencyBalance } from "../hooks/balances/useCurrencyBalance";
 import { ApprovalState, useApproveCallback } from "../hooks/useApproveCallback";
 import { BridgeTx, useBridgeCallback } from "../hooks/useBridgeCallback";
+import { tryParseAmount } from "../hooks/useWrapCallback";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setDestinationChain,
@@ -35,7 +36,7 @@ import { fetchHydrogenFees, fetchTokens } from "../store/modules/bridge/services
 import { TYPE } from "../theme";
 import { deserializeBridgeableToken, serializeBridgeableToken } from "../utils/bridge";
 import { BridgeableToken } from "../utils/entities/bridgeableToken";
-import { TokenAmount } from "../utils/entities/fractions/tokenAmount";
+import { maxAmountSpend } from "../utils/maxAmountSpend";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -159,17 +160,16 @@ const Bridge = () => {
     address ?? undefined,
     deserializeBridgeableToken(selectedCurrency) ?? undefined,
   );
-  const maxAmountInput = selectedCurrencyBalance?.quotient;
-  // const maxAmountInput = getMaxAmountInput(selectedCurrency, selectedCurrencyBalance);
 
-  const atMaxAmountInput = Boolean(selectedCurrencyAmount && maxAmountInput?.toString() === selectedCurrencyAmount);
+  // get the max amounts user can add
+  const maxAmounts = maxAmountSpend(selectedCurrencyBalance);
+  const parsedAmount = tryParseAmount(selectedCurrencyAmount, deserializeBridgeableToken(selectedCurrency));
+
+  const atMaxAmountInput = Boolean(maxAmounts?.equalTo(parsedAmount ?? "0"));
 
   // check whether the user has approved the router on the tokens
   const [approvalBridge, approveBridgeCallback] = useApproveCallback(
-    new TokenAmount(
-      deserializeBridgeableToken(selectedCurrency) ?? WETH_TOKENS[SupportedChainId.MAINNET],
-      selectedCurrencyBalance?.raw ?? BigInt(0),
-    ),
+    selectedCurrencyBalance,
     getChainInfo(chain?.id ?? SupportedChainId.MAINNET).bridgeInfo.bridgeEntranceAddr,
   );
 
@@ -182,8 +182,8 @@ const Bridge = () => {
   );
 
   const handleMaxInput = useCallback(() => {
-    dispatch(setSourceAmount(maxAmountInput?.toString() ?? "0"));
-  }, [dispatch, maxAmountInput]);
+    dispatch(setSourceAmount(maxAmounts?.toExact() ?? ""));
+  }, [dispatch, maxAmounts]);
 
   const handleCurrencySelect = useCallback(
     (inputCurrency: BridgeableToken) => {
@@ -224,6 +224,7 @@ const Bridge = () => {
 
     setShowSwitchNetworkModal(false);
     dispatch(setSelectedCurrency(null));
+    dispatch(setSourceAmount(""));
   }, [dispatch, sourceChain, switchNetwork]);
 
   const handleBridge = useCallback(async () => {
@@ -432,8 +433,9 @@ const Bridge = () => {
               disabled={
                 isLoading ||
                 isError ||
-                BigInt(selectedCurrencyAmount) <= 0 ||
-                Number(selectedCurrencyAmount) > Number(selectedCurrencyBalance?.toExact() ?? 0)
+                JSBI.lessThan(maxAmounts?.raw ?? JSBI.BigInt(0), parsedAmount?.raw ?? JSBI.BigInt(0)) ||
+                !parsedAmount ||
+                !selectedCurrency
               }
               onClick={() => {
                 setBridgeState({
