@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import { formatUnits } from "viem";
+import { DEFAULT_CARBON_TOKEN_DECIMALS } from "../../constants/utils";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { ConfirmationModalContent, TransactionErrorContent } from "../TransactionConfirmationModal";
 import BridgeConfirmationModal from "./BridgeConfirmationModal";
@@ -49,7 +51,10 @@ export default function ConfirmBridgeModal({
   }, [onConfirm, bridgeTx, bridgeErrorMessage, showAcceptChanges]);
 
   // text to show while loading
-  const pendingText = `Bridging ${bridgeTx?.amount} ${bridgeTx?.srcToken?.symbol} to ${bridgeTx?.destToken?.symbol}`;
+  const pendingText = `Bridging ${formatUnits(
+    bridgeTx?.amount ?? BigInt(0),
+    bridgeTx?.destToken?.decimals ?? DEFAULT_CARBON_TOKEN_DECIMALS,
+  )} ${bridgeTx?.srcToken?.symbol} to ${bridgeTx?.destToken?.symbol}`;
 
   const confirmationContent = useCallback(
     () =>

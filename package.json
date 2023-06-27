@@ -16,6 +16,7 @@
     "@ethersproject/abi": "^5.7.0",
     "@openzeppelin/wizard": "^0.3.0",
     "@popperjs/core": "^2.11.8",
+    "@radix-ui/react-dropdown-menu": "^2.0.5",
     "@reach/dialog": "^0.18.0",
     "@reach/portal": "^0.18.0",
     "@reduxjs/toolkit": "^1.9.5",

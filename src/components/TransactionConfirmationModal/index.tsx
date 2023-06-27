@@ -70,10 +70,6 @@ function TransactionSubmittedContent({
 }) {
   const theme = useTheme();
 
-  // const { library } = useActiveWeb3React()
-
-  // const { addToken, success } = useAddTokenToMetamask(currencyToAdd)
-
   return (
     <Wrapper>
       <Section>
@@ -95,20 +91,6 @@ function TransactionSubmittedContent({
               </Text>
             </ExternalLink>
           )}
-          {/* {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonLight mt="12px" padding="6px 12px" width="fit-content" onClick={addToken}>
-              {!success ? (
-                <RowFixed>
-                  Add {currencyToAdd.symbol} to Metamask <StyledLogo src={MetaMaskLogo} />
-                </RowFixed>
-              ) : (
-                <RowFixed>
-                  Added {currencyToAdd.symbol}{' '}
-                  <CheckCircle size={'16px'} stroke={theme.green1} style={{ marginLeft: '6px' }} />
-                </RowFixed>
-              )}
-            </ButtonLight>
-          )} */}
           <ButtonPrimary onClick={onDismiss} style={{ margin: "20px 0 0 0" }}>
             <Text fontWeight={500} fontSize={20}>
               Close

@@ -40,7 +40,5 @@ export function useDerivedBridgeInfo() {
     feeAmount: bridgeFees ?? "0",
   };
 
-  console.log(bridgeTx);
-
   return bridgeTx;
 }
