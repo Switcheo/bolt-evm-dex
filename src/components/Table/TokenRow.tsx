@@ -1,7 +1,9 @@
 import { CSSProperties, ForwardedRef, forwardRef, ReactNode } from "react";
-import { ChevronRight } from "react-feather";
 import styled, { css } from "styled-components";
-import { formatTransactionHash } from "../../utils/format";
+import { getOfficialChainIdFromName } from "../../constants/chains";
+import { ExternalLink } from "../../theme";
+import { formatChainName, formatTransactionHash } from "../../utils/format";
+import { getEtherscanLink } from "../../utils/getExplorerLink";
 import {
   LARGE_MEDIA_BREAKPOINT,
   MAX_WIDTH_MEDIA_BREAKPOINT,
@@ -45,12 +47,12 @@ const DateCell = styled(Cell)`
   white-space: nowrap;
 `;
 
-const NameCell = styled(Cell)`
-  justify-content: flex-start;
-  padding: 0px 8px;
-  min-width: 240px;
-  gap: 8px;
-`;
+// const NameCell = styled(Cell)`
+//   justify-content: flex-start;
+//   padding: 0px 8px;
+//   min-width: 240px;
+//   gap: 8px;
+// `;
 
 const ChainCell = styled(Cell)`
   justify-content: flex-start;
@@ -73,12 +75,12 @@ const TransactionCell = styled(DataCell)`
   }
 `;
 
-const MoreDetailsCell = styled(Cell)`
-  justify-content: flex-start;
-  padding: 0px 8px;
-  /* min-width: 240px; */
-  gap: 8px;
-`;
+// const MoreDetailsCell = styled(Cell)`
+//   justify-content: flex-start;
+//   padding: 0px 8px;
+//   /* min-width: 240px; */
+//   gap: 8px;
+// `;
 
 const StyledTokenRow = styled.div<{
   first?: boolean;
@@ -87,8 +89,8 @@ const StyledTokenRow = styled.div<{
 }>`
   background-color: transparent;
   display: grid;
-  font-size: 13px;
-  grid-template-columns: 3fr 5fr 3fr 3fr 4fr 4fr 4fr 3fr 3fr;
+  font-size: 14px;
+  grid-template-columns: 3fr 4fr 4fr 6fr 6fr 5fr;
   line-height: 24px;
   max-width: 1366px;
   min-width: 390px;
@@ -121,11 +123,11 @@ const StyledTokenRow = styled.div<{
   }
 
   @media only screen and (max-width: ${MAX_WIDTH_MEDIA_BREAKPOINT}) {
-    grid-template-columns: 3fr 5fr 3fr 3fr 4fr 4fr 4fr 3fr 3fr;
+    grid-template-columns: 3fr 4fr 4fr 6fr 6fr 5fr;
   }
 
   @media only screen and (max-width: ${LARGE_MEDIA_BREAKPOINT}) {
-    grid-template-columns: 3fr 5fr 3fr 3fr 4fr 4fr 4fr 3fr 3fr;
+    grid-template-columns: 3fr 4fr 4fr 6fr 6fr 5fr;
   }
 
   @media only screen and (max-width: ${MEDIUM_MEDIA_BREAKPOINT}) {
@@ -149,6 +151,7 @@ const StyledHeaderRow = styled(StyledTokenRow)`
   border-radius: 8px 8px 0px 0px;
   color: ${({ theme }) => theme.textSecondary};
   font-size: 14px;
+  font-weight: 600;
   height: 48px;
   line-height: 16px;
   padding: 0px 12px;
@@ -164,23 +167,23 @@ const StyledHeaderRow = styled(StyledTokenRow)`
   }
 `;
 
-const TokenInfoCell = styled(Cell)`
-  gap: 8px;
-  line-height: 24px;
-  /* font-size: 16px; */
-  max-width: inherit;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+// const TokenInfoCell = styled(Cell)`
+//   gap: 8px;
+//   line-height: 24px;
+//   /* font-size: 16px; */
+//   max-width: inherit;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
 
-  @media only screen and (max-width: ${SMALL_MEDIA_BREAKPOINT}) {
-    justify-content: flex-start;
-    flex-direction: column;
-    gap: 0px;
-    width: max-content;
-    font-weight: 500;
-  }
-`;
+//   @media only screen and (max-width: ${SMALL_MEDIA_BREAKPOINT}) {
+//     justify-content: flex-start;
+//     flex-direction: column;
+//     gap: 0px;
+//     width: max-content;
+//     font-weight: 500;
+//   }
+// `;
 
 // const TokenName = styled.div`
 //   overflow: hidden;
@@ -189,31 +192,31 @@ const TokenInfoCell = styled(Cell)`
 //   max-width: 100%;
 // `;
 
-const TokenSymbol = styled(Cell)`
-  color: ${({ theme }) => theme.textTertiary};
-  text-transform: uppercase;
+// const TokenSymbol = styled(Cell)`
+//   color: ${({ theme }) => theme.textTertiary};
+//   text-transform: uppercase;
 
-  @media only screen and (max-width: ${SMALL_MEDIA_BREAKPOINT}) {
-    font-size: 12px;
-    height: 16px;
-    justify-content: flex-start;
-    width: 100%;
-  }
-`;
+//   @media only screen and (max-width: ${SMALL_MEDIA_BREAKPOINT}) {
+//     font-size: 12px;
+//     height: 16px;
+//     justify-content: flex-start;
+//     width: 100%;
+//   }
+// `;
 
 interface TokenRowProps {
   first?: boolean;
   header: boolean;
   $loading?: boolean;
   date: ReactNode;
-  tokenInfo: ReactNode;
-  sourceChain: ReactNode;
-  destinationChain: ReactNode;
-  sourceTransaction: ReactNode;
-  destinationTransaction: ReactNode;
-  bridgeTransaction: ReactNode;
+  // tokenInfo: ReactNode;
+  sourceChain: string;
+  destinationChain: string;
+  sourceTransaction: string;
+  destinationTransaction: string;
+  // bridgeTransaction: ReactNode;
   status: ReactNode;
-  moreDetails: ReactNode;
+  // moreDetails: ReactNode;
   last?: boolean;
   style?: CSSProperties;
 }
@@ -222,33 +225,49 @@ interface TokenRowProps {
 function TokenRow({
   header,
   date,
-  tokenInfo,
+  // tokenInfo,
   sourceChain,
   destinationChain,
   sourceTransaction,
   destinationTransaction,
-  bridgeTransaction,
+  // bridgeTransaction,
   status,
-  moreDetails,
+  // moreDetails,
   ...rest
 }: TokenRowProps) {
   const rowCells = (
     <>
       <DateCell data-testid="date-cell">{date}</DateCell>
-      <NameCell data-testid="name-cell">{tokenInfo}</NameCell>
+      {/* <NameCell data-testid="name-cell">{tokenInfo}</NameCell> */}
       <ChainCell data-testid="source-chain-cell">{sourceChain}</ChainCell>
       <ChainCell data-testid="destination-chain-cell">{destinationChain}</ChainCell>
       <TransactionCell data-testid="source-transaction-cell" $sortable={false}>
-        {sourceTransaction}
+        {!header ? (
+          <ExternalLink
+            href={getEtherscanLink(getOfficialChainIdFromName(sourceChain), sourceTransaction, "transaction")}
+          >
+            {formatTransactionHash(sourceTransaction)}
+          </ExternalLink>
+        ) : (
+          sourceTransaction
+        )}
       </TransactionCell>
       <TransactionCell data-testid="destination-transaction-cell" $sortable={false}>
-        {destinationTransaction}
+        {!header ? (
+          <ExternalLink
+            href={getEtherscanLink(getOfficialChainIdFromName(destinationChain), destinationTransaction, "transaction")}
+          >
+            {formatTransactionHash(destinationTransaction)}
+          </ExternalLink>
+        ) : (
+          destinationTransaction
+        )}
       </TransactionCell>
-      <TransactionCell data-testid="bridge-transaction-cell" $sortable={false}>
+      {/* <TransactionCell data-testid="bridge-transaction-cell" $sortable={false}>
         {bridgeTransaction}
-      </TransactionCell>
+      </TransactionCell> */}
       <StatusCell data-testid="status-cell">{status}</StatusCell>
-      <MoreDetailsCell data-testid="more-details-cell">{moreDetails}</MoreDetailsCell>
+      {/* <MoreDetailsCell data-testid="more-details-cell">{moreDetails}</MoreDetailsCell> */}
     </>
   );
   if (header) return <StyledHeaderRow data-testid="header-row">{rowCells}</StyledHeaderRow>;
@@ -260,14 +279,14 @@ export function HeaderRow() {
     <TokenRow
       header={true}
       date={"Date/Time"}
-      tokenInfo={"Asset name"}
+      // tokenInfo={"Asset name"}
       sourceChain={"Source"}
       destinationChain={"Destination"}
-      sourceTransaction={"Source Tx"}
-      destinationTransaction={"Destination Tx"}
-      bridgeTransaction={"Bridge Tx"}
+      sourceTransaction={"Source Transaction"}
+      destinationTransaction={"Destination Transaction"}
+      // bridgeTransaction={"Bridge Tx"}
       status={"Status"}
-      moreDetails={"More details"}
+      // moreDetails={"More details"}
     />
   );
 }
@@ -292,12 +311,12 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HT
     id,
     date,
     // assetName,
-    assetSymbol,
+    // assetSymbol,
     sourceChain,
     destinationChain,
     sourceTransactionHash,
     destinationTransactionHash,
-    bridgeTransactionHash,
+    // bridgeTransactionHash,
     status,
     // moreDetails,
   } = props;
@@ -308,23 +327,23 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HT
       <TokenRow
         header={false}
         date={new Date(date).toLocaleDateString()}
-        tokenInfo={
-          <TokenInfoCell>
-            {/* <TokenName data-cy="token-name">{assetName}</TokenName> */}
-            <TokenSymbol>{assetSymbol}</TokenSymbol>
-          </TokenInfoCell>
-        }
-        sourceChain={sourceChain}
-        destinationChain={destinationChain}
-        sourceTransaction={formatTransactionHash(sourceTransactionHash)}
-        destinationTransaction={formatTransactionHash(destinationTransactionHash)}
-        bridgeTransaction={formatTransactionHash(bridgeTransactionHash)}
+        // tokenInfo={
+        //   <TokenInfoCell>
+        //     {/* <TokenName data-cy="token-name">{assetName}</TokenName> */}
+        //     <TokenSymbol>{assetSymbol}</TokenSymbol>
+        //   </TokenInfoCell>
+        // }
+        sourceChain={formatChainName(sourceChain)}
+        destinationChain={formatChainName(destinationChain)}
+        sourceTransaction={sourceTransactionHash}
+        destinationTransaction={destinationTransactionHash}
+        // bridgeTransaction={formatTransactionHash(bridgeTransactionHash)}
         status={status}
-        moreDetails={
-          <MoreDetailsCell>
-            <ChevronRight size={16} />
-          </MoreDetailsCell>
-        }
+        // moreDetails={
+        //   <MoreDetailsCell>
+        //     <ChevronRight size={16} />
+        //   </MoreDetailsCell>
+        // }
       />
       {/* </StyledLink> */}
     </div>

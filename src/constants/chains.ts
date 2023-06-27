@@ -79,12 +79,16 @@ export const getChainNameFromBridgingId = (chainId: SupportedBridgingChainId): s
 // Function to retrieve the Bridging ChainId from the Name
 export const getBridgingChainIdFromName = (name: string): SupportedBridgingChainId => {
   const entries = recordEntries(ChainIdToNameRecord);
-  const entry = entries.find((entry) => entry[1] === name);
+  const entry = entries.find((entry) => entry[1].toLowerCase() === name.toLowerCase());
   if (entry) {
     const chainId = entry[0];
     return getBridgingChainIdFromOfficialChainId(chainId);
   }
   return SupportedBridgingChainId.MAINNET;
+};
+
+export const getOfficialChainIdFromName = (name: string): SupportedChainId => {
+  return getOfficialChainIdFromBridgingChainId(getBridgingChainIdFromName(name));
 };
 
 export const convertToSupportedChainId = (chainId: number | string): SupportedChainId | null => {
