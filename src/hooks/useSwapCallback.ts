@@ -1,5 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
+import { TransactionResponse } from "@ethersproject/providers";
 import JSBI from "jsbi";
 import { useMemo } from "react";
 import { getAddress, isAddress } from "viem";
@@ -191,7 +192,7 @@ export function useSwapCallback(
           gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: address } : { from: address }),
         })
-          .then((response: any) => {
+          .then((response: TransactionResponse) => {
             const inputSymbol = trade.inputAmount.currency.symbol;
             const outputSymbol = trade.outputAmount.currency.symbol;
             const inputAmount = trade.inputAmount.toSignificant(3);

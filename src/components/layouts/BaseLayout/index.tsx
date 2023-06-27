@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import Header from "../../Header";
 import Polling from "../../Header/Polling";
+import Popups from "../../Popups";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -47,6 +48,7 @@ const BaseLayout = () => {
           <Header />
         </HeaderWrapper>
         <BodyWrapper>
+          <Popups />
           <Polling />
           <Outlet />
           <Marginer />

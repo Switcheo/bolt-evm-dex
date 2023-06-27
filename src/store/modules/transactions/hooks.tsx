@@ -1,12 +1,14 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useCallback, useMemo } from "react";
+import { TransactionReceipt } from "viem";
 import { useAccount, useNetwork } from "wagmi";
+import { hasProperty } from "../../../utils/validateTypes";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { addTransaction, TransactionDetails } from "./transactionsSlice";
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
-  response: TransactionResponse,
+  response: TransactionResponse | TransactionReceipt,
   customData?: {
     summary?: string;
     approval?: { tokenAddress: string; spender: string };
@@ -20,7 +22,7 @@ export function useTransactionAdder(): (
 
   return useCallback(
     (
-      response: TransactionResponse,
+      response: TransactionResponse | TransactionReceipt,
       {
         summary,
         approval,
@@ -30,11 +32,21 @@ export function useTransactionAdder(): (
       if (!address) return;
       if (!chainId) return;
 
-      const { hash } = response;
-      if (!hash) {
-        throw Error("No transaction hash found.");
+      // if the response is a transaction receipt, we add transactionHash. If it is a transaction response, we add hash
+      if (hasProperty<TransactionReceipt, "transactionHash">(response, "transactionHash")) {
+        const { transactionHash } = response;
+
+        if (!transactionHash) {
+          throw Error("No transaction hash found.");
+        }
+        dispatch(addTransaction({ hash: transactionHash, from: address, chainId, approval, summary, claim }));
+      } else {
+        const { hash } = response;
+        if (!hash) {
+          throw Error("No transaction hash found.");
+        }
+        dispatch(addTransaction({ hash, from: address, chainId, approval, summary, claim }));
       }
-      dispatch(addTransaction({ hash, from: address, chainId, approval, summary, claim }));
     },
     [address, chainId, dispatch],
   );
@@ -86,24 +98,4 @@ export function useHasPendingApproval(tokenAddress: string | undefined, spender:
       }),
     [allTransactions, spender, tokenAddress],
   );
-}
-
-// watch for submissions to claim
-// return null if not done loading, return undefined if not found
-export function useUserHasSubmittedClaim(account?: string): {
-  claimSubmitted: boolean;
-  claimTxn: TransactionDetails | undefined;
-} {
-  const allTransactions = useAllTransactions();
-
-  // get the txn if it has been submitted
-  const claimTxn = useMemo(() => {
-    const txnIndex = Object.keys(allTransactions).find((hash) => {
-      const tx = allTransactions[hash];
-      return tx.claim && tx.claim.recipient === account;
-    });
-    return txnIndex && allTransactions[txnIndex] ? allTransactions[txnIndex] : undefined;
-  }, [account, allTransactions]);
-
-  return { claimSubmitted: Boolean(claimTxn), claimTxn };
 }

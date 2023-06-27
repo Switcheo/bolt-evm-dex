@@ -4,7 +4,12 @@ import { getNetwork, getPublicClient, getWalletClient, prepareWriteContract } fr
 import { BRIDGE_ENTRANCE_ABI } from "../constants/abis";
 import { MAIN_DEV_RECOVERY_ADDRESS, NATIVE_TOKEN_ADDRESS } from "../constants/addresses";
 import { getChainInfo } from "../constants/chainInfo";
-import { getOfficialChainIdFromBridgingChainId, SupportedBridgingChainId } from "../constants/chains";
+import {
+  getChainNameFromBridgingId,
+  getOfficialChainIdFromBridgingChainId,
+  SupportedBridgingChainId,
+} from "../constants/chains";
+import { useTransactionAdder } from "../store/modules/transactions/hooks";
 import { BridgeableToken } from "../utils/entities/bridgeableToken";
 
 export enum BridgeCallbackState {
@@ -36,6 +41,8 @@ export const getEvmGasLimit = (evmChain: SupportedBridgingChainId) => {
 };
 
 export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
+  const addTransaction = useTransactionAdder();
+
   if (!bridgeTx)
     return {
       state: BridgeCallbackState.INVALID,
@@ -102,6 +109,16 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
       gas: BigInt(getEvmGasLimit(srcChain)),
     });
     const hash = await walletClient.writeContract(request);
+
+    const transactionReceipt = await publicClient.waitForTransactionReceipt({
+      hash,
+    });
+
+    addTransaction(transactionReceipt, {
+      summary: `Bridge ${srcToken.symbol} (${getChainNameFromBridgingId(srcToken.bridgeChainId)}) to ${
+        destToken.symbol
+      } (${getChainNameFromBridgingId(destToken.bridgeChainId)})`,
+    });
 
     return hash;
   };

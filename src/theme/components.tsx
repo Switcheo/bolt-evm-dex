@@ -242,14 +242,14 @@ export function ExternalLink({
 }: Omit<HTMLProps<HTMLAnchorElement>, "as" | "ref" | "onClick"> & {
   href: string;
 }) {
-  const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
-      event.preventDefault();
-      window.location.href = href;
-    },
-    [href],
-  );
-  return <StyledLink target={target} rel={rel} href={href} onClick={handleClick} {...rest} />;
+  // const handleClick = useCallback(
+  //   (event: React.MouseEvent<HTMLAnchorElement>) => {
+  //     event.preventDefault();
+  //     window.location.href = href;
+  //   },
+  //   [href],
+  // );
+  return <StyledLink target={target} rel={rel} href={href} {...rest} />;
 }
 
 export function ExternalLinkIcon({
