@@ -1,9 +1,11 @@
+import { capitalize } from "lodash";
 import { CSSProperties, ForwardedRef, forwardRef, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import { getOfficialChainIdFromName } from "../../constants/chains";
 import { ExternalLink } from "../../theme";
-import { formatChainName, formatTransactionHash } from "../../utils/format";
+import { formatChainName, formatStatus, formatTransactionHash } from "../../utils/format";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
+import { AutoColumn } from "../Column";
 import {
   LARGE_MEDIA_BREAKPOINT,
   MAX_WIDTH_MEDIA_BREAKPOINT,
@@ -305,6 +307,16 @@ interface LoadedRowProps {
   moreDetails: string;
 }
 
+const DateCellComp = (date: string) => {
+  const dateObj = new Date(date);
+  return (
+    <AutoColumn>
+      <div>{dateObj.toLocaleDateString()}</div>
+      <div>{dateObj.toLocaleTimeString()}</div>
+    </AutoColumn>
+  );
+};
+
 /* Loaded State: row component with token information */
 export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HTMLDivElement>) => {
   const {
@@ -326,7 +338,7 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HT
       {/* <StyledLink to={"#"}> */}
       <TokenRow
         header={false}
-        date={new Date(date).toLocaleDateString()}
+        date={DateCellComp(date)}
         // tokenInfo={
         //   <TokenInfoCell>
         //     {/* <TokenName data-cy="token-name">{assetName}</TokenName> */}
@@ -338,7 +350,7 @@ export const LoadedRow = forwardRef((props: LoadedRowProps, ref: ForwardedRef<HT
         sourceTransaction={sourceTransactionHash}
         destinationTransaction={destinationTransactionHash}
         // bridgeTransaction={formatTransactionHash(bridgeTransactionHash)}
-        status={status}
+        status={formatStatus(status)}
         // moreDetails={
         //   <MoreDetailsCell>
         //     <ChevronRight size={16} />

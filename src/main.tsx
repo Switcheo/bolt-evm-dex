@@ -45,7 +45,7 @@ export const boltchain = {
   },
 } as const satisfies Chain;
 
-const chains = [mainnet, polygon, bsc, sepolia, boltchain];
+const chains = [boltchain, mainnet, polygon, bsc, sepolia];
 
 const wagmiConfig = createConfig(
   getDefaultConfig({

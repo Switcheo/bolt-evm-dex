@@ -206,19 +206,7 @@ const ERC20Features: ERC20Feature[] = [
   {
     id: "permit",
     label: "Permit",
-  },
-  {
-    id: "votes",
-    label: "Votes",
-  },
-  {
-    id: "flashmint",
-    label: "Flash Minting",
-  },
-  {
-    id: "snapshots",
-    label: "Snapshot",
-  },
+  }
 ];
 
 interface CompilerOutput {
