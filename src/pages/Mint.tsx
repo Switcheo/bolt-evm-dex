@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import { isAddress } from "viem";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
+import SuccessMintModal from "../components/SuccessMintModal";
 import { SupportedChainId } from "../constants/chains";
 import { WSS_FAUCET_URL } from "../constants/utils";
-import { TYPE } from "../theme";
 import AppBody from "./AppBody";
 
 export const Wrapper = styled.div`
@@ -17,8 +17,6 @@ export const Wrapper = styled.div`
 `;
 
 const BUTTON_MARGIN_TOP = "1rem";
-const FONT_SIZE = 14;
-const SUCCESS_COLOR = "green1";
 
 const FAUCET_REQUEST = {
   url: "",
@@ -27,13 +25,13 @@ const FAUCET_REQUEST = {
 };
 
 export default function Mint() {
-  const theme = useTheme();
   const { address } = useAccount();
 
   const [typed, setTyped] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
@@ -58,6 +56,7 @@ export default function Mint() {
       if (response?.success) {
         setError(null);
         setSuccessMessage(`10 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`);
+        setShowModal(true);
       }
 
       setLoading(false);
@@ -100,6 +99,11 @@ export default function Mint() {
     switchNetwork?.(42069);
   }, [switchNetwork]);
 
+  const handleModalDismiss = useCallback(() => {
+    setSuccessMessage(null);
+    setShowModal(false);
+  }, []);
+
   return (
     <>
       <AppBody>
@@ -130,12 +134,7 @@ export default function Mint() {
                   {error ? error : "Send Me ETH"}
                 </ButtonError>
               )}
-
-              {successMessage && (
-                <TYPE.body color={theme?.[SUCCESS_COLOR]} fontWeight={500} fontSize={FONT_SIZE} mt="0.75rem">
-                  {successMessage}
-                </TYPE.body>
-              )}
+              <SuccessMintModal isOpen={showModal} onDismiss={handleModalDismiss} message={successMessage} />
             </ColumnCenter>
           </AutoColumn>
         </Wrapper>

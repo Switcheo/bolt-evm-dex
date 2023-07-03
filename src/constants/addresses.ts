@@ -1,6 +1,7 @@
 import { Address } from "viem";
 import { SupportedChainId } from "./chains";
 
+
 interface AddressMap {
   [chainId: number]: Address;
 }
@@ -74,3 +75,5 @@ export const MULTICALL_ADDRESSES: AddressMap = {
 };
 
 export const MAIN_DEV_RECOVERY_ADDRESS = "swth1cuekk8en9zgnuv0eh4hk7xtr2kghn69x0x6u7r";
+
+export const BOLT_ERC20_ADDRESS = "0x333668EF1b9aa9E8a944b6331fF591Fb94EcD126";
