@@ -1,4 +1,3 @@
-import { capitalize } from "lodash";
 import { CSSProperties, ForwardedRef, forwardRef, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import { getOfficialChainIdFromName } from "../../constants/chains";
