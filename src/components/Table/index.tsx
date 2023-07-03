@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useAccount } from "wagmi";
 import { useGetRelaysQuery } from "../../store/modules/bridgeHistory/services/bridgeHistory";
 import { HeaderRow, LoadedRow } from "./TokenRow";
+import { ConnectKitLightButton } from "../Button";
 
 const GridContainer = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ const TokenDataContainer = styled.div`
 
 const BridgeHistoryTable = () => {
   const { address } = useAccount();
-  const { data, isLoading } = useGetRelaysQuery(
+  const { data, isLoading , isUninitialized } = useGetRelaysQuery(
     {
       bridgeType: "polynetwork",
       searchTerm: address,
@@ -37,6 +38,7 @@ const BridgeHistoryTable = () => {
     {
       pollingInterval: 5000,
       refetchOnFocus: false,
+      skip: !address,
     },
   );
 
@@ -52,7 +54,7 @@ const BridgeHistoryTable = () => {
     }
   }, [data]);
 
-  if (isLoading || !data) {
+  if ((isLoading || !data) && address) {
     return <div>Loading...</div>;
   }
 
@@ -76,7 +78,12 @@ const BridgeHistoryTable = () => {
             moreDetails={transaction.status}
           />
         ))}
-        {data.data.length === 0 && <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>}
+        {(data?.data.length === 0 && address) && <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>}
+        {isUninitialized && <div style={{  display: 'flex', justifyContent: 'center', padding: "20px" }}>
+          <ConnectKitLightButton style={{ maxWidth: '200px'}} padding="16px" $borderRadius="20px">
+            Connect Wallet
+          </ConnectKitLightButton>
+        </div>}
       </TokenDataContainer>
     </GridContainer>
   );
