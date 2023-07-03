@@ -59,7 +59,7 @@ function SuccessMintModal({ isOpen, onDismiss, message }: SuccessMintModalProps)
           </ConfirmedIcon>
           <AutoColumn gap="12px" justify={"center"}>
             {message && (
-              <TYPE.body fontSize={14} color={theme?.green1}>
+              <TYPE.body fontSize={14} color={theme?.green1} textAlign="center">
                 {message}
               </TYPE.body>
             )}
