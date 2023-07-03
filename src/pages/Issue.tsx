@@ -342,7 +342,7 @@ const Issue = () => {
                 )}
               </ButtonError>
             ) : (
-              <ConnectKitLightButton padding="18px" $borderRadius="20px" width="unset" />
+              <ConnectKitLightButton padding="10px 16px" $borderRadius="10px" width="unset" />
             )}
           </AutoRow>
           <IssueRow>
