@@ -17,7 +17,7 @@ const TEST_ADDRESS_NEVER_USE = new Wallet(TEST_PRIVATE_KEY).address;
 const CHAIN_ID = SupportedChainId.BOLTCHAIN;
 const HEXLIFIED_CHAIN_ID = `0x${CHAIN_ID.toString(16)}`;
 
-const provider = new JsonRpcProvider("https://rpc.bolt-dev.switcheo.network", 42069);
+const provider = new JsonRpcProvider("https://rpc.devnet.boltchain.com", 42069);
 const signer = new Wallet(TEST_PRIVATE_KEY, provider);
 export const injected = new (class extends Eip1193Bridge {
   chainId = CHAIN_ID;

@@ -36,12 +36,12 @@ export const boltchain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://rpc.bolt-dev.switcheo.network"] },
-    default: { http: ["https://rpc.bolt-dev.switcheo.network"] },
+    public: { http: ["https://rpc.devnet.boltchain.com"] },
+    default: { http: ["https://rpc.devnet.boltchain.com"] },
   },
   blockExplorers: {
-    etherscan: { name: "Blockscout", url: "https://blockscout.bolt-dev.switcheo.network" },
-    default: { name: "Blockscout", url: "https://blockscout.bolt-dev.switcheo.network" },
+    etherscan: { name: "Blockscout", url: "https://explorer.devnet.boltchain.com" },
+    default: { name: "Blockscout", url: "https://explorer.devnet.boltchain.com" },
   },
 } as const satisfies Chain;
 

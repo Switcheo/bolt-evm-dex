@@ -168,43 +168,6 @@ const StyledHeaderRow = styled(StyledTokenRow)`
   }
 `;
 
-// const TokenInfoCell = styled(Cell)`
-//   gap: 8px;
-//   line-height: 24px;
-//   /* font-size: 16px; */
-//   max-width: inherit;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   white-space: nowrap;
-
-//   @media only screen and (max-width: ${SMALL_MEDIA_BREAKPOINT}) {
-//     justify-content: flex-start;
-//     flex-direction: column;
-//     gap: 0px;
-//     width: max-content;
-//     font-weight: 500;
-//   }
-// `;
-
-// const TokenName = styled.div`
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   white-space: nowrap;
-//   max-width: 100%;
-// `;
-
-// const TokenSymbol = styled(Cell)`
-//   color: ${({ theme }) => theme.textTertiary};
-//   text-transform: uppercase;
-
-//   @media only screen and (max-width: ${SMALL_MEDIA_BREAKPOINT}) {
-//     font-size: 12px;
-//     height: 16px;
-//     justify-content: flex-start;
-//     width: 100%;
-//   }
-// `;
-
 interface TokenRowProps {
   first?: boolean;
   header: boolean;
