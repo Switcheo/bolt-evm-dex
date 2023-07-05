@@ -27,7 +27,7 @@ const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
 
 export const boltchain = {
-  id: 42_069,
+  id: 42_070,
   name: "Boltchain",
   network: "boltchain",
   nativeCurrency: {

@@ -3,6 +3,7 @@ import { Hash } from "viem";
 import { Percent } from "../utils/entities/fractions/percent";
 import { SupportedChainId } from "./chains";
 
+
 interface HashMap {
   [chainId: number]: Hash;
 }

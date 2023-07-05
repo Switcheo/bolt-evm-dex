@@ -272,7 +272,7 @@ export default function Swap() {
   );
 
   const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(42069);
+    switchNetwork?.(SupportedChainId.BOLTCHAIN);
   }, [switchNetwork]);
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT);

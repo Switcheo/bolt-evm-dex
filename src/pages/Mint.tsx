@@ -96,7 +96,7 @@ export default function Mint() {
   }, [typed, sendJsonMessage]);
 
   const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(42069);
+    switchNetwork?.(SupportedChainId.BOLTCHAIN);
   }, [switchNetwork]);
 
   const handleModalDismiss = useCallback(() => {
