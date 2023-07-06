@@ -65,7 +65,7 @@ export default function Mint() {
   );
 
   const { sendJsonMessage, readyState } = useWebSocket(
-    WSS_FAUCET_URL,
+    'ws://faucet.devnet.boltchain.com//faucet-smart/api',
     {
       onOpen: () => console.log("WebSocket connection opened."),
       onClose: () => console.log("WebSocket connection closed."),
@@ -75,8 +75,7 @@ export default function Mint() {
         console.error("WebSocket error occurred.", event);
         setLoading(false);
       },
-    },
-    chain?.id === SupportedChainId.BOLTCHAIN,
+    }
   );
 
   const handleRecipientType = useCallback(
