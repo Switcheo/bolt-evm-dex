@@ -31,6 +31,6 @@ export const formatChainName = (chainName: string) => {
 };
 
 export const formatStatus = (status: string) => {
-  if (status === 'in_transit') return 'In Transit';
+  if (status === "in_transit") return "In Transit";
   return capitalize(status);
-}
+};

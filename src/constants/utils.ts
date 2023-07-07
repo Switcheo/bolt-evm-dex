@@ -3,7 +3,6 @@ import { Hash } from "viem";
 import { Percent } from "../utils/entities/fractions/percent";
 import { SupportedChainId } from "./chains";
 
-
 interface HashMap {
   [chainId: number]: Hash;
 }
@@ -12,7 +11,7 @@ interface HashMap {
 // URLS
 // ************************************************************
 
-export const WSS_FAUCET_URL = "ws://faucet.devnet.boltchain.com/faucet-smart/api";
+export const WSS_FAUCET_URL = "wss://faucet.devnet.boltchain.com/faucet-smart/api";
 
 // default allowed slippage, in bips
 export const INITIAL_ALLOWED_SLIPPAGE = 50;

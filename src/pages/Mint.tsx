@@ -64,19 +64,16 @@ export default function Mint() {
     [typed],
   );
 
-  const { sendJsonMessage, readyState } = useWebSocket(
-    'ws://faucet.devnet.boltchain.com//faucet-smart/api',
-    {
-      onOpen: () => console.log("WebSocket connection opened."),
-      onClose: () => console.log("WebSocket connection closed."),
-      shouldReconnect: () => true,
-      onMessage: processMessages,
-      onError: (event: WebSocketEventMap["error"]) => {
-        console.error("WebSocket error occurred.", event);
-        setLoading(false);
-      },
-    }
-  );
+  const { sendJsonMessage, readyState } = useWebSocket(WSS_FAUCET_URL, {
+    onOpen: () => console.log("WebSocket connection opened."),
+    onClose: () => console.log("WebSocket connection closed."),
+    shouldReconnect: () => true,
+    onMessage: processMessages,
+    onError: (event: WebSocketEventMap["error"]) => {
+      console.error("WebSocket error occurred.", event);
+      setLoading(false);
+    },
+  });
 
   const handleRecipientType = useCallback(
     (val: string) => {

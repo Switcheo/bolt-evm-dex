@@ -1,7 +1,6 @@
 import { Address } from "viem";
 import { SupportedChainId } from "./chains";
 
-
 interface AddressMap {
   [chainId: number]: Address;
 }
