@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
 import { useGetRelaysQuery } from "../../store/modules/bridgeHistory/services/bridgeHistory";
-import { HeaderRow, LoadedRow } from "./TokenRow";
 import { ConnectKitLightButton } from "../Button";
+import { HeaderRow, LoadedRow } from "./TokenRow";
 
 const GridContainer = styled.div`
   display: flex;
@@ -30,7 +30,7 @@ const TokenDataContainer = styled.div`
 
 const BridgeHistoryTable = () => {
   const { address } = useAccount();
-  const { data, isLoading , isUninitialized } = useGetRelaysQuery(
+  const { data, isLoading, isUninitialized } = useGetRelaysQuery(
     {
       bridgeType: "polynetwork",
       searchTerm: address,
@@ -78,12 +78,16 @@ const BridgeHistoryTable = () => {
             moreDetails={transaction.status}
           />
         ))}
-        {(data?.data.length === 0 && address) && <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>}
-        {isUninitialized && <div style={{  display: 'flex', justifyContent: 'center', padding: "20px" }}>
-          <ConnectKitLightButton style={{ maxWidth: '200px'}} padding="16px" $borderRadius="20px">
-            Connect Wallet
-          </ConnectKitLightButton>
-        </div>}
+        {data?.data.length === 0 && address && (
+          <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>
+        )}
+        {isUninitialized && (
+          <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+            <ConnectKitLightButton style={{ maxWidth: "200px" }} padding="16px" $borderRadius="20px">
+              Connect Wallet
+            </ConnectKitLightButton>
+          </div>
+        )}
       </TokenDataContainer>
     </GridContainer>
   );

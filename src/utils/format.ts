@@ -7,6 +7,8 @@
  *
  */
 
+import { capitalize } from "lodash";
+
 // Function that formats a transaction hash for display
 export const formatTransactionHash = (hash: string | undefined): string => {
   if (!hash) return "";
@@ -26,4 +28,9 @@ export const ellipsisAfterChars = (str: string, length: number): string => {
 export const formatChainName = (chainName: string) => {
   if (chainName === "bsc") return "Binance Smart Chain";
   return chainName.charAt(0).toUpperCase() + chainName.slice(1);
+};
+
+export const formatStatus = (status: string) => {
+  if (status === "in_transit") return "In Transit";
+  return capitalize(status);
 };

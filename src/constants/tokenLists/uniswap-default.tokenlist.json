@@ -420,10 +420,10 @@
     },
     {
       "name": "Wrapped Ether",
-      "address": "0xbA6E0C8d1F8aD851B2C3C4e664E4f6a6C119A6e6",
+      "address": "0x01C3cb5b4CEF6069762B4390A38aC908E3278a29",
       "symbol": "WETH",
       "decimals": 18,
-      "chainId": 42069,
+      "chainId": 42070,
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
     }
   ]

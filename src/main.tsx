@@ -27,7 +27,7 @@ const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
 
 export const boltchain = {
-  id: 42_069,
+  id: 42_070,
   name: "Boltchain",
   network: "boltchain",
   nativeCurrency: {
@@ -36,16 +36,16 @@ export const boltchain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://rpc.bolt-dev.switcheo.network"] },
-    default: { http: ["https://rpc.bolt-dev.switcheo.network"] },
+    public: { http: ["https://rpc.devnet.boltchain.com"] },
+    default: { http: ["https://rpc.devnet.boltchain.com"] },
   },
   blockExplorers: {
-    etherscan: { name: "Blockscout", url: "https://blockscout.bolt-dev.switcheo.network" },
-    default: { name: "Blockscout", url: "https://blockscout.bolt-dev.switcheo.network" },
+    etherscan: { name: "Blockscout", url: "https://explorer.devnet.boltchain.com" },
+    default: { name: "Blockscout", url: "https://explorer.devnet.boltchain.com" },
   },
 } as const satisfies Chain;
 
-const chains = [mainnet, polygon, bsc, sepolia, boltchain];
+const chains = [boltchain, mainnet, polygon, bsc, sepolia];
 
 const wagmiConfig = createConfig(
   getDefaultConfig({

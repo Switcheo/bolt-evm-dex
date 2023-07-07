@@ -29,7 +29,7 @@ export function getEtherscanLink(
       prefix = `https://scan.carbon.network`;
       break;
     case SupportedChainId.BOLTCHAIN:
-      prefix = `https://blockscout.bolt-dev.switcheo.network`;
+      prefix = `https://explorer.devnet.boltchain.com`;
       break;
     default:
       prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;

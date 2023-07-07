@@ -2,7 +2,7 @@ export enum SupportedChainId {
   MAINNET = 1,
   POLYGON = 137,
   BSC = 56,
-  BOLTCHAIN = 42069,
+  BOLTCHAIN = 42070,
   CARBON = 9790,
 }
 
