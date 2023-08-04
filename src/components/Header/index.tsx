@@ -265,7 +265,7 @@ const NETWORK_LABELS: { [key: number]: string } = {
   1: "Ethereum",
   56: "Binance Smart Chain",
   137: "Polygon",
-  42069: "BoltChain",
+  42070: "BoltChain",
 };
 
 const Header = () => {
