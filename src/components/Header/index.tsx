@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { DefaultTheme } from "styled-components";
 import { useAccount, useBalance, useNetwork } from "wagmi";
-import Logo from "../../assets/svg/boltchain-horizontal-logo.svg";
+import Logo from "../../assets/svg/boltchain_logo.svg";
 import { useOnClickOutside } from "../../hooks/useOnOutsideClick";
 import { ConnectKitLightButton } from "../Button";
 import { YellowCard } from "../Card";
