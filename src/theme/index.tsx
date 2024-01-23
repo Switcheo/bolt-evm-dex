@@ -11,6 +11,7 @@ import { colors } from "./colors";
 // import { useIsDarkMode } from "../state/user/hooks";
 import { Colors } from "./styled";
 import { opacify } from "./utils";
+import "@fontsource-variable/dm-sans";
 
 export * from "./components";
 
@@ -170,12 +171,12 @@ export const TYPE = {
 
 export const FixedGlobalStyle = createGlobalStyle`
 html, input, textarea, button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'DM Sans Variable', sans-serif;
   }
 }
 
