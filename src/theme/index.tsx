@@ -8,7 +8,6 @@ import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
 } from "styled-components";
 import { colors } from "./colors";
-// import { useIsDarkMode } from "../state/user/hooks";
 import { Colors } from "./styled";
 import { opacify } from "./utils";
 import "@fontsource-variable/dm-sans";
@@ -23,8 +22,7 @@ const MEDIA_WIDTHS = {
 };
 
 export const BREAKPOINTS = {
-  xs: 396,
-  sm: 640,
+  sm: 480,
   md: 768,
   lg: 1024,
   xl: 1280,
