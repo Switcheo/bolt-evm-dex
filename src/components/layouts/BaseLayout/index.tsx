@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Header from "../../Header";
 import Polling from "../../Header/Polling";
 import Popups from "../../Popups";
+import SideMenuBar from "../../SideMenuBar.tsx";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -26,14 +27,11 @@ const BodyWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  z-index: 10;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
     padding-top: 2rem;
   `};
-
-  z-index: 1;
 `;
 
 const Marginer = styled.div`
@@ -47,6 +45,7 @@ const BaseLayout = () => {
         <HeaderWrapper>
           <Header />
         </HeaderWrapper>
+        <SideMenuBar />
         <BodyWrapper>
           <Popups />
           <Polling />
