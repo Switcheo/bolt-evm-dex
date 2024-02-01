@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { ReactComponent as SwapIcon } from "../assets/svg/swap.svg";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -318,13 +319,11 @@ export default function Swap() {
             <AutoColumn justify="space-between">
               <AutoRow justify={isExpertMode ? "space-between" : "center"} style={{ padding: "0 1rem" }}>
                 <ArrowWrapper $clickable>
-                  <ArrowDown
-                    size="16"
+                  <SwapIcon
                     onClick={() => {
                       setApprovalSubmitted(false); // reset 2 step UI for approvals
                       onSwitchTokens();
                     }}
-                    color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme?.primary1 : theme?.text2}
                   />
                 </ArrowWrapper>
                 {recipient === null && !showWrap && isExpertMode ? (
