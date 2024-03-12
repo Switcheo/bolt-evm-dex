@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import styled, { ThemeContext, useTheme } from "styled-components";
+import { ThemeContext, useTheme } from "styled-components";
 import { Field } from "../../store/modules/swap/swapSlice";
 import { useUserSlippageTolerance } from "../../store/modules/user/hooks";
-import { ExternalLink, TYPE } from "../../theme";
+import { TYPE } from "../../theme";
 import { TradeType } from "../../utils/entities/constants";
 import { Trade } from "../../utils/entities/trade";
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from "../../utils/prices";
@@ -12,16 +12,6 @@ import QuestionHelper from "../QuestionHelper";
 import { RowBetween, RowFixed } from "../Row";
 import SwapRoute from "./SwapRoute";
 
-const InfoLink = styled(ExternalLink)`
-  width: 100%;
-  border: 1px solid ${({ theme }) => theme.bg3};
-  padding: 6px 6px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 14px;
-  color: ${({ theme }) => theme.text1};
-`;
-
 function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
   const theme = useTheme();
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade);
@@ -30,7 +20,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
 
   return (
     <>
-      <AutoColumn style={{ padding: "0 16px" }}>
+      <AutoColumn gap="10px">
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme?.text2}>
@@ -74,11 +64,11 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
   );
 }
 
-export interface AdvancedSwapDetailsProps {
+export interface AdvancedSwapDetailProps {
   trade?: Trade;
 }
 
-export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
+export function AdvancedSwapDetail({ trade }: AdvancedSwapDetailProps) {
   const theme = useContext(ThemeContext);
 
   const [allowedSlippage] = useUserSlippageTolerance();
@@ -92,7 +82,7 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
           <TradeSummary trade={trade} allowedSlippage={allowedSlippage} />
           {showRoute && (
             <>
-              <RowBetween style={{ padding: "0 16px" }}>
+              <RowBetween>
                 <span style={{ display: "flex", alignItems: "center" }}>
                   <TYPE.black fontSize={14} fontWeight={400} color={theme?.text2}>
                     Route
@@ -102,16 +92,6 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                 <SwapRoute trade={trade} />
               </RowBetween>
             </>
-          )}
-          {!showRoute && (
-            <AutoColumn style={{ padding: "12px 16px 0 16px" }}>
-              <InfoLink
-                href={"https://info.uniswap.org/pair/" + trade.route.pairs[0].liquidityToken.address}
-                target="_blank"
-              >
-                View pair analytics ↗
-              </InfoLink>
-            </AutoColumn>
           )}
         </>
       )}
