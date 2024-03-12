@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { Settings, X } from "react-feather";
+import { X } from "react-feather";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
+import { ReactComponent as Settings } from "../../assets/svg/settings.svg";
 import { useOnClickOutside } from "../../hooks/useOnOutsideClick";
 import {
   useExpertModeManager,
@@ -19,21 +20,16 @@ import Toggle from "../Toggle";
 import TransactionSettings from "../TransactionSettings";
 
 const StyledMenuIcon = styled(Settings)`
-  height: 20px;
-  width: 20px;
-
-  > * {
-    stroke: ${({ theme }) => theme.text2};
-  }
-
+  height: 32px;
+  width: 32px;
   &:hover {
     opacity: 0.7;
   }
 `;
 
 const StyledCloseIcon = styled(X)`
-  height: 20px;
-  width: 20px;
+  height: 32px;
+  width: 32px;
   &:hover {
     cursor: pointer;
   }
@@ -83,9 +79,27 @@ const StyledMenu = styled.div`
   text-align: left;
 `;
 
+const MenuBackground = styled.div`
+  background: ${({ theme }) => theme.primaryGradient};
+  box-shadow: 500px 500px 500px;
+  border-radius: 9999px;
+  filter: blur(500px);
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+`;
+
+const MenuContent = styled(AutoColumn)`
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(500px);
+`;
+
 const MenuFlyout = styled.span`
   min-width: 20.125rem;
-  background-color: ${({ theme }) => theme.bg2};
+  border: ${({ theme }) => theme.border1};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 12px;
@@ -96,6 +110,7 @@ const MenuFlyout = styled.span`
   top: 3rem;
   right: 0rem;
   z-index: 100;
+  overflow: hidden;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 18.125rem;
@@ -188,8 +203,9 @@ export default function SettingsTab() {
       </StyledMenuButton>
       {open && (
         <MenuFlyout>
-          <AutoColumn gap="md" style={{ padding: "1rem" }}>
-            <Text fontWeight={600} fontSize={14}>
+          <MenuBackground />
+          <MenuContent gap="md">
+            <Text fontWeight={600} fontSize={14} color={theme?.text1}>
               Transaction Settings
             </Text>
             <TransactionSettings
@@ -198,7 +214,7 @@ export default function SettingsTab() {
               deadline={ttl}
               setDeadline={setTtl}
             />
-            <Text fontWeight={600} fontSize={14}>
+            <Text fontWeight={600} fontSize={14} color={theme?.text2}>
               Interface Settings
             </Text>
             <RowBetween>
@@ -239,7 +255,7 @@ export default function SettingsTab() {
                 }}
               />
             </RowBetween>
-          </AutoColumn>
+          </MenuContent>
         </MenuFlyout>
       )}
     </StyledMenu>

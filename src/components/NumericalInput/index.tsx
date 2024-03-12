@@ -11,7 +11,7 @@ type InputProps = {
 const StyledInput = styled.input<InputProps>`
   ${({ $error, theme }) => css`
     color: ${$error ? theme.red1 : theme.text1};
-    background-color: ${theme.bg1};
+    background-color: transparent;
     ::placeholder {
       color: ${theme.text4};
     }
@@ -39,7 +39,7 @@ const StyledInput = styled.input<InputProps>`
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
 
-export const NumericalInput = React.memo(function InnerInput({
+export const NumericalInput = React.memo(function NumericalInput({
   value,
   onUserInput,
   placeholder = "0.0",

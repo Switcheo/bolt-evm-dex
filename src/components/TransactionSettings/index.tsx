@@ -19,33 +19,45 @@ enum DeadlineError {
 const FancyButton = styled.button`
   color: ${({ theme }) => theme.text1};
   align-items: center;
-  height: 2rem;
-  border-radius: 36px;
-  font-size: 1rem;
+  min-height: 1.2rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
   width: auto;
-  min-width: 3.5rem;
-  border: 1px solid ${({ theme }) => theme.bg3};
+  min-width: 2.8rem;
+  border: ${({ theme }) => theme.border1};
   outline: none;
-  background: ${({ theme }) => theme.bg1};
+  background: transparent;
   &:hover {
-    border: 1px solid ${({ theme }) => theme.bg4};
+    border: ${({ theme }) => theme.borderHover};
   }
   &:focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: 1px solid ${({ theme }) => theme.border1};
   }
 `;
 
-const Option = styled(FancyButton)<{ $active: boolean }>`
+const OptionButtonGroup = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  flex: 1;
+`;
+
+const OptionButton = styled(FancyButton)<{ $active: boolean }>`
   margin-right: 8px;
+  border-radius: 6px;
+  font-size: 12px;
   &:hover {
     cursor: pointer;
   }
-  background-color: ${({ $active, theme }) => $active && theme.primary1};
-  color: ${({ $active, theme }) => ($active ? theme.white : theme.text1)};
+  background-color: ${({ $active, theme }) => $active && theme.text1};
+  color: ${({ $active, theme }) => ($active ? theme.textDark : theme.text1)};
 `;
 
 const Input = styled.input`
-  background: ${({ theme }) => theme.bg1};
+  background: transparent;
   font-size: 16px;
   width: auto;
   outline: none;
@@ -54,15 +66,17 @@ const Input = styled.input`
     -webkit-appearance: none;
   }
   color: ${({ theme, color }) => (color === "red" ? theme.red1 : theme.text1)};
+  font-weight: 700;
   text-align: right;
 `;
 
 const OptionCustom = styled(FancyButton)<{ $active?: boolean; $warning?: boolean }>`
-  height: 2rem;
+  height: 2.4rem;
   position: relative;
   padding: 0 0.75rem;
-  flex: 1;
-  border: ${({ theme, $active, $warning }) => $active && `1px solid ${$warning ? theme.red1 : theme.primary1}`};
+  max-width: 4.8rem;
+  background: ${({ theme }) => theme.grey10};
+  border: ${({ theme, $active, $warning }) => $active && ($warning ? `1px solid ${theme.red1}` : theme.border1)};
   &:hover {
     border: ${({ theme, $active, $warning }) =>
       $active && `1px solid ${$warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
@@ -72,6 +86,7 @@ const OptionCustom = styled(FancyButton)<{ $active?: boolean; $warning?: boolean
     width: 100%;
     height: 100%;
     border: 0px;
+    color: ${({ theme }) => theme.white25};
     border-radius: 2rem;
   }
 `;
@@ -156,33 +171,36 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           <QuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
         </RowFixed>
         <RowBetween>
-          <Option
-            onClick={() => {
-              setSlippageInput("");
-              setRawSlippage(10);
-            }}
-            $active={rawSlippage === 10}
-          >
-            0.1%
-          </Option>
-          <Option
-            onClick={() => {
-              setSlippageInput("");
-              setRawSlippage(50);
-            }}
-            $active={rawSlippage === 50}
-          >
-            0.5%
-          </Option>
-          <Option
-            onClick={() => {
-              setSlippageInput("");
-              setRawSlippage(100);
-            }}
-            $active={rawSlippage === 100}
-          >
-            1%
-          </Option>
+          <OptionButtonGroup>
+            <OptionButton
+              onClick={() => {
+                setSlippageInput("");
+                setRawSlippage(10);
+              }}
+              $active={rawSlippage === 10}
+            >
+              0.1%
+            </OptionButton>
+            <OptionButton
+              onClick={() => {
+                setSlippageInput("");
+                setRawSlippage(50);
+              }}
+              $active={rawSlippage === 50}
+            >
+              0.5%
+            </OptionButton>
+            <OptionButton
+              onClick={() => {
+                setSlippageInput("");
+                setRawSlippage(100);
+              }}
+              $active={rawSlippage === 100}
+            >
+              1%
+            </OptionButton>
+          </OptionButtonGroup>
+
           <OptionCustom $active={![10, 50, 100].includes(rawSlippage)} $warning={!slippageInputIsValid} tabIndex={-1}>
             <RowBetween>
               {!!slippageInput &&
@@ -233,7 +251,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
         </RowFixed>
         <RowFixed>
-          <OptionCustom style={{ width: "80px" }} tabIndex={-1}>
+          <OptionCustom tabIndex={-1}>
             <Input
               color={deadlineError ? "red" : undefined}
               onBlur={() => {
