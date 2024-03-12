@@ -1,6 +1,6 @@
 import { erc20, infoDefaults, KindedOptions } from "@openzeppelin/wizard";
 import { ERC20Options, premintPattern, printERC20 } from "@openzeppelin/wizard/dist/erc20";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import solidity from "react-syntax-highlighter/dist/esm/languages/prism/solidity";
 import vscDarkPlus from "react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus";
@@ -10,7 +10,7 @@ import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn } from "../components/Column";
 import Loader from "../components/Loader";
-import { AutoRow, RowBetween } from "../components/Row";
+import { RowBetween } from "../components/Row";
 import { useTransactionAdder } from "../store/modules/transactions/hooks";
 import { getCompilerInput } from "../utils/getCompilerInput";
 import { Solc } from "../utils/solidity-compiler/wrapper";
@@ -22,15 +22,14 @@ export const Wrapper = styled.div`
 
 const IssueBody = styled.div`
   position: relative;
-  max-width: 1366px;
-  // margin: 0 5rem;
   width: 100%;
-  background: ${({ theme }) => theme.bg1};
+  background: ${({ theme }) => theme.glassBg};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
-  /* padding: 1rem; */
-  margin-top: -50px;
+  margin-top: auto;
+  margin-bottom: auto;
+  overflow: hidden;
 `;
 
 const IssueRow = styled(RowBetween)`
@@ -51,7 +50,6 @@ const SettingsSection = styled.div`
 
   padding: 1rem;
   border-radius: 15px;
-  border: 1px solid ${({ theme }) => theme.bg2};
 `;
 
 const OutputSection = styled.div`
@@ -318,96 +316,112 @@ const Issue = () => {
 
   return (
     <IssueBody>
+      {walletClient && !isError && !isLoading && address ? (
+        <Fragment />
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            background: "linear-gradient(to right, rgba(51, 51, 51, 0.35) 0.87%, rgba(0, 0, 0, 0.35) 100%)",
+            zIndex: "999",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConnectKitLightButton padding="10px 16px" $borderRadius="10px" width="auto" />
+        </div>
+      )}
       <Wrapper id="issue-page">
         <AutoColumn gap="1rem">
-          <AutoRow justify="end" width="100%">
-            {walletClient && !isError && !isLoading && address ? (
-              <ButtonError
-                padding="10px 16px"
-                width="unset"
-                onClick={handleDeployment}
-                disabled={compiling}
-                $borderRadius="10px"
-                $error={!!deployError}
-              >
-                {compiling ? (
-                  <SpinnerContainer>
-                    <Loader />
-                    <span>Deploying Token...</span>
-                  </SpinnerContainer>
-                ) : deployError ? (
-                  deployError
-                ) : (
-                  "Deploy Token"
-                )}
-              </ButtonError>
-            ) : (
-              <ConnectKitLightButton padding="10px 16px" $borderRadius="10px" width="unset" />
-            )}
-          </AutoRow>
           <IssueRow>
             <SettingsSection>
-              <div>
-                <ControlSection>
-                  <ControlSectionHeading>Settings</ControlSectionHeading>
-                  <TokenDetailsSection>
-                    <LabeledInput>
-                      <span>Token Name</span>
-                      <Input
-                        type="text"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck="false"
-                        // error={error}
-                        onChange={handleInputChange}
-                        name="name"
-                        value={opts.name}
-                      />
-                    </LabeledInput>
-                    <LabeledInput>
-                      <span>Symbol</span>
-                      <Input
-                        type="text"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck="false"
-                        onChange={handleInputChange}
-                        name="symbol"
-                        value={opts.symbol}
-                      />
-                    </LabeledInput>
-                  </TokenDetailsSection>
+              <ControlSection>
+                <ControlSectionHeading>Settings</ControlSectionHeading>
+                <TokenDetailsSection>
                   <LabeledInput>
-                    <span>Premint</span>
+                    <span>Token Name</span>
                     <Input
                       type="text"
                       autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
                       spellCheck="false"
-                      placeholder="0"
-                      pattern={premintPattern.source}
                       onChange={handleInputChange}
-                      name="premint"
-                      value={opts.premint}
+                      name="name"
+                      value={opts.name}
                     />
                   </LabeledInput>
-                </ControlSection>
-                <ControlSection>
-                  <ControlSectionHeading>Features</ControlSectionHeading>
-                  {ERC20Features.map((feature) => {
-                    return (
-                      <CheckboxGroup key={`features-${feature.id}`}>
-                        <label>
-                          <input type="checkbox" name={feature.id} onChange={handleCheckboxChange} />
-                          {feature.label}
-                        </label>
-                      </CheckboxGroup>
-                    );
-                  })}
-                </ControlSection>
+                  <LabeledInput>
+                    <span>Symbol</span>
+                    <Input
+                      type="text"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck="false"
+                      onChange={handleInputChange}
+                      name="symbol"
+                      value={opts.symbol}
+                    />
+                  </LabeledInput>
+                </TokenDetailsSection>
+                <LabeledInput>
+                  <span>Premint</span>
+                  <Input
+                    type="text"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    placeholder="0"
+                    pattern={premintPattern.source}
+                    onChange={handleInputChange}
+                    name="premint"
+                    value={opts.premint}
+                  />
+                </LabeledInput>
+              </ControlSection>
+              <ControlSection>
+                <ControlSectionHeading>Features</ControlSectionHeading>
+                {ERC20Features.map((feature) => {
+                  return (
+                    <CheckboxGroup key={`features-${feature.id}`}>
+                      <label>
+                        <input type="checkbox" name={feature.id} onChange={handleCheckboxChange} />
+                        {feature.label}
+                      </label>
+                    </CheckboxGroup>
+                  );
+                })}
+              </ControlSection>
+              <div>
+                {walletClient && !isError && !isLoading && address ? (
+                  <ButtonError
+                    padding="10px 16px"
+                    width="100%"
+                    marginTop="16px"
+                    onClick={handleDeployment}
+                    disabled={compiling}
+                    $borderRadius="10px"
+                    $error={!!deployError}
+                  >
+                    {compiling ? (
+                      <SpinnerContainer>
+                        <Loader />
+                        <span>Deploying Token...</span>
+                      </SpinnerContainer>
+                    ) : deployError ? (
+                      deployError
+                    ) : (
+                      "Deploy Token"
+                    )}
+                  </ButtonError>
+                ) : (
+                  <Fragment />
+                )}
               </div>
             </SettingsSection>
 
@@ -417,6 +431,7 @@ const Issue = () => {
                   language="solidity"
                   style={vscDarkPlus}
                   customStyle={{
+                    background: "rgba(0, 0, 0, 0.25)",
                     height: "100%",
                     margin: 0,
                   }}
