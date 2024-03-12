@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
+import backgroundImagePath from "../../../assets/svg/background_gradient.svg";
 import Header from "../../Header";
 import Polling from "../../Header/Polling";
 import Popups from "../../Popups";
@@ -10,6 +11,14 @@ const AppWrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   overflow-x: hidden;
+  height: 100vh;
+  background-image: url(${backgroundImagePath});
+  -o-background-size: 100% 100%;
+  -webkit-background-size: 100% 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 100%;
 `;
 
 const HeaderWrapper = styled.div`
@@ -20,17 +29,26 @@ const HeaderWrapper = styled.div`
 
 const BodyWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
-  padding-top: 100px;
   align-items: center;
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
     padding-top: 2rem;
+  `};
+`;
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  padding: 0 20vw;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0 2rem;
   `};
 `;
 
@@ -40,20 +58,20 @@ const Marginer = styled.div`
 
 const BaseLayout = () => {
   return (
-    <>
-      <AppWrapper>
-        <HeaderWrapper>
-          <Header />
-        </HeaderWrapper>
+    <AppWrapper>
+      <HeaderWrapper>
+        <Header />
+      </HeaderWrapper>
+      <BodyWrapper>
         <SideMenuBar />
-        <BodyWrapper>
-          <Popups />
-          <Polling />
+        <ContentContainer>
           <Outlet />
-          <Marginer />
-        </BodyWrapper>
-      </AppWrapper>
-    </>
+        </ContentContainer>
+        <Popups />
+        <Polling />
+        <Marginer />
+      </BodyWrapper>
+    </AppWrapper>
   );
 };
 
