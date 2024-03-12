@@ -10,7 +10,7 @@ import styled, { useTheme } from "styled-components";
 import { useAccount, useNetwork, usePublicClient, useWalletClient } from "wagmi";
 import { signTypedData } from "wagmi/actions";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
-import { BlueCard, LightCard } from "../components/Card";
+import { LightCard, TipCard } from "../components/Card";
 import { AutoColumn, ColumnCenter } from "../components/Column";
 import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import CurrencyLogo from "../components/CurrencyLogo";
@@ -573,14 +573,14 @@ export default function RemoveLiquidity() {
             pendingText={pendingText}
           />
           <AutoColumn gap="md">
-            <BlueCard>
+            <TipCard>
               <AutoColumn gap="10px">
                 <TYPE.link fontWeight={400} color={"primaryText1"}>
                   <b>Tip:</b> Removing pool tokens converts your position back into underlying tokens at the current
                   rate, proportional to your share of the pool. Accrued fees are included in the amounts you receive.
                 </TYPE.link>
               </AutoColumn>
-            </BlueCard>
+            </TipCard>
             <LightCard>
               <AutoColumn gap="20px">
                 <RowBetween>
