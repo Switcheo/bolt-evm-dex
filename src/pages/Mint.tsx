@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { isAddress } from "viem";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
@@ -9,6 +9,7 @@ import { AutoColumn, ColumnCenter } from "../components/Column";
 import SuccessMintModal from "../components/SuccessMintModal";
 import { SupportedChainId } from "../constants/chains";
 import { WSS_FAUCET_URL } from "../constants/utils";
+import { TYPE } from "../theme";
 import AppBody from "./AppBody";
 
 export const Wrapper = styled.div`
@@ -26,9 +27,10 @@ const FAUCET_REQUEST = {
 
 export default function Mint() {
   const { address } = useAccount();
+  const theme = useTheme();
 
   const [typed, setTyped] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -44,22 +46,20 @@ export default function Mint() {
       } catch (e) {
         console.error("Error parsing message", e);
         setError("Error processing server response.");
-        setLoading(false);
+        setStatus("error");
         return;
       }
 
       if (response?.error) {
-        setError(response.error);
+        setStatus("error");
         setSuccessMessage(null);
       }
 
       if (response?.success) {
-        setError(null);
+        setStatus("success");
         setSuccessMessage(`10 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`);
         setShowModal(true);
       }
-
-      setLoading(false);
     },
     [typed],
   );
@@ -71,7 +71,7 @@ export default function Mint() {
     onMessage: processMessages,
     onError: (event: WebSocketEventMap["error"]) => {
       console.error("WebSocket error occurred.", event);
-      setLoading(false);
+      setStatus("error");
     },
   });
 
@@ -84,7 +84,9 @@ export default function Mint() {
   );
 
   const onClaim = useCallback(() => {
-    setLoading(true);
+    setStatus("loading");
+    console.log("Claim button clicked.");
+    console.log("WebSocket readyState:", readyState);
     sendJsonMessage({
       ...FAUCET_REQUEST,
       url: typed,
@@ -96,8 +98,9 @@ export default function Mint() {
   }, [switchNetwork]);
 
   const handleModalDismiss = useCallback(() => {
-    setSuccessMessage(null);
+    setStatus("idle");
     setShowModal(false);
+    setSuccessMessage(null);
   }, []);
 
   return (
@@ -105,6 +108,12 @@ export default function Mint() {
       <AppBody>
         <Wrapper id="mint-page">
           <AutoColumn>
+            <TYPE.black mb={"16px"} fontWeight={700}>
+              Mint
+            </TYPE.black>
+            <TYPE.main mb={"8px"} fontWeight={500} fontSize={"12px"} color={theme?.grey25}>
+              Recipient
+            </TYPE.main>
             <ColumnCenter>
               <AddressInputPanel id="mint-address-input-panel" value={typed} onChange={handleRecipientType} />
               {!address ? (
@@ -123,14 +132,19 @@ export default function Mint() {
                   id="mint-button"
                   width="100%"
                   mt={BUTTON_MARGIN_TOP}
-                  disabled={!!error || !isAddress(typed) || readyState !== 1 || loading}
+                  disabled={!!error || !isAddress(typed) || readyState !== 1 || status === "loading"}
                   $error={!!error}
                   onClick={onClaim}
                 >
                   {error ? error : "Send Me ETH"}
                 </ButtonError>
               )}
-              <SuccessMintModal isOpen={showModal} onDismiss={handleModalDismiss} message={successMessage} />
+              <SuccessMintModal
+                isOpen={showModal}
+                status={status}
+                onDismiss={handleModalDismiss}
+                message={successMessage}
+              />
             </ColumnCenter>
           </AutoColumn>
         </Wrapper>
