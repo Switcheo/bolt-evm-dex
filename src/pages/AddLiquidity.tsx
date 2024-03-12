@@ -8,7 +8,7 @@ import styled, { useTheme } from "styled-components";
 import { useAccount, useNetwork, usePublicClient, useWalletClient } from "wagmi";
 import { ConfirmAddModalBottom } from "../components/addLiquidity/ConfirmAddModalBottom";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
-import { BlueCard, LightCard } from "../components/Card";
+import { LightCard, TipCard } from "../components/Card";
 import { AutoColumn, ColumnCenter } from "../components/Column";
 import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import DoubleCurrencyLogo from "../components/DoubleLogo";
@@ -358,31 +358,32 @@ export default function AddLiquidity() {
             {noLiquidity ||
               (isCreate ? (
                 <ColumnCenter>
-                  <BlueCard>
+                  <TipCard>
                     <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={600} color={"primaryText1"}>
+                      <TYPE.link fontWeight={700} color={"rgba(242, 242, 242, 1)"}>
                         You are the first liquidity provider.
                       </TYPE.link>
-                      <TYPE.link fontWeight={400} color={"primaryText1"}>
-                        The ratio of tokens you add will set the price of this pool.
+                      <TYPE.link fontWeight={400} color={"rgba(242, 242, 242, 0.5)"}>
+                        The ratio of tokens you add will set the price of this pool. The ratio of tokens you add will
+                        set the price of this pool.
                       </TYPE.link>
-                      <TYPE.link fontWeight={400} color={"primaryText1"}>
+                      <TYPE.link fontWeight={400} color={"rgba(242, 242, 242, 0.5)"}>
                         Once you are happy with the rate click supply to review.
                       </TYPE.link>
                     </AutoColumn>
-                  </BlueCard>
+                  </TipCard>
                 </ColumnCenter>
               ) : (
                 <ColumnCenter>
-                  <BlueCard>
+                  <TipCard>
                     <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={400} color={"primaryText1"}>
-                        <b>Tip:</b> When you add liquidity, you will receive pool tokens representing your position.
-                        These tokens automatically earn fees proportional to your share of the pool, and can be redeemed
-                        at any time.
-                      </TYPE.link>
+                      <TYPE.grey fontWeight={700}>Tip:</TYPE.grey>
+                      <TYPE.grey50>
+                        When you add liquidity, you will receive pool tokens representing your position. These tokens
+                        automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
+                      </TYPE.grey50>
                     </AutoColumn>
-                  </BlueCard>
+                  </TipCard>
                 </ColumnCenter>
               ))}
             <CurrencyInputPanel
