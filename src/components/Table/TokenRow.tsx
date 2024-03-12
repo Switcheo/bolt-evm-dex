@@ -90,7 +90,7 @@ const StyledTokenRow = styled.div<{
 }>`
   background-color: transparent;
   display: grid;
-  font-size: 14px;
+  font-size: 12px;
   grid-template-columns: 3fr 4fr 4fr 6fr 6fr 5fr;
   line-height: 24px;
   max-width: 1366px;
@@ -150,8 +150,8 @@ const StyledHeaderRow = styled(StyledTokenRow)`
   border-bottom: 1px solid;
   border-color: ${({ theme }) => theme.backgroundOutline};
   border-radius: 8px 8px 0px 0px;
-  color: ${({ theme }) => theme.textSecondary};
-  font-size: 14px;
+  color: ${({ theme }) => theme.grey50};
+  font-size: 12px;
   font-weight: 600;
   height: 48px;
   line-height: 16px;

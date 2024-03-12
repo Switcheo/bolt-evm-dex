@@ -8,8 +8,8 @@ import { HeaderRow, LoadedRow } from "./TokenRow";
 const GridContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 1366px;
-  background-color: ${({ theme }) => theme.bg1};
+  overflow: hidden;
+  background: ${({ theme }) => theme.glassBg};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   margin-left: auto;
@@ -23,6 +23,7 @@ const GridContainer = styled.div`
 const TokenDataContainer = styled.div`
   display: flex;
   flex-direction: column;
+  background: ${({ theme }) => theme.white10};
   gap: 4px;
   height: 100%;
   width: 100%;
@@ -79,7 +80,7 @@ const BridgeHistoryTable = () => {
           />
         ))}
         {data?.data.length === 0 && address && (
-          <div style={{ textAlign: "center", padding: "20px" }}>No transactions found</div>
+          <div style={{ textAlign: "center", padding: "20px" }}>No Transaction History</div>
         )}
         {isUninitialized && (
           <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
