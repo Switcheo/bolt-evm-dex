@@ -3,44 +3,60 @@ import { Colors } from "./styled";
 const white = "#FFFFFF";
 const black = "#000000";
 
-export function colors(darkMode: boolean): Colors {
+export function colors(): Colors {
   return {
     // base
     white,
     black,
 
     // text
-    text1: darkMode ? "#FFFFFF" : "#000000",
-    text2: darkMode ? "#C3C5CB" : "#565A69",
-    text3: darkMode ? "#6C7284" : "#888D9B",
-    text4: darkMode ? "#565A69" : "#C3C5CB",
-    text5: darkMode ? "#2C2F36" : "#EDEEF2",
+    text1: "#FFFFFF",
+    text2: "#C3C5CB",
+    text3: "#6C7284",
+    text4: "#565A69",
+    text5: "#2C2F36",
+
+    textDark: "#272727",
+    textLight: "#FFFFFF",
 
     // backgrounds / greys
-    bg1: darkMode ? "#212429" : "#FFFFFF",
-    bg2: darkMode ? "#2C2F36" : "#F7F8FA",
-    bg3: darkMode ? "#40444F" : "#EDEEF2",
-    bg4: darkMode ? "#565A69" : "#CED0D9",
-    bg5: darkMode ? "#6C7284" : "#888D9B",
+    rootBg: "#16142A",
+    glassBg: "linear-gradient(to right, rgba(51,51,51, 0.35), rgba(0,0,0, 0.35))",
+    white10: "rgba(255,255,255,0.1)",
+    white25: "rgba(255,255,255,0.25)",
+    grey10: "rgba(242,242,242,0.1)",
+    grey25: "rgba(242,242,242,0.25)",
+    grey50: "rgba(242,242,242,0.5)",
+    grey: "rgba(242,242,242,1)",
+    bg1: "#212429",
+    bg2: "#2C2F36",
+    bg3: "#40444F",
+    bg4: "#565A69",
+    bg5: "#6C7284",
 
     //specialty colors
-    modalBG: darkMode ? "rgba(0,0,0,.425)" : "rgba(0,0,0,0.3)",
-    advancedBG: darkMode ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.6)",
+    modalBG: "rgba(0,0,0,.425)",
+    advancedBG: "rgba(0,0,0,0.1)",
 
     //primary colors
-    primary1: darkMode ? "#2172E5" : "#ff007a",
-    primary2: darkMode ? "#3680E7" : "#FF8CC3",
-    primary3: darkMode ? "#4D8FEA" : "#FF99C9",
-    primary4: darkMode ? "#376bad70" : "#F6DDE8",
-    primary5: darkMode ? "#153d6f70" : "#FDEAF1",
+    primary1: "#2172E5",
+    primary2: "#3680E7",
+    primary3: "#4D8FEA",
+    primary4: "#376bad70",
+    primary5: "#153d6f70",
+
+    // primary gradient
+    primaryGradient: "linear-gradient(to right, #81e1ff 0%, #1f77fd 34%, #647dfd 67%, #b57cfe 100%)",
+    greyGradient5: "linear-gradient(to right, rgba(164, 164, 164, 0.05), rgba(215, 215, 215, 0.05))",
+    greyGradient10: "linear-gradient(to right, rgba(164, 164, 164, 0.1), rgba(215, 215, 215, 0.1))",
 
     // color text
-    primaryText1: darkMode ? "#6da8ff" : "#ff007a",
+    primaryText1: "#6da8ff",
 
     // secondary colors
-    secondary1: darkMode ? "#2172E5" : "#ff007a",
-    secondary2: darkMode ? "#17000b26" : "#F6DDE8",
-    secondary3: darkMode ? "#17000b26" : "#FDEAF1",
+    secondary1: "#2172E5",
+    secondary2: "#17000b26",
+    secondary3: "#17000b26",
 
     // other
     red1: "#FD4040",
@@ -51,8 +67,5 @@ export function colors(darkMode: boolean): Colors {
     yellow2: "#F3841E",
     blue1: "#2172E5",
 
-    // dont wanna forget these blue yet
-    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
-    // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
   };
 }

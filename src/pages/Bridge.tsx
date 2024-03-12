@@ -1,8 +1,8 @@
 import JSBI from "jsbi";
 import { useCallback, useEffect, useState } from "react";
-import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { ReactComponent as ArrowSwap } from "../assets/svg/arrow_swap.svg";
 import BridgeInputPanel from "../components/BridgeInputPanel";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
@@ -40,27 +40,27 @@ import { maxAmountSpend } from "../utils/maxAmountSpend";
 
 export const Wrapper = styled.div`
   position: relative;
-  padding: 1rem;
+  padding: 20px;
+  border: 1px solid ${({ theme }) => theme.grey25};
+  border-radius: 30px;
 `;
 
 const BridgeBody = styled.div`
   position: relative;
-  max-width: 620px;
-  // margin: 0 5rem;
+  max-width: 600px;
+  margin-top: auto;
+  margin-bottom: auto;
   width: 100%;
-  background: ${({ theme }) => theme.bg1};
+  background: ${({ theme }) => theme.glassBg};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
-  /* padding: 1rem; */
-  margin-top: -50px;
   gap: 1rem;
 `;
 
 const BridgeHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-direction: column;
   padding: 1rem 1rem 0 1rem;
 `;
@@ -82,8 +82,8 @@ const BridgeCardContainer = styled.div<{ $hideInput: boolean }>`
   flex: 1 1 0;
   gap: 0.5rem;
   border-radius: ${({ $hideInput }) => ($hideInput ? "8px" : "20px")};
-  border: 1px solid ${({ theme }) => theme.bg2};
-  background-color: ${({ theme }) => theme.bg1};
+  border: 1px solid ${({ theme }) => theme.white25};
+  background-color: ${({ theme }) => theme.glassBg};
 `;
 
 const BridgeTokenLogoContainer = styled.div`
@@ -298,7 +298,7 @@ const Bridge = () => {
         />
         <AutoColumn gap="md">
           <BridgeHeader>
-            <ActiveText>BoltBridge</ActiveText>
+            <ActiveText>Bolt Bridge</ActiveText>
           </BridgeHeader>
 
           <BridgeTokenContainer>
@@ -344,8 +344,7 @@ const Bridge = () => {
 
               <BridgeArrow>
                 <ArrowWrapper $clickable>
-                  <ArrowRight
-                    size="24"
+                  <ArrowSwap
                     onClick={() => {
                       dispatch(setDestinationChain(sourceChain));
                       dispatch(fetchTokens());

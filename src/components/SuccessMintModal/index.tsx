@@ -1,13 +1,14 @@
-import { ArrowUpCircle } from "react-feather";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useNetwork } from "wagmi";
 import { getWalletClient } from "wagmi/actions";
+import { ReactComponent as MintErrorIcon } from "../../assets/svg/mint_error.svg";
+import { ReactComponent as MintSuccessIcon } from "../../assets/svg/mint_success.svg";
 import { BOLT_ERC20_ADDRESS } from "../../constants/addresses";
-import { CloseIcon, ExternalLink, LinkStyledButton, TYPE } from "../../theme";
+import { CloseIcon, ExternalLink, TYPE } from "../../theme";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
-import { ButtonPrimary } from "../Button";
 import { AutoColumn, ColumnCenter } from "../Column";
+import MintLoadingIcon from "../MintLoadingIcon";
 import Modal from "../Modal";
 import { RowBetween } from "../Row";
 
@@ -22,13 +23,18 @@ const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
 `;
 
+const CloseIconContainer = styled(RowBetween)`
+  justify-content: flex-end;
+`;
+
 interface SuccessMintModalProps {
   isOpen: boolean;
+  status: "idle" | "loading" | "success" | "error";
   onDismiss: () => void;
   message?: string | null;
 }
 
-function SuccessMintModal({ isOpen, onDismiss, message }: SuccessMintModalProps) {
+function SuccessMintModal({ isOpen, status, onDismiss, message }: SuccessMintModalProps) {
   const theme = useTheme();
   const chainId = useNetwork().chain?.id;
 
@@ -48,14 +54,16 @@ function SuccessMintModal({ isOpen, onDismiss, message }: SuccessMintModalProps)
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
       <Wrapper>
         <Section>
-          <RowBetween>
-            <Text fontWeight={500} fontSize={20}>
+          <CloseIconContainer>
+            <CloseIcon onClick={onDismiss} />
+          </CloseIconContainer>
+          <ConfirmedIcon>
+            {status === "loading" && <MintLoadingIcon />}
+            {status === "success" && <MintSuccessIcon />}
+            {status === "error" && <MintErrorIcon />}
+            <Text fontWeight={500} fontSize={20} mt={4}>
               $BOLT Requested
             </Text>
-            <CloseIcon onClick={onDismiss} />
-          </RowBetween>
-          <ConfirmedIcon>
-            <ArrowUpCircle strokeWidth={0.5} size={90} color={theme?.primary1} />
           </ConfirmedIcon>
           <AutoColumn gap="12px" justify={"center"}>
             {message && (
@@ -71,18 +79,8 @@ function SuccessMintModal({ isOpen, onDismiss, message }: SuccessMintModalProps)
               </ExternalLink>
             )}
             <Text fontWeight={500} fontSize={14}>
-              {BOLT_ERC20_ADDRESS}
+              requested for {BOLT_ERC20_ADDRESS}
             </Text>
-            <LinkStyledButton>
-              <Text fontWeight={500} fontSize={18} onClick={handleAddBolt}>
-                Add $BOLT to Metamask
-              </Text>
-            </LinkStyledButton>
-            <ButtonPrimary onClick={onDismiss} style={{ margin: "20px 0 0 0" }}>
-              <Text fontWeight={500} fontSize={20}>
-                Close
-              </Text>
-            </ButtonPrimary>
           </AutoColumn>
         </Section>
       </Wrapper>

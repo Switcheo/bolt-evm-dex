@@ -66,16 +66,10 @@ export function useMulticallContract(): Contract | null {
   return useContract(chainId && MULTICALL_ADDRESSES[chainId], MULTICALL_ABI, false);
 }
 
-export function useInterfaceMulticall() {
-  const { chain } = useNetwork();
-  const chainId = chain?.id as SupportedChainId;
-  return useContract(MULTICALL_ADDRESSES[chainId], MULTICALL_ABI, false);
-}
-
 export function useRouterContract(): Contract | null {
   const { chain } = useNetwork();
   const chainId = chain?.id as SupportedChainId;
-  return useContract(chainId && V2_ROUTER_ADDRESSES[chainId], UNISWAP_V2_ROUTER_ABI, false);
+  return useContract(chainId && V2_ROUTER_ADDRESSES[chainId], UNISWAP_V2_ROUTER_ABI);
 }
 
 export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {

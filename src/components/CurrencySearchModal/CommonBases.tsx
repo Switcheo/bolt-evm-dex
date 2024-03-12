@@ -6,12 +6,11 @@ import { Currency, ETHER } from "../../utils/entities/currency";
 import { currencyEquals, Token } from "../../utils/entities/token";
 import { AutoColumn } from "../Column";
 import CurrencyLogo from "../CurrencyLogo";
-import QuestionHelper from "../QuestionHelper";
 import { AutoRow } from "../Row";
 
 const BaseWrapper = styled.div<{ $disable?: boolean }>`
   border: 1px solid ${({ theme, $disable }) => ($disable ? "transparent" : theme.bg3)};
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   padding: 6px;
 
@@ -36,12 +35,6 @@ export default function CommonBases({
 }) {
   return (
     <AutoColumn gap="md">
-      <AutoRow>
-        <Text fontWeight={500} fontSize={14}>
-          Common bases
-        </Text>
-        <QuestionHelper text="These tokens are commonly paired with other tokens." />
-      </AutoRow>
       <AutoRow gap="4px">
         <BaseWrapper
           onClick={() => {

@@ -1,0 +1,38 @@
+<svg preserveAspectRatio="xMidYMid slice" width="100%" height="100%" viewBox="0 0 1366 768" fill="none"
+  xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_534_4430)">
+    <rect width="1366" height="768" fill="#16142A" />
+    <g style="mix-blend-mode:screen" filter="url(#filter0_f_534_4430)">
+      <ellipse cx="683" cy="-120" rx="350" ry="130" fill="#434097" />
+    </g>
+    <g opacity="0.5" filter="url(#filter1_f_534_4430)">
+      <path
+        d="M975.647 413.174C1054.44 337.089 962.922 405.221 888.94 328.61C814.958 252 481.995 277.683 403.206 353.768C324.417 429.854 325.991 333.327 575.444 477.038C649.425 553.648 896.858 489.26 975.647 413.174Z"
+        fill="url(#paint0_linear_534_4430)" />
+    </g>
+  </g>
+  <defs>
+    <filter id="filter0_f_534_4430" x="-167" y="-750" width="1700" height="1260" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+      <feGaussianBlur stdDeviation="250" result="effect1_foregroundBlur_534_4430" />
+    </filter>
+    <filter id="filter1_f_534_4430" x="182.171" y="107.37" width="998.748" height="579.137" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+      <feGaussianBlur stdDeviation="87.5" result="effect1_foregroundBlur_534_4430" />
+    </filter>
+    <linearGradient id="paint0_linear_534_4430" x1="527.946" y1="222.919" x2="839.054" y2="545.081"
+      gradientUnits="userSpaceOnUse">
+      <stop stop-color="#81E1FF" />
+      <stop offset="0.338542" stop-color="#1F77FD" />
+      <stop offset="0.671875" stop-color="#647DFD" />
+      <stop offset="1" stop-color="#B57CFE" />
+    </linearGradient>
+    <clipPath id="clip0_534_4430">
+      <rect width="1366" height="768" fill="white" />
+    </clipPath>
+  </defs>
+</svg>

@@ -5,11 +5,12 @@ import { NavLink } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { DefaultTheme } from "styled-components";
 import { useAccount, useBalance, useNetwork } from "wagmi";
-import Logo from "../../assets/svg/boltchain-horizontal-logo.svg";
+import Logo from "../../assets/svg/boltchain_logo.svg";
 import { useOnClickOutside } from "../../hooks/useOnOutsideClick";
 import { ConnectKitLightButton } from "../Button";
 import { YellowCard } from "../Card";
-import Row, { RowFixed } from "../Row";
+import { RowFixed } from "../Row";
+import { navLinks } from "../SideMenuBar.tsx";
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -20,37 +21,21 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
-  position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 0.5rem 1rem;
+  position: fixed;
+  margin: 1rem 0;
+  padding: 1rem 2rem;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     width: calc(100%);
     position: relative;
   `};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        
-  `}
 `;
 
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
-   justify-content: space-between;
-  `};
-`;
-
-const HeaderLinks = styled(Row)`
-  justify-content: center;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem 0 1rem 1rem;
-    justify-content: flex-end;
-`};
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    display: none;
+    width: 100%;
+    justify-content: space-between;
   `};
 `;
 
@@ -88,24 +73,9 @@ const HeaderElement = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-   flex-direction: row-reverse;
+    flex-direction: row-reverse;
     align-items: center;
   `};
-`;
-
-const AccountElement = styled.div<{ $active: boolean }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: ${(props) => (props.$active ? props.theme.bg1 : props.theme.bg3)};
-  border-radius: 12px;
-  white-space: nowrap;
-  width: 100%;
-  cursor: pointer;
-
-  &:focus {
-    border: 1px solid blue;
-  }
 `;
 
 const HideSmall = styled.span`
@@ -127,10 +97,28 @@ const NetworkCard = styled(YellowCard)`
   `};
 `;
 
+const BalanceContainer = styled.div`
+  display: flex;
+  padding: 8px 12px;
+  background: ${({ theme }) => theme.grey10};
+  border-radius: 6px;
+  align-items: center;
+  margin-right: -2px;
+`;
+
 const BalanceText = styled(Text)`
+  padding: 0;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
+`;
+
+const BalanceSymbol = styled(Text)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  display: none;
+  `};
+  display: inline;
+  font-weight: 500;
 `;
 
 const Title = styled.a`
@@ -265,7 +253,7 @@ const NETWORK_LABELS: { [key: number]: string } = {
   1: "Ethereum",
   56: "Binance Smart Chain",
   137: "Polygon",
-  42069: "BoltChain",
+  42070: "BoltChain",
 };
 
 const Header = () => {
@@ -284,7 +272,7 @@ const Header = () => {
   return (
     <HeaderFrame>
       <HeaderRow>
-        <Title href=".">
+        <Title href="#">
           <LogoIcon>
             <img width={"180px"} src={Logo} alt="Bolt Logo" />
           </LogoIcon>
@@ -292,26 +280,6 @@ const Header = () => {
         <NavbarToggle onClick={() => setIsOpen(!isOpen)}>
           <HamburgerMenu />
         </NavbarToggle>
-        <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={"/swap"}>
-            Swap
-          </StyledNavLink>
-          <StyledNavLink id={`pool-nav-link`} to={"/pool"}>
-            Pool
-          </StyledNavLink>
-          <StyledNavLink id={`mint-nav-link`} to={"/mint"}>
-            Mint
-          </StyledNavLink>
-          <StyledNavLink id={`issue-nav-link`} to={"/issue"}>
-            Issue
-          </StyledNavLink>
-          <StyledNavLink id={`bridge-nav-link`} to={"/bridge"}>
-            Bridge
-          </StyledNavLink>
-          <StyledNavLink id={`bridge-history-nav-link`} to={"/bridge-history"}>
-            Bridge History
-          </StyledNavLink>
-        </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
@@ -322,14 +290,14 @@ const Header = () => {
               </NetworkCard>
             )}
           </HideSmall>
-          <AccountElement $active={isConnected} style={{ pointerEvents: "auto" }}>
-            {isConnected && !isLoading && !isError && data && (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {data.formatted.slice(0, 10)} {data.symbol}
+          {isConnected && !isLoading && !isError && data && (
+            <BalanceContainer>
+              <BalanceText fontWeight={700}>
+                {data.formatted.slice(0, 10)}&nbsp;<BalanceSymbol>{data.symbol}</BalanceSymbol>
               </BalanceText>
-            )}
-            <ConnectKitLightButton padding="8px" width="unset" $borderRadius="12px" />
-          </AccountElement>
+            </BalanceContainer>
+          )}
+          <ConnectKitLightButton padding="8px" width="unset" $borderRadius="12px" />
         </HeaderElement>
       </HeaderControls>
       <MobileMenuOverlay $show={isOpen}>
@@ -341,24 +309,14 @@ const Header = () => {
             }}
             onClick={() => setIsOpen(false)}
           />
-          <StyledNavLink id={`swap-nav-link`} to={"/swap"} onClick={() => setIsOpen(false)}>
-            Swap
-          </StyledNavLink>
-          <StyledNavLink id={`pool-nav-link`} to={"/pool"} onClick={() => setIsOpen(false)}>
-            Pool
-          </StyledNavLink>
-          <StyledNavLink id={`mint-nav-link`} to={"/mint"} onClick={() => setIsOpen(false)}>
-            Mint
-          </StyledNavLink>
-          <StyledNavLink id={`issue-nav-link`} to={"/issue"} onClick={() => setIsOpen(false)}>
-            Issue
-          </StyledNavLink>
-          <StyledNavLink id={`bridge-nav-link`} to={"/bridge"} onClick={() => setIsOpen(false)}>
-            Bridge
-          </StyledNavLink>
-          <StyledNavLink id={`bridge-history-nav-link`} to={"/bridge-history"} onClick={() => setIsOpen(false)}>
-            Bridge History
-          </StyledNavLink>
+
+          {navLinks.map((nav) => {
+            return (
+              <StyledNavLink key={nav.label} to={nav.route} onClick={() => setIsOpen(false)}>
+                {nav.label}
+              </StyledNavLink>
+            );
+          })}
         </MobileMenu>
       </MobileMenuOverlay>
     </HeaderFrame>

@@ -8,9 +8,9 @@ import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
 } from "styled-components";
 import { colors } from "./colors";
-// import { useIsDarkMode } from "../state/user/hooks";
 import { Colors } from "./styled";
 import { opacify } from "./utils";
+import "@fontsource-variable/dm-sans";
 
 export * from "./components";
 
@@ -22,8 +22,7 @@ const MEDIA_WIDTHS = {
 };
 
 export const BREAKPOINTS = {
-  xs: 396,
-  sm: 640,
+  sm: 480,
   md: 768,
   lg: 1024,
   xl: 1280,
@@ -69,16 +68,16 @@ const opacities = {
   enabled: 1,
 };
 
-export function theme(darkMode: boolean): DefaultTheme {
+export function theme(): DefaultTheme {
   return {
-    ...colors(darkMode),
+    ...colors(),
 
     breakpoint: BREAKPOINTS,
     transition: transitions,
     opacity: opacities,
     backgroundTable: "#0D111C",
     hoverDefault: opacify(8, "#98A1C0"),
-    backgroundSurface: colors(true).bg1,
+    backgroundSurface: colors().bg1,
     backgroundOutline: opacify(24, "#98A1C0"),
     deepShadow:
       "12px 16px 24px rgba(0, 0, 0, 0.24), 12px 8px 12px rgba(0, 0, 0, 0.24), 4px 4px 8px rgba(0, 0, 0, 0.32);",
@@ -90,7 +89,11 @@ export function theme(darkMode: boolean): DefaultTheme {
     },
 
     //shadows
-    shadow1: darkMode ? "#000" : "#2F80ED",
+    shadow1: "#000",
+
+    //borders:
+    border1: "1px solid rgba(242, 242, 242, 0.25)",
+    borderHover: "1px solid rgba(242, 242, 242, 0.5)",
 
     // media queries
     mediaWidth: mediaWidthTemplates,
@@ -108,10 +111,7 @@ export function theme(darkMode: boolean): DefaultTheme {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const darkMode = true;
-  // const darkMode = false;
-
-  const themeObject = useMemo(() => theme(darkMode), [darkMode]);
+  const themeObject = useMemo(() => theme(), []);
 
   return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>;
 }
@@ -122,19 +122,28 @@ const TextWrapper = styled(Text)<{ color: keyof Colors }>`
 
 export const TYPE = {
   main(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={"text2"} {...props} />;
+    return <TextWrapper fontWeight={500} color={colors().text2} {...props} />;
   },
   link(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={"primary1"} {...props} />;
+    return <TextWrapper fontWeight={500} color={colors().primary1} {...props} />;
   },
   black(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={"text1"} {...props} />;
+    return <TextWrapper fontWeight={500} color={colors().text1} {...props} />;
   },
   white(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={"white"} {...props} />;
+    return <TextWrapper fontWeight={500} color={colors().white} {...props} />;
+  },
+  white25(props: TextProps) {
+    return <TextWrapper fontWeight={500} color={colors().white25} {...props} />;
+  },
+  grey(props: TextProps) {
+    return <TextWrapper fontWeight={500} color={colors().grey} {...props} />;
+  },
+  grey50(props: TextProps) {
+    return <TextWrapper fontWeight={500} color={colors().grey50} {...props} />;
   },
   body(props: TextProps) {
-    return <TextWrapper fontWeight={400} fontSize={16} color={"text1"} {...props} />;
+    return <TextWrapper fontWeight={400} fontSize={16} color={colors().text1} {...props} />;
   },
   largeHeader(props: TextProps) {
     return <TextWrapper fontWeight={600} fontSize={24} {...props} />;
@@ -170,12 +179,12 @@ export const TYPE = {
 
 export const FixedGlobalStyle = createGlobalStyle`
 html, input, textarea, button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'DM Sans Variable', sans-serif;
   }
 }
 
@@ -185,9 +194,9 @@ body {
   padding: 0;
 }
 
- a {
-   color: ${colors(false).blue1}; 
- }
+a {
+  color: ${colors().blue1}; 
+}
 
 * {
   box-sizing: border-box;
@@ -211,7 +220,7 @@ html {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.rootBg};
 }
 
 body {

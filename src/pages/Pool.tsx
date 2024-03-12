@@ -8,7 +8,6 @@ import noise from "../assets/images/noise.png";
 import { ButtonPrimary, ButtonSecondary } from "../components/Button";
 import Card from "../components/Card";
 import { AutoColumn } from "../components/Column";
-import { SwapPoolTabs } from "../components/NavigationTabs";
 import FullPositionCard from "../components/PositionCard";
 import { RowBetween, RowFixed } from "../components/Row";
 import { useTokenBalancesWithLoadingIndicator } from "../hooks/balances/useTokenBalancesWithLoadingIndicator";
@@ -38,22 +37,10 @@ const Dots = styled.span`
   }
 `;
 
-const DataCard = styled(AutoColumn)<{ $disabled?: boolean }>`
-  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #ff007a 0%, #2172e5 100%);
-  border-radius: 12px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-`;
-
-const PageWrapper = styled(AutoColumn)`
+const PageWrapper = styled.div`
   max-width: 640px;
+  margin-top: 8rem;
   width: 100%;
-`;
-
-const VoteCard = styled(DataCard)`
-  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #27ae60 0%, #000000 100%);
-  overflow: hidden;
 `;
 
 const TitleRow = styled(RowBetween)`
@@ -82,14 +69,25 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
 `;
 
 const ResponsiveButtonSecondary = styled(ButtonSecondary)`
+  background-color: transparent;
   width: fit-content;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 48%;
-  `};
+  border: ${({ theme }) => theme.border1};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.text1};
+  transition: box-shadow 0.25s ease-in-out;
+
+  &:hover {
+    border: ${({ theme }) => theme.borderHover};
+    box-shadow: 0 2px 15px 0 rgba(176, 127, 254, 0.25);
+  }
+
+  &:focus {
+    border: ${({ theme }) => theme.borderHover};
+    outline: none;
+  }
 `;
 
 const EmptyProposals = styled.div`
-  border: 1px solid ${({ theme }) => theme.text4};
   padding: 16px 12px;
   border-radius: 12px;
   display: flex;
@@ -131,6 +129,10 @@ export const CardSection = styled(AutoColumn)<{ $disabled?: boolean }>`
   padding: 1rem;
   z-index: 1;
   opacity: ${({ $disabled }) => $disabled && "0.4"};
+`;
+
+const AnalyticsLink = styled(ExternalLink)`
+  color: ${({ theme }) => theme.white};
 `;
 
 export default function Pool() {
@@ -188,45 +190,15 @@ export default function Pool() {
   return (
     <>
       <PageWrapper>
-        <SwapPoolTabs $active={"pool"} />
-        <VoteCard>
-          <CardBGImage />
-          <CardNoise />
-          <CardSection>
-            <AutoColumn gap="md">
-              <RowBetween>
-                <TYPE.white fontWeight={600}>Liquidity provider rewards</TYPE.white>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.white fontSize={14}>
-                  {`Liquidity providers earn a 0.3% fee on all trades proportional to their share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.`}
-                </TYPE.white>
-              </RowBetween>
-              <ExternalLink
-                style={{ color: "white", textDecoration: "underline" }}
-                target="_blank"
-                href="https://uniswap.org/docs/v2/core-concepts/pools/"
-              >
-                <TYPE.white fontSize={14}>Read more about providing liquidity</TYPE.white>
-              </ExternalLink>
-            </AutoColumn>
-          </CardSection>
-          <CardBGImage />
-          <CardNoise />
-        </VoteCard>
-
         <AutoColumn gap="lg" justify="center">
           <AutoColumn gap="lg" style={{ width: "100%" }}>
             <TitleRow style={{ marginTop: "1rem" }} padding={"0"}>
               <HideSmall>
                 <TYPE.mediumHeader style={{ marginTop: "0.5rem", justifySelf: "flex-start" }}>
-                  Your liquidity
+                  Your Liquidity
                 </TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to="/create/ETH">
-                  Create a pair
-                </ResponsiveButtonSecondary>
                 <ResponsiveButtonPrimary
                   id="join-pool-button"
                   as={Link}
@@ -238,6 +210,9 @@ export default function Pool() {
                     Add Liquidity
                   </Text>
                 </ResponsiveButtonPrimary>
+                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to="/create/ETH">
+                  Create a pair
+                </ResponsiveButtonSecondary>
               </ButtonRow>
             </TitleRow>
 
@@ -255,14 +230,10 @@ export default function Pool() {
               </EmptyProposals>
             ) : allV2PairsWithLiquidity?.length > 0 ? (
               <>
-                <ButtonSecondary>
-                  <RowBetween>
-                    <ExternalLink href={"https://uniswap.info/account/" + address}>
-                      Account analytics and accrued fees
-                    </ExternalLink>
-                    <span> ↗</span>
-                  </RowBetween>
-                </ButtonSecondary>
+                <AnalyticsLink href={"https://uniswap.info/account/" + address}>
+                  Account analytics and accrued fees
+                  <span> ↗</span>
+                </AnalyticsLink>
                 {allV2PairsWithLiquidity.map((v2Pair) => (
                   <FullPositionCard key={v2Pair.liquidityToken.address} pair={v2Pair} />
                 ))}
@@ -288,9 +259,9 @@ export default function Pool() {
             {/* This part is modified such that the migrate text is gone */}
             <AutoColumn justify={"center"} gap="md">
               <Text textAlign="center" fontSize={14} style={{ padding: ".5rem 0 .5rem 0" }}>
-                {"Don't see a pool you joined?"}{" "}
+                Don't see a pool you joined?
                 <StyledInternalLink id="import-pool-link" to={"/find"}>
-                  {"Import it."}
+                  Import it
                 </StyledInternalLink>
               </Text>
             </AutoColumn>

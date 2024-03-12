@@ -16,15 +16,15 @@ import { RowBetween } from "../Row";
 const InputPanel = styled.div<{ $hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
-  border-radius: ${({ $hideInput }) => ($hideInput ? "8px" : "20px")};
-  background-color: ${({ theme }) => theme.bg2};
+  border-radius: ${({ $hideInput }) => ($hideInput ? "8px" : "10px")};
+  background-color: ${({ theme }) => theme.white10};
+  border: ${({ theme }) => theme.border1};
   z-index: 1;
 `;
 
 const Container = styled.div<{ $hideInput: boolean }>`
-  border-radius: ${({ $hideInput }) => ($hideInput ? "8px" : "20px")};
+  border-radius: ${({ $hideInput }) => ($hideInput ? "8px" : "10px")};
   border: 1px solid ${({ theme }) => theme.bg2};
-  background-color: ${({ theme }) => theme.bg1};
 `;
 
 const InputRow = styled.div<{ $selected: boolean }>`
@@ -33,22 +33,28 @@ const InputRow = styled.div<{ $selected: boolean }>`
   padding: ${({ $selected }) => ($selected ? "0.75rem 0.5rem 0.75rem 1rem" : "0.75rem 0.75rem 0.75rem 1rem")};
 `;
 
-const StyledBalanceMax = styled.button`
-  height: 28px;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
+const MaxButton = styled.button`
+  width: 40px;
+  height: 24px;
+  background-color: transparent;
+  border: ${({ theme }) => theme.border1};
   border-radius: 0.5rem;
-  font-size: 0.875rem;
-
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   margin-right: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
+  color: ${({ theme }) => theme.text1};
+  transition: box-shadow 0.25s ease-in-out;
   &:hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: ${({ theme }) => theme.borderHover};
+    box-shadow: 0 2px 15px 0 rgba(176, 127, 254, 0.25);
+  }
+  &:active {
+    background: ${({ theme }) => theme.primaryGradient};
+    color: ${({ theme }) => theme.black};
   }
   &:focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: ${({ theme }) => theme.borderHover};
     outline: none;
   }
 
@@ -62,20 +68,14 @@ const CurrencySelect = styled.button<{ $selected: boolean }>`
   height: 2.2rem;
   font-size: 20px;
   font-weight: 500;
-  background-color: ${({ $selected, theme }) => ($selected ? theme.bg1 : theme.primary1)};
+  background-color: transparent;
   color: ${({ $selected, theme }) => ($selected ? theme.text1 : theme.white)};
   border-radius: 12px;
-  box-shadow: ${({ $selected }) => ($selected ? "none" : "0px 6px 10px rgba(0, 0, 0, 0.075)")};
   outline: none;
   cursor: pointer;
   user-select: none;
   border: none;
   padding: 0 0.5rem;
-
-  &:focus,
-  &:hover {
-    background-color: ${({ $selected, theme }) => ($selected ? theme.bg2 : darken(0.05, theme.primary1))};
-  }
 `;
 
 const Aligner = styled.span`
@@ -191,9 +191,7 @@ export default function CurrencyInputPanel({
                   onUserInput(val);
                 }}
               />
-              {address && currency && showMaxButton && label !== "To" && (
-                <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
-              )}
+              {address && currency && showMaxButton && label !== "To" && <MaxButton onClick={onMax}>MAX</MaxButton>}
             </>
           )}
           <CurrencySelect

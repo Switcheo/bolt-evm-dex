@@ -1,7 +1,4 @@
-import { Plus } from "react-feather";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { ButtonPrimary } from "../components/Button";
 import { RowBetween } from "../components/Row";
 import BridgeHistoryTable from "../components/Table";
 
@@ -13,8 +10,7 @@ const ActiveText = styled.div`
 const BridgeHistoryContainer = styled.div`
   width: 100%;
   min-width: 320px;
-  margin-top: -50px;
-
+  margin-top: 8rem;
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
     padding-top: 48px;
   }
@@ -38,10 +34,6 @@ const BridgeHistory = () => {
       <TitleContainer>
         <RowBetween>
           <ActiveText>Bridging History</ActiveText>
-          <ButtonPrimary as={Link} to="/bridge" width="unset" padding="10px 16px" $borderRadius="16px">
-            <Plus size={16} style={{ marginRight: 8 }} />
-            New Transfer
-          </ButtonPrimary>
         </RowBetween>
       </TitleContainer>
 

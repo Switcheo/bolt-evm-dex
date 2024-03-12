@@ -1,10 +1,13 @@
+import { BigNumber, ethers } from "ethers";
 import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowDown } from "react-feather";
+import { ArrowDown, ChevronDown, ChevronUp } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { ReactComponent as GasIcon } from "../assets/svg/gas_icon.svg";
+import { ReactComponent as SwapIcon } from "../assets/svg/swap.svg";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -16,17 +19,16 @@ import Loader from "../components/Loader";
 import { SwapPoolTabs } from "../components/NavigationTabs";
 import ProgressSteps from "../components/ProgressSteps";
 import { AutoRow, RowBetween } from "../components/Row";
-import AdvancedSwapDetailsDropdown from "../components/Swap/AdvancedSwapDetailsDropdown";
+import { AdvancedSwapDetail } from "../components/Swap/AdvancedSwapDetail";
 import { ArrowWrapper } from "../components/Swap/ArrowWrapper";
 import SwapHeader from "../components/Swap/SwapHeader";
 import TokenWarningModal from "../components/TokenWarningModal";
 import TradePrice from "../components/TradePrice";
-import UnsupportedCurrencyFooter from "../components/UnsupportedCurrencyFooter";
 import { SupportedChainId } from "../constants/chains";
-import { INITIAL_ALLOWED_SLIPPAGE } from "../constants/utils";
 import { useAllTokens, useCurrency } from "../hooks/Tokens";
 import { useIsTransactionUnsupported } from "../hooks/Trades";
 import { ApprovalState, useApproveCallbackFromTrade } from "../hooks/useApproveCallback";
+import { useDebounce } from "../hooks/useDebounce";
 import { useSwapCallback } from "../hooks/useSwapCallback";
 import useWrapCallback, { WrapType } from "../hooks/useWrapCallback";
 import {
@@ -43,6 +45,7 @@ import { Currency } from "../utils/entities/currency";
 import { CurrencyAmount } from "../utils/entities/fractions/currencyAmount";
 import { Token } from "../utils/entities/token";
 import { Trade } from "../utils/entities/trade";
+import { getEthersProvider } from "../utils/evm";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { computeTradePriceBreakdown, warningSeverity } from "../utils/prices";
 import AppBody from "./AppBody";
@@ -61,6 +64,15 @@ export const ClickableText = styled(Text)`
 
 export const BottomGrouping = styled.div`
   margin-top: 1rem;
+`;
+
+export const ChevronWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default function Swap() {
@@ -104,6 +116,9 @@ export default function Swap() {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState();
+  // Debounce the typedValue
+  const debouncedTypedValue = useDebounce(typedValue, 1000); // 2 seconds delay
+
   const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo();
 
   const {
@@ -194,6 +209,51 @@ export default function Swap() {
     }
   }, [approval, approvalSubmitted]);
 
+  const [estimatedGasFee, setEstimatedGasFee] = useState<string | null>(null);
+  const fetchEthToUsdRate = async (): Promise<number> => {
+    const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
+    const data = await response.json();
+    return data.ethereum.usd;
+  };
+
+  const provider = getEthersProvider({ chainId });
+
+  const estimateGasForSwap = useCallback(async () => {
+    try {
+      const feeData = await provider.getFeeData();
+
+      let gasUsed = BigNumber.from("216860");
+
+      // if bolt chain then multiply gasUsed by 10^9
+      if (chainId === SupportedChainId.BOLTCHAIN) {
+        gasUsed = BigNumber.from("21686000000000");
+      }
+
+      // Extracting the necessary fields from the feeData
+      const baseFeePerGas = BigNumber.from(feeData.lastBaseFeePerGas || 0);
+      const maxPriorityFeePerGas = BigNumber.from(feeData.maxPriorityFeePerGas || 1);
+
+      // Calculate the total cost in wei
+      const totalCostInWei = baseFeePerGas.add(maxPriorityFeePerGas).mul(gasUsed);
+      const totalCostInEth = ethers.utils.formatUnits(totalCostInWei, "ether");
+
+      const ethToUsdRate = await fetchEthToUsdRate();
+
+      // Convert the total cost to USD
+      const totalCostInUsd = (parseFloat(totalCostInEth) * ethToUsdRate).toFixed(4);
+
+      setEstimatedGasFee(`$ ${totalCostInUsd}`);
+    } catch (error) {
+      console.error("Gas estimate failed", error);
+      setEstimatedGasFee(null);
+    }
+  }, [chainId]);
+
+  useEffect(() => {
+    if (debouncedTypedValue) {
+      estimateGasForSwap();
+    }
+  }, [debouncedTypedValue, estimateGasForSwap]);
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT]);
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput));
 
@@ -204,6 +264,8 @@ export default function Swap() {
 
   const [singleHopOnly] = useUserSingleHopOnly();
 
+  const [showDetails, toggleShowDetails] = useState(false);
+
   const handleSwap = useCallback(() => {
     if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
       return;
@@ -211,6 +273,7 @@ export default function Swap() {
     if (!swapCallback) {
       return;
     }
+    estimateGasForSwap();
     setSwapState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined });
     swapCallback()
       .then((hash) => {
@@ -225,7 +288,7 @@ export default function Swap() {
           txHash: undefined,
         });
       });
-  }, [priceImpactWithoutFee, swapCallback, tradeToConfirm, showConfirm]);
+  }, [priceImpactWithoutFee, swapCallback, tradeToConfirm, showConfirm, estimateGasForSwap]);
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false);
@@ -256,10 +319,11 @@ export default function Swap() {
 
   const handleInputSelect = useCallback(
     (inputCurrency: Currency) => {
+      estimateGasForSwap();
       setApprovalSubmitted(false); // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency);
     },
-    [onCurrencySelection],
+    [onCurrencySelection, estimateGasForSwap],
   );
 
   const handleMaxInput = useCallback(() => {
@@ -318,13 +382,11 @@ export default function Swap() {
             <AutoColumn justify="space-between">
               <AutoRow justify={isExpertMode ? "space-between" : "center"} style={{ padding: "0 1rem" }}>
                 <ArrowWrapper $clickable>
-                  <ArrowDown
-                    size="16"
+                  <SwapIcon
                     onClick={() => {
                       setApprovalSubmitted(false); // reset 2 step UI for approvals
                       onSwitchTokens();
                     }}
-                    color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme?.primary1 : theme?.text2}
                   />
                 </ArrowWrapper>
                 {recipient === null && !showWrap && isExpertMode ? (
@@ -335,11 +397,11 @@ export default function Swap() {
               </AutoRow>
             </AutoColumn>
             <CurrencyInputPanel
-              value={formattedAmounts[Field.OUTPUT]}
-              onUserInput={handleTypeOutput}
               label={independentField === Field.INPUT && !showWrap && trade ? "To (estimated)" : "To"}
+              value={formattedAmounts[Field.OUTPUT]}
               showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
+              onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               otherCurrency={currencies[Field.INPUT]}
               id="swap-currency-output"
@@ -360,39 +422,43 @@ export default function Swap() {
             ) : null}
 
             {showWrap ? null : (
-              <Card padding={showWrap ? ".25rem 1rem 0 1rem" : "0px"} borderRadius={"20px"}>
-                <AutoColumn gap="8px" style={{ padding: "0 16px" }}>
+              <Card padding={showWrap ? ".25rem 1rem 0 1rem" : "0px"} borderRadius={"10px"}>
+                <AutoColumn gap="10px">
                   {Boolean(trade) && (
                     <RowBetween align="center">
-                      <Text fontWeight={500} fontSize={14} color={theme?.text2}>
-                        Price
-                      </Text>
                       <TradePrice
                         price={trade?.executionPrice}
                         showInverted={showInverted}
                         setShowInverted={setShowInverted}
                       />
+                      <Text fontWeight={500} fontSize={14} display={"flex"} alignItems={"center"}>
+                        <GasIcon width={18} height={18} />
+                        {estimatedGasFee}
+                      </Text>
                     </RowBetween>
                   )}
-                  {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
-                    <RowBetween align="center">
-                      <ClickableText
-                        fontWeight={500}
-                        fontSize={14}
-                        color={theme?.text2}
-                        onClick={() => setToggleSettingsMenu((toggleSettingsMenu) => !toggleSettingsMenu)}
-                      >
-                        Slippage Tolerance
-                      </ClickableText>
-                      <ClickableText
-                        fontWeight={500}
-                        fontSize={14}
-                        color={theme?.text2}
-                        onClick={() => setToggleSettingsMenu((toggleSettingsMenu) => !toggleSettingsMenu)}
-                      >
-                        {allowedSlippage / 100}%
-                      </ClickableText>
-                    </RowBetween>
+
+                  {showDetails && (
+                    <>
+                      <AdvancedSwapDetail trade={trade} />
+                    </>
+                  )}
+
+                  {trade && (
+                    <ChevronWrapper
+                      onClick={() => {
+                        toggleShowDetails(!showDetails);
+                      }}
+                    >
+                      {showDetails ? (
+                        <ChevronUp />
+                      ) : (
+                        <>
+                          <ChevronDown />
+                          <Text>Click for more info</Text>{" "}
+                        </>
+                      )}
+                    </ChevronWrapper>
                   )}
                 </AutoColumn>
               </Card>
@@ -404,7 +470,7 @@ export default function Swap() {
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !address ? (
-              <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
+              <ConnectKitLightButton padding="18px" $borderRadius="20px" width="100%">
                 Connect Wallet
               </ConnectKitLightButton>
             ) : chainId !== SupportedChainId.BOLTCHAIN ? (
@@ -461,7 +527,7 @@ export default function Swap() {
                   }
                   $error={isValid && priceImpactSeverity > 2}
                 >
-                  <Text fontSize={16} fontWeight={500}>
+                  <Text fontSize={14} fontWeight={500}>
                     {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
                       : `Swap${priceImpactSeverity > 2 ? " Anyway" : ""}`}
@@ -487,7 +553,7 @@ export default function Swap() {
                 disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                 $error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <Text fontSize={20} fontWeight={500}>
+                <Text fontSize={14} fontWeight={500}>
                   {swapInputError
                     ? swapInputError
                     : priceImpactSeverity > 3 && !isExpertMode
@@ -510,11 +576,6 @@ export default function Swap() {
           </BottomGrouping>
         </Wrapper>
       </AppBody>
-      {!swapIsUnsupported ? (
-        <AdvancedSwapDetailsDropdown trade={trade} />
-      ) : (
-        <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
-      )}
     </>
   );
 }

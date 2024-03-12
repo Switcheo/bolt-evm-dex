@@ -100,9 +100,6 @@ export const IconWrapper = styled.div<{
   height: ${({ size }) => size ?? "20px"};
   margin-right: ${({ $marginRight }) => $marginRight ?? 0};
   margin-left: ${({ $marginLeft }) => $marginLeft ?? 0};
-  & > * {
-    stroke: ${({ theme, stroke }) => stroke ?? theme.blue1};
-  }
 `;
 
 // A button that triggers some onClick result, but looks like a link.
@@ -131,23 +128,40 @@ export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
 
 // An internal link from the react-router-dom library that is correctly styled
 export const StyledInternalLink = styled(Link)`
-  text-decoration: none;
-  cursor: pointer;
-  color: ${({ theme }) => theme.primary1};
+  display: inline-flex;
+  background-color: transparent;
+  margin-left: 8px;
+  padding: 4px 12px;
+  border: ${({ theme }) => theme.border1};
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
   font-weight: 500;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  color: ${({ theme }) => theme.text1};
+  transition: box-shadow 0.25s ease-in-out;
+  text-decoration: none; // Removes the underline from the link
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    text-decoration: underline;
-  }
-
-  &:focus {
-    outline: none;
-    text-decoration: underline;
+    border: ${({ theme }) => theme.borderHover};
+    box-shadow: 0 2px 15px 0 rgba(176, 127, 254, 0.25);
   }
 
   &:active {
-    text-decoration: none;
+    background: ${({ theme }) => theme.primaryGradient};
+    color: ${({ theme }) => theme.black};
   }
+
+  &:focus {
+    border: ${({ theme }) => theme.borderHover};
+    outline: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+margin-right: 0.5rem;
+`};
 `;
 
 const StyledLink = styled.a`

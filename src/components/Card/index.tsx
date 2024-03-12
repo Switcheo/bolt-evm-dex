@@ -45,19 +45,19 @@ export const PinkCard = styled(Card)`
   font-weight: 500;
 `;
 
-const BlueCardStyled = styled(Card)`
+const TipCardStyled = styled(Card)`
   background-color: ${({ theme }) => theme.primary5};
-  color: ${({ theme }) => theme.primary1};
-  border-radius: 12px;
+  // background: ${({ theme }) => `1px solid ${theme.greyGradient10}`};
+  border-radius: 10px;
   width: fit-content;
 `;
 
-export const BlueCard = ({ children, ...rest }: CardProps) => {
+export const TipCard = ({ children, ...rest }: CardProps) => {
   return (
-    <BlueCardStyled {...rest}>
-      <Text fontWeight={500} color="#2172E5">
+    <TipCardStyled {...rest}>
+      <Text color="white" fontWeight={500}>
         {children}
       </Text>
-    </BlueCardStyled>
+    </TipCardStyled>
   );
 };

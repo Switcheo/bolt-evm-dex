@@ -12,7 +12,7 @@ const Base = styled(RebassButton)<{
   $borderRadius?: string;
   $altDisabledStyle?: boolean;
 }>`
-  padding: ${({ padding }) => (padding ? padding : "18px")};
+  padding: ${({ padding }) => (padding ? padding : "8px 16px")};
   width: ${({ width }) => (width ? width : "100%")};
   font-weight: 500;
   text-align: center;
@@ -39,7 +39,8 @@ const Base = styled(RebassButton)<{
 `;
 
 export const ButtonPrimary = styled(Base)`
-  background-color: ${({ theme }) => theme.primary1};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.primaryGradient};
   color: white;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
@@ -55,20 +56,49 @@ export const ButtonPrimary = styled(Base)`
   &:disabled {
     background-color: ${({ theme, $altDisabledStyle, disabled }) =>
       $altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
-    color: ${({ theme, $altDisabledStyle, disabled }) =>
-      $altDisabledStyle ? (disabled ? theme.text3 : "white") : theme.text3};
     cursor: auto;
     box-shadow: none;
     border: 1px solid transparent;
     outline: none;
-    opacity: ${({ $altDisabledStyle }) => ($altDisabledStyle ? "0.5" : "1")};
+    opacity: ${({ $altDisabledStyle }) => ($altDisabledStyle ? "1" : ".25")};
   }
 `;
 
-export const ButtonLight = styled(Base)`
-  background-color: ${({ theme }) => theme.primary5};
-  color: ${({ theme }) => theme.primaryText1};
+const ConnectedButtonBorderGradient = styled.div`
+  flex: 1;
+  border-radius: 8px;
+  position: relative; /* Position relative to allow absolute positioning inside */
+  display: flex;
+  border: ${({ theme }) => `1px solid ${theme.grey25}`};
+  transition: border-color 300ms step-start, color 500ms step-start;
+  background-color: transparent;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: -2px; /* Adjust these values as needed to fit your design */
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 8px; /* Match your container's border-radius */
+      border: 2px solid transparent;
+      background: ${({ theme }) => `${theme.primaryGradient} border-box`};
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) padding-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      pointer-events: none; /* Ignore mouse events on the pseudo-element */
+    }
+  }
+`;
+
+export const ConnectedButton = styled(Base)`
+  background: ${({ theme }) => theme.greyGradient5};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.grey50};
   font-size: 16px;
+  padding: 6px 12px;
   font-weight: 500;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
@@ -91,6 +121,47 @@ export const ButtonLight = styled(Base)`
       outline: none;
     }
   }
+`;
+
+const WalletBtnGradientWrapper = styled.div`
+  position: relative;
+  &:hover {
+    .btn-gradient {
+      opacity: 1;
+      background: ${({ theme }) => theme.primaryGradient};
+      filter: blur(4px);
+    }
+  }
+`;
+
+const WalletBtnGradient = styled.div`
+  opacity: 0;
+  z-index: -99999;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  transition: opacity 0.25s ease-in-out;
+  border-radius: 8px;
+`;
+
+const WalletBtnWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 12px;
+  white-space: nowrap;
+  width: 100%;
+  color: white;
+  &:focus {
+    border: 1px solid blue;
+  }
+`;
+
+export const DisconnectedButton = styled(ConnectedButton)`
+  background: ${({ theme }) => theme.primaryGradient};
+  color: white;
+  border: 0;
 `;
 
 export const ButtonGray = styled(Base)`
@@ -199,6 +270,10 @@ export const ButtonOutlined = styled(Base)`
   }
 `;
 
+export const ButtonGhost = styled(ButtonOutlined)`
+  border: transparent;
+`;
+
 export const ButtonEmpty = styled(Base)`
   background-color: transparent;
   color: ${({ theme }) => theme.primary1};
@@ -254,9 +329,10 @@ const ButtonConfirmedStyle = styled(Base)`
 `;
 
 const ButtonErrorStyle = styled(Base)`
-  background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
-
+  background-color: transparent;
+  padding: 8px 16px;
+  border-radius: 8px;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
     background-color: ${({ theme }) => darken(0.05, theme.red1)};
@@ -272,7 +348,6 @@ const ButtonErrorStyle = styled(Base)`
     opacity: 50%;
     cursor: auto;
     box-shadow: none;
-    background-color: ${({ theme }) => theme.red1};
     border: 1px solid ${({ theme }) => theme.red1};
   }
 `;
@@ -336,26 +411,6 @@ export function ButtonDropdownGrey({ disabled = false, children, ...rest }: { di
   );
 }
 
-// export function ButtonDropdownLight({
-//   disabled = false,
-//   children,
-//   ...rest
-// }: { disabled?: boolean } & ButtonProps & {
-//     padding?: string;
-//     width?: string;
-//     $borderRadius?: string;
-//     $altDisabledStyle?: boolean;
-//   }) {
-//   return (
-//     <ButtonOutlined {...rest} disabled={disabled}>
-//       <RowBetween>
-//         <div style={{ display: "flex", alignItems: "center" }}>{children}</div>
-//         <ChevronDown size={24} />
-//       </RowBetween>
-//     </ButtonOutlined>
-//   );
-// }
-
 interface ButtonDropdownLightProps extends ButtonProps {
   disabled?: boolean;
   padding?: string;
@@ -367,12 +422,12 @@ interface ButtonDropdownLightProps extends ButtonProps {
 export const ButtonDropdownLight = forwardRef<HTMLButtonElement, ButtonDropdownLightProps>(
   ({ disabled = false, children, ...rest }, ref) => {
     return (
-      <ButtonOutlined ref={ref} {...rest} disabled={disabled}>
+      <ButtonGhost ref={ref} {...rest} disabled={disabled}>
         <RowBetween>
           <div style={{ display: "flex", alignItems: "center" }}>{children}</div>
           <ChevronDown size={24} />
         </RowBetween>
-      </ButtonOutlined>
+      </ButtonGhost>
     );
   },
 );
@@ -397,9 +452,24 @@ export function ConnectKitLightButton({
     <ConnectKitButton.Custom>
       {({ isConnected, show, truncatedAddress, ensName }) => {
         return (
-          <ButtonLight onClick={show} {...props}>
-            {isConnected ? ensName ?? truncatedAddress : "Connect Wallet"}
-          </ButtonLight>
+          <>
+            {isConnected ? (
+              <ConnectedButtonBorderGradient>
+                <ConnectedButton onClick={show} {...props}>
+                  {ensName ?? truncatedAddress}
+                </ConnectedButton>
+              </ConnectedButtonBorderGradient>
+            ) : (
+              <WalletBtnGradientWrapper>
+                <WalletBtnGradient className="btn-gradient" />
+                <WalletBtnWrapper>
+                  <DisconnectedButton onClick={show} {...props}>
+                    Connect Wallet
+                  </DisconnectedButton>
+                </WalletBtnWrapper>
+              </WalletBtnGradientWrapper>
+            )}
+          </>
         );
       }}
     </ConnectKitButton.Custom>

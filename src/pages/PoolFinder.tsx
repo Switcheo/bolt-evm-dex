@@ -5,7 +5,7 @@ import { Text } from "rebass";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
 import { ButtonDropdownLight } from "../components/Button";
-import { BlueCard, LightCard } from "../components/Card";
+import { LightCard, TipCard } from "../components/Card";
 import { AutoColumn, ColumnCenter } from "../components/Column";
 import CurrencyLogo from "../components/CurrencyLogo";
 import CurrencySearchModal from "../components/CurrencySearchModal";
@@ -110,13 +110,14 @@ export default function PoolFinder() {
     <AppBody>
       <FindPoolTabs />
       <AutoColumn style={{ padding: "1rem" }} gap="md">
-        <BlueCard>
+        <TipCard>
           <AutoColumn gap="10px">
-            <TYPE.link fontWeight={400} color={"primaryText1"}>
-              <b>Tip:</b> Use this tool to find pairs that don&apos;t automatically appear in the interface.
-            </TYPE.link>
+            <TYPE.grey fontWeight={700}>Tip:</TYPE.grey>
+            <TYPE.grey50>
+              Use this tool to find pairs that don&apos;t automatically appear in the interface.
+            </TYPE.grey50>
           </AutoColumn>
-        </BlueCard>
+        </TipCard>
         <ButtonDropdownLight
           onClick={() => {
             setShowSearch(true);

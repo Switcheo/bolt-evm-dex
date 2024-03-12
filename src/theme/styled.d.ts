@@ -12,8 +12,19 @@ export interface Colors {
   text3: Color;
   text4: Color;
   text5: Color;
+  textDark: Color;
+  textLight: Color;
 
   // backgrounds / greys
+  rootBg: Color;
+  glassBg: Color;
+  white10: Color;
+  white25: Color;
+  grey50: Color;
+  grey: Color;
+  grey25: Color;
+  grey50: Color;
+  grey10: Color;
   bg1: Color;
   bg2: Color;
   bg3: Color;
@@ -30,6 +41,10 @@ export interface Colors {
   primary4: Color;
   primary5: Color;
 
+  primaryGradient: Color;
+  greyGradient5: Color;
+  greyGradient10: Color;
+
   primaryText1: Color;
 
   // pinks
@@ -45,6 +60,7 @@ export interface Colors {
   yellow1: Color;
   yellow2: Color;
   blue1: Color;
+  grey50: Color;
 }
 
 export interface Grids {
@@ -59,6 +75,9 @@ declare module "styled-components" {
 
     // shadows
     shadow1: string;
+
+    // border
+    border1: string;
 
     // media queries
     mediaWidth: {
