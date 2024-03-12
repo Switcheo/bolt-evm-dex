@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 const MenuWrapper = styled.div`
   position: absolute;
-  height: 100vh;
   width: 20vw;
   display: flex;
   justify-content: center;
@@ -20,7 +19,6 @@ const MenuLinkContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  // gap: 1.5rem;
   margin-left: 2rem;
 `;
 
@@ -31,17 +29,21 @@ const MenuLink = styled(Link)<{ $active?: boolean }>`
   padding: 1rem 0;
   font-weight: 700;
   color: ${(props) => (props.$active ? "white" : "gray")};
+  align-items: center;
+  align-content: center;
   opacity: ${(props) => (props.$active ? "1" : ".5")};
   transition: all 0.2s ease-in-out;
 
   &:hover {
     color: white;
-    opacity: 1; // Optional: add opacity change on hover
-  }
+    opacity: 1; 
 `;
 
 const MenuLinkIcon = styled.div`
   margin-right: 16px;
+  display: flex;
+  align-items: center;
+  align-content: center;
 `;
 
 export const navLinks = [
@@ -60,7 +62,7 @@ export default function SideMenuBar() {
       <MenuLinkContainer>
         {navLinks.map((nav) => {
           return (
-            <MenuLink to={nav.route} $active={current.pathname === nav.route}>
+            <MenuLink key={nav.label} to={nav.route} $active={current.pathname === nav.route}>
               <MenuLinkIcon>{nav.emoji}</MenuLinkIcon>
               {nav.label}
             </MenuLink>
