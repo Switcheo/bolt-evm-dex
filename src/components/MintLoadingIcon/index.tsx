@@ -1,7 +1,7 @@
+// @ts-nocheck
 import { useEffect } from "react";
 import { ReactComponent as MintLoading } from "../../assets/svg/mint_loading.svg";
 
-/* eslint-disable */
 export default function MintLoadingIcon() {
   useEffect(() => {
     !(function (t, n) {
