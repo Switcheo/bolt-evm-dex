@@ -31,8 +31,7 @@ export default function Mint() {
 
   const [typed, setTyped] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const { chain } = useNetwork();
@@ -45,19 +44,20 @@ export default function Mint() {
         response = JSON.parse(event.data);
       } catch (e) {
         console.error("Error parsing message", e);
-        setError("Error processing server response.");
+
+        setMessage("Error processing server response.");
         setStatus("error");
         return;
       }
 
       if (response?.error) {
         setStatus("error");
-        setSuccessMessage(null);
+        setMessage(response.error);
       }
 
       if (response?.success) {
         setStatus("success");
-        setSuccessMessage(`10 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`);
+        setMessage(`10 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`);
         setShowModal(true);
       }
     },
@@ -72,21 +72,18 @@ export default function Mint() {
     onError: (event: WebSocketEventMap["error"]) => {
       console.error("WebSocket error occurred.", event);
       setStatus("error");
+      setMessage("Error connecting to faucet server.");
     },
   });
 
-  const handleRecipientType = useCallback(
-    (val: string) => {
-      setTyped(val);
-      if (error) setError(null);
-    },
-    [error],
-  );
+  const handleRecipientType = useCallback((val: string) => {
+    setTyped(val);
+  }, []);
 
   const onClaim = useCallback(() => {
     setStatus("loading");
-    console.log("Claim button clicked.");
-    console.log("WebSocket readyState:", readyState);
+    setShowModal(true);
+
     sendJsonMessage({
       ...FAUCET_REQUEST,
       url: typed,
@@ -100,7 +97,7 @@ export default function Mint() {
   const handleModalDismiss = useCallback(() => {
     setStatus("idle");
     setShowModal(false);
-    setSuccessMessage(null);
+    setMessage(null);
   }, []);
 
   return (
@@ -132,19 +129,13 @@ export default function Mint() {
                   id="mint-button"
                   width="100%"
                   mt={BUTTON_MARGIN_TOP}
-                  disabled={!!error || !isAddress(typed) || readyState !== 1 || status === "loading"}
-                  $error={!!error}
+                  disabled={!isAddress(typed) || readyState !== 1 || status === "loading"}
                   onClick={onClaim}
                 >
-                  {error ? error : "Send Me ETH"}
+                  {"Send Me ETH"}
                 </ButtonError>
               )}
-              <SuccessMintModal
-                isOpen={showModal}
-                status={status}
-                onDismiss={handleModalDismiss}
-                message={successMessage}
-              />
+              <SuccessMintModal isOpen={showModal} status={status} onDismiss={handleModalDismiss} message={message} />
             </ColumnCenter>
           </AutoColumn>
         </Wrapper>

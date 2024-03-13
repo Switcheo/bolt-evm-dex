@@ -12,7 +12,7 @@ const InputPanel = styled.div`
   width: 100%;
 `;
 
-const ExplorerButtonWrapper = styled.a`
+export const ExplorerButtonWrapper = styled.a`
   background-color: transparent;
   margin-top: 8px;
   padding: 4px 8px;
