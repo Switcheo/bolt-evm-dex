@@ -1,7 +1,6 @@
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useNetwork } from "wagmi";
-import { getWalletClient } from "wagmi/actions";
 import { ReactComponent as MintErrorIcon } from "../../assets/svg/mint_error.svg";
 import { ReactComponent as MintSuccessIcon } from "../../assets/svg/mint_success.svg";
 import { BOLT_ERC20_ADDRESS } from "../../constants/addresses";
@@ -37,18 +36,6 @@ interface SuccessMintModalProps {
 function SuccessMintModal({ isOpen, status, onDismiss, message }: SuccessMintModalProps) {
   const theme = useTheme();
   const chainId = useNetwork().chain?.id;
-
-  const handleAddBolt = async () => {
-    const walletClient = await getWalletClient();
-    await walletClient?.watchAsset({
-      type: "ERC20",
-      options: {
-        address: BOLT_ERC20_ADDRESS,
-        decimals: 18,
-        symbol: "BOLT",
-      },
-    });
-  };
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>

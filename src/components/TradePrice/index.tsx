@@ -1,6 +1,6 @@
 import { Repeat } from "react-feather";
 import { Text } from "rebass";
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { Price } from "../../utils/entities/fractions/price";
 import { StyledBalanceMaxMini } from "../ConfirmSwapModal/styleds";
 

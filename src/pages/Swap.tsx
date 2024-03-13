@@ -108,7 +108,6 @@ export default function Swap() {
 
   // for expert mode
   // const toggleSettings = useToggleSettingsMenu();
-  const [, setToggleSettingsMenu] = useState(false);
   const [isExpertMode] = useExpertModeManager();
 
   // get custom setting values for user
