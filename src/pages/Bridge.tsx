@@ -68,6 +68,9 @@ const BridgeHeader = styled.div`
 const BridgeTokenContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `};
   align-items: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -83,7 +86,10 @@ const BridgeCardContainer = styled.div<{ $hideInput: boolean }>`
   gap: 0.5rem;
   border-radius: ${({ $hideInput }) => ($hideInput ? "8px" : "20px")};
   border: 1px solid ${({ theme }) => theme.white25};
-  background-color: ${({ theme }) => theme.glassBg};
+  background: ${({ theme }) => theme.glassBg};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `};
 `;
 
 const BridgeTokenLogoContainer = styled.div`
