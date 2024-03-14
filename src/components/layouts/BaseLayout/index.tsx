@@ -35,7 +35,7 @@ const BodyWrapper = styled.div`
   flex: 1;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
-    padding-top: 2rem;
+    margin-bottom: 6rem;
   `};
 `;
 
@@ -46,7 +46,7 @@ const ContentContainer = styled.div`
   align-items: center;
   flex: 1;
   height: 100%;
-  padding: 0 20vw;
+  padding: 10vw 20vw;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0 2rem;
   `};
