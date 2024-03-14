@@ -57,7 +57,7 @@ export default function Mint() {
 
       if (response?.success) {
         setStatus("success");
-        setMessage(`10 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`);
+        setMessage(`1 ETH request accepted for ${typed}. Awaiting blockchain confirmation.`);
         setShowModal(true);
       }
     },
