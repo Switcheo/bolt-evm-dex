@@ -52,14 +52,14 @@ export function ExplorerButton({
   children,
   href,
   ...rest
-}: Omit<HTMLProps<HTMLAnchorElement>, "as" | "ref" | "onClick"> & {
-  href: string;
+}: Omit<HTMLProps<HTMLAnchorElement>, "as" | "ref"> & {
+  href?: string;
 }) {
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       // Optionally, you can add additional logic here (like tracking)
-      window.location.href = href;
+      window.location.href = href || "#";
     },
     [href],
   );

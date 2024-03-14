@@ -68,7 +68,7 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   `};
 `;
 
-const ResponsiveButtonSecondary = styled(ButtonSecondary)`
+export const ResponsiveButtonSecondary = styled(ButtonSecondary)`
   background-color: transparent;
   width: fit-content;
   border: ${({ theme }) => theme.border1};
@@ -131,7 +131,7 @@ export const CardSection = styled(AutoColumn)<{ $disabled?: boolean }>`
   opacity: ${({ $disabled }) => $disabled && "0.4"};
 `;
 
-const AnalyticsLink = styled(ExternalLink)`
+export const AnalyticsLink = styled(ExternalLink)`
   color: ${({ theme }) => theme.white};
 `;
 

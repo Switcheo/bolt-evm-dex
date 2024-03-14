@@ -1,23 +1,22 @@
 import JSBI from "jsbi";
-import { transparentize } from "polished";
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "react-feather";
 import { Link } from "react-router-dom";
 import { Text } from "rebass";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useAccount } from "wagmi";
+import { ReactComponent as ManageEdit } from "../../assets/svg/manage_edit.svg";
 import { BIG_INT_ZERO } from "../../constants/utils";
 import { useTokenBalance } from "../../hooks/balances/useTokenBalance";
 import { useTotalSupply } from "../../hooks/Tokens";
 import { useColor } from "../../hooks/useColor";
-import { CardNoise } from "../../pages/Pool";
-import { ExternalLink, TYPE } from "../../theme";
+import { AnalyticsLink, ResponsiveButtonSecondary } from "../../pages/Pool";
+import { TYPE } from "../../theme";
 import { currencyId } from "../../utils/currencyId";
 import { Percent } from "../../utils/entities/fractions/percent";
 import { TokenAmount } from "../../utils/entities/fractions/tokenAmount";
 import { Pair } from "../../utils/entities/pair";
 import { unwrappedToken } from "../../utils/wrappedCurrency";
-import { ButtonEmpty, ButtonPrimary, ButtonSecondary } from "../Button";
+import { ButtonPrimary } from "../Button";
 import { GreyCard, LightCard } from "../Card";
 import { AutoColumn } from "../Column";
 import { Dots } from "../ConfirmSwapModal/styleds";
@@ -31,10 +30,13 @@ export const FixedHeightRow = styled(RowBetween)`
 
 const StyledPositionCard = styled(LightCard)<{ bgColor: string }>`
   border: none;
-  background: ${({ theme, bgColor }) =>
-    `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
+  background: ${({ theme }) => theme.glassBg};
   position: relative;
   overflow: hidden;
+`;
+
+const RemoveButton = styled(ResponsiveButtonSecondary)`
+  width: 160px;
 `;
 
 interface PositionCardProps {
@@ -46,6 +48,7 @@ interface PositionCardProps {
 
 export function MinimalPositionCard({ pair, showUnwrapped = false, border }: PositionCardProps) {
   const { address } = useAccount();
+  const theme = useTheme();
 
   const currency0 = showUnwrapped ? pair.token0 : unwrappedToken(pair.token0);
   const currency1 = showUnwrapped ? pair.token1 : unwrappedToken(pair.token1);
@@ -99,7 +102,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
             </FixedHeightRow>
             <AutoColumn gap="4px">
               <FixedHeightRow>
-                <Text fontSize={16} fontWeight={500}>
+                <Text fontSize={16} fontWeight={500} color={theme?.white50}>
                   Your pool share:
                 </Text>
                 <Text fontSize={16} fontWeight={500}>
@@ -154,6 +157,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
 
 export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
   const { address } = useAccount();
+  const theme = useTheme();
 
   const currency0 = unwrappedToken(pair.token0);
   const currency1 = unwrappedToken(pair.token1);
@@ -187,7 +191,6 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
 
   return (
     <StyledPositionCard border={border} bgColor={backgroundColor}>
-      <CardNoise />
       <AutoColumn gap="12px">
         <FixedHeightRow>
           <AutoRow gap="8px">
@@ -197,56 +200,45 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
             </Text>
           </AutoRow>
           <RowFixed gap="8px">
-            <ButtonEmpty
-              padding="6px 8px"
-              $borderRadius="12px"
-              width="fit-content"
+            <ResponsiveButtonSecondary
+              style={{ fontSize: "14px", padding: "2px 8px" }}
               onClick={() => setShowMore(!showMore)}
             >
-              {showMore ? (
-                <>
-                  Manage
-                  <ChevronUp size="20" style={{ marginLeft: "10px" }} />
-                </>
-              ) : (
-                <>
-                  Manage
-                  <ChevronDown size="20" style={{ marginLeft: "10px" }} />
-                </>
-              )}
-            </ButtonEmpty>
+              <ManageEdit style={{ marginRight: "8px" }} />
+              Manage
+            </ResponsiveButtonSecondary>
           </RowFixed>
         </FixedHeightRow>
 
         {showMore && (
           <AutoColumn gap="8px">
             <FixedHeightRow>
-              <Text fontSize={16} fontWeight={500}>
+              <Text fontSize={16} fontWeight={500} color={theme?.grey50}>
                 Your total pool tokens:
               </Text>
-              <Text fontSize={16} fontWeight={500}>
+              <Text fontSize={16} fontWeight={500} color={theme?.grey}>
                 {userPoolBalance ? userPoolBalance.toSignificant(4) : "-"}
               </Text>
             </FixedHeightRow>
             {stakedBalance && (
               <FixedHeightRow>
-                <Text fontSize={16} fontWeight={500}>
+                <Text fontSize={16} fontWeight={500} color={theme?.grey50}>
                   Pool tokens in rewards pool:
                 </Text>
-                <Text fontSize={16} fontWeight={500}>
+                <Text fontSize={16} fontWeight={500} color={theme?.grey}>
                   {stakedBalance.toSignificant(4)}
                 </Text>
               </FixedHeightRow>
             )}
             <FixedHeightRow>
               <RowFixed>
-                <Text fontSize={16} fontWeight={500}>
+                <Text fontSize={16} fontWeight={500} color={theme?.grey50}>
                   Pooled {currency0.symbol}:
                 </Text>
               </RowFixed>
               {token0Deposited ? (
                 <RowFixed>
-                  <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                  <Text fontSize={16} fontWeight={500} marginLeft={"6px"} color={theme?.grey}>
                     {token0Deposited?.toSignificant(6)}
                   </Text>
                   <CurrencyLogo size="20px" style={{ marginLeft: "8px" }} currency={currency0} />
@@ -258,13 +250,13 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
 
             <FixedHeightRow>
               <RowFixed>
-                <Text fontSize={16} fontWeight={500}>
+                <Text fontSize={16} fontWeight={500} color={theme?.grey50}>
                   Pooled {currency1.symbol}:
                 </Text>
               </RowFixed>
               {token1Deposited ? (
                 <RowFixed>
-                  <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                  <Text fontSize={16} fontWeight={500} marginLeft={"6px"} color={theme?.grey}>
                     {token1Deposited?.toSignificant(6)}
                   </Text>
                   <CurrencyLogo size="20px" style={{ marginLeft: "8px" }} currency={currency1} />
@@ -275,44 +267,44 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
             </FixedHeightRow>
 
             <FixedHeightRow>
-              <Text fontSize={16} fontWeight={500}>
+              <Text fontSize={16} fontWeight={500} color={theme?.grey50}>
                 Your pool share:
               </Text>
-              <Text fontSize={16} fontWeight={500}>
+              <Text fontSize={16} fontWeight={500} color={theme?.grey}>
                 {poolTokenPercentage
                   ? (poolTokenPercentage.toFixed(2) === "0.00" ? "<0.01" : poolTokenPercentage.toFixed(2)) + "%"
                   : "-"}
               </Text>
             </FixedHeightRow>
-
-            <ButtonSecondary padding="8px" $borderRadius="8px">
-              <ExternalLink
-                style={{ width: "100%", textAlign: "center" }}
-                href={`https://uniswap.info/account/${address}`}
-              >
-                View accrued fees and analytics<span style={{ fontSize: "11px" }}>↗</span>
-              </ExternalLink>
-            </ButtonSecondary>
             {userDefaultPoolBalance && JSBI.greaterThan(userDefaultPoolBalance.raw, BIG_INT_ZERO) && (
-              <RowBetween style={{ marginTop: "10px" }}>
-                <ButtonPrimary
-                  padding="8px"
-                  $borderRadius="8px"
-                  as={Link}
-                  to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}
-                  width="48%"
+              <RowBetween style={{ marginTop: "10px", gap: "8px" }}>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <ButtonPrimary
+                    padding="8px"
+                    $borderRadius="8px"
+                    as={Link}
+                    to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}
+                    width="160px"
+                  >
+                    Add
+                  </ButtonPrimary>
+                  <RemoveButton
+                    padding="8px"
+                    $borderRadius="8px"
+                    as={Link}
+                    width="160px"
+                    to={`/remove/${currencyId(currency0)}/${currencyId(currency1)}`}
+                  >
+                    Remove
+                  </RemoveButton>
+                </div>
+
+                <AnalyticsLink
+                  style={{ width: "100%", textAlign: "center" }}
+                  href={`https://uniswap.info/account/${address}`}
                 >
-                  Add
-                </ButtonPrimary>
-                <ButtonPrimary
-                  padding="8px"
-                  $borderRadius="8px"
-                  as={Link}
-                  width="48%"
-                  to={`/remove/${currencyId(currency0)}/${currencyId(currency1)}`}
-                >
-                  Remove
-                </ButtonPrimary>
+                  View accrued fees and analytics<span style={{ fontSize: "11px" }}>↗</span>
+                </AnalyticsLink>
               </RowBetween>
             )}
             {stakedBalance && JSBI.greaterThan(stakedBalance.raw, BIG_INT_ZERO) && (
