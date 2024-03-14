@@ -108,15 +108,9 @@ const BalanceContainer = styled.div`
 
 const BalanceText = styled(Text)`
   padding: 0;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
 `;
 
 const BalanceSymbol = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-  display: none;
-  `};
   display: inline;
   font-weight: 500;
 `;
