@@ -40,6 +40,7 @@ const Base = styled(RebassButton)<{
 
 export const ButtonPrimary = styled(Base)`
   border-radius: 8px;
+  border: 0;
   background: ${({ theme }) => theme.primaryGradient};
   color: white;
   &:focus {
