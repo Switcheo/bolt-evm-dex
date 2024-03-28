@@ -59,7 +59,7 @@ export function ExplorerButton({
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       // Optionally, you can add additional logic here (like tracking)
-      window.location.href = href || "#";
+      window.open(href || "#", "_blank");
     },
     [href],
   );

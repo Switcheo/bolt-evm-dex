@@ -278,7 +278,7 @@ export function ExternalLinkIcon({
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       // send a ReactGA event and then trigger a location change
-      window.location.href = href;
+      window.open(href, "_blank");
     },
     [href],
   );
