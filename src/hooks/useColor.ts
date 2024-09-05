@@ -7,7 +7,7 @@ import { Token } from "../utils/entities/token";
 import uriToHttp from "../utils/uriToHttp";
 
 async function getColorFromToken(token: Token): Promise<string | null> {
-  if (token.chainId === SupportedChainId.BOLTCHAIN) {
+  if (token.chainId === SupportedChainId.PIVOTAL_SEPOLIA) {
     return Promise.resolve("#FAAB14");
   }
 

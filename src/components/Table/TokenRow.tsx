@@ -1,6 +1,6 @@
 import { CSSProperties, ForwardedRef, forwardRef, ReactNode } from "react";
 import styled, { css } from "styled-components";
-import { getOfficialChainIdFromName } from "../../constants/chains";
+import { getChainIdFromName } from "../../constants/chains";
 import { ExternalLink } from "../../theme";
 import { formatChainName, formatStatus, formatTransactionHash } from "../../utils/format";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
@@ -208,7 +208,7 @@ function TokenRow({
       <TransactionCell data-testid="source-transaction-cell" $sortable={false}>
         {!header ? (
           <ExternalLink
-            href={getEtherscanLink(getOfficialChainIdFromName(sourceChain), sourceTransaction, "transaction")}
+            href={getEtherscanLink(getChainIdFromName(sourceChain), sourceTransaction, "transaction")}
           >
             {formatTransactionHash(sourceTransaction)}
           </ExternalLink>
@@ -219,7 +219,7 @@ function TokenRow({
       <TransactionCell data-testid="destination-transaction-cell" $sortable={false}>
         {!header ? (
           <ExternalLink
-            href={getEtherscanLink(getOfficialChainIdFromName(destinationChain), destinationTransaction, "transaction")}
+            href={getEtherscanLink(getChainIdFromName(destinationChain), destinationTransaction, "transaction")}
           >
             {formatTransactionHash(destinationTransaction)}
           </ExternalLink>

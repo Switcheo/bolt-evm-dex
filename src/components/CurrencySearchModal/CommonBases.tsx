@@ -1,9 +1,7 @@
 import { Text } from "rebass";
 import styled from "styled-components";
-import { SupportedChainId } from "../../constants/chains";
-import { SUGGESTED_BASES } from "../../constants/tokens";
 import { Currency, ETHER } from "../../utils/entities/currency";
-import { currencyEquals, Token } from "../../utils/entities/token";
+import { currencyEquals } from "../../utils/entities/token";
 import { AutoColumn } from "../Column";
 import CurrencyLogo from "../CurrencyLogo";
 import QuestionHelper from "../QuestionHelper";
@@ -26,11 +24,9 @@ const BaseWrapper = styled.div<{ $disable?: boolean }>`
 `;
 
 export default function CommonBases({
-  chainId,
   onSelect,
   selectedCurrency,
 }: {
-  chainId?: SupportedChainId;
   selectedCurrency?: Currency | null;
   onSelect: (currency: Currency) => void;
 }) {
@@ -56,17 +52,6 @@ export default function CommonBases({
             ETH
           </Text>
         </BaseWrapper>
-        {(chainId ? SUGGESTED_BASES[chainId] : []).map((token: Token) => {
-          const selected = selectedCurrency instanceof Token && selectedCurrency.address === token.address;
-          return (
-            <BaseWrapper onClick={() => !selected && onSelect(token)} $disable={selected} key={token.address}>
-              <CurrencyLogo currency={token} style={{ marginRight: 8 }} />
-              <Text fontWeight={500} fontSize={16}>
-                {token.symbol}
-              </Text>
-            </BaseWrapper>
-          );
-        })}
       </AutoRow>
     </AutoColumn>
   );

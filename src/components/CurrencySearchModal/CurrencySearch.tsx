@@ -204,7 +204,7 @@ export function CurrencySearch({
           />
         </Row>
         {showCommonBases && (
-          <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
+          <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
         )}
       </PaddedColumn>
       <Separator />

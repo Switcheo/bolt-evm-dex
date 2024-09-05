@@ -24,31 +24,6 @@ export const FALLBACK_URLS = {
     "https://rpc.ankr.com/eth",
     "https://eth-mainnet.public.blastapi.io",
   ],
-  [SupportedChainId.POLYGON]: [
-    // "Safe" URLs
-    "https://polygon-rpc.com/",
-    "https://rpc-mainnet.matic.network",
-    "https://matic-mainnet.chainstacklabs.com",
-    "https://rpc-mainnet.maticvigil.com",
-    "https://rpc-mainnet.matic.quiknode.pro",
-    "https://matic-mainnet-full-rpc.bwarelabs.com",
-  ],
-  [SupportedChainId.BSC]: [
-    // "Safe" URLs
-    "https://endpoints.omniatech.io/v1/bsc/mainnet/public",
-    "https://bsc-mainnet.gateway.pokt.network/v1/lb/6136201a7bad1500343e248d",
-    "https://1rpc.io/bnb",
-    "https://bsc-dataseed3.binance.org",
-    "https://bsc-dataseed2.defibit.io",
-    "https://bsc-dataseed1.ninicoin.io",
-    "https://binance.nodereal.io",
-    "https://bsc-dataseed4.defibit.io",
-    "https://rpc.ankr.com/bsc",
-  ],
-  [SupportedChainId.BOLTCHAIN]: [
-    // "Safe" URLs
-    "https://rpc.bolt.switcheo.network",
-  ],
 };
 
 /**
@@ -60,10 +35,4 @@ export const RPC_URLS = {
     `https://mainnet.infura.io/v3/${INFURA_KEY}`,
     ...FALLBACK_URLS[SupportedChainId.MAINNET],
   ],
-  [SupportedChainId.POLYGON]: [
-    `https://polygon-mainnet.infura.io/v3/${INFURA_KEY}`,
-    ...FALLBACK_URLS[SupportedChainId.POLYGON],
-  ],
-  [SupportedChainId.BSC]: [...FALLBACK_URLS[SupportedChainId.BSC]],
-  [SupportedChainId.BOLTCHAIN]: [...FALLBACK_URLS[SupportedChainId.BOLTCHAIN]],
 };

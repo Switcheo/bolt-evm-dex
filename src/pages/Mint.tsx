@@ -92,7 +92,7 @@ export default function Mint() {
   }, [typed, sendJsonMessage]);
 
   const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(SupportedChainId.BOLTCHAIN);
+    switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
   }, [switchNetwork]);
 
   const handleModalDismiss = useCallback(() => {
@@ -109,14 +109,14 @@ export default function Mint() {
               <AddressInputPanel id="mint-address-input-panel" value={typed} onChange={handleRecipientType} />
               {!address ? (
                 <ConnectKitLightButton padding="18px" $borderRadius="20px" width="100%" mt={BUTTON_MARGIN_TOP} />
-              ) : chain?.id !== SupportedChainId.BOLTCHAIN ? (
+              ) : chain?.id !== SupportedChainId.PIVOTAL_SEPOLIA ? (
                 <ButtonError
                   width="100%"
                   mt={BUTTON_MARGIN_TOP}
-                  $error={chain?.id !== SupportedChainId.BOLTCHAIN}
+                  $error={chain?.id !== SupportedChainId.PIVOTAL_SEPOLIA}
                   onClick={handleChangeNetwork}
                 >
-                  Please switch to the Boltchain Network.
+                  Please switch to the Pivotal Network.
                 </ButtonError>
               ) : (
                 <ButtonError

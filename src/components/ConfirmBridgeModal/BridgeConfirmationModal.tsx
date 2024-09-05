@@ -3,7 +3,7 @@ import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useNetwork } from "wagmi";
 import Circle from "../../assets/images/blue-loader.svg";
-import { SupportedBridgingChainId } from "../../constants/chains";
+import { SupportedChainId } from "../../constants/chains";
 import { ExternalLink } from "../../theme";
 import { CloseIcon, CustomLightSpinner } from "../../theme/components";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
@@ -65,7 +65,7 @@ function TransactionSubmittedContent({
 }: {
   onDismiss: () => void;
   hash: string | undefined;
-  chainId: SupportedBridgingChainId;
+  chainId: SupportedChainId;
 }) {
   const theme = useTheme();
 

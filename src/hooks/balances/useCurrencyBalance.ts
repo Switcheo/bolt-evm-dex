@@ -31,6 +31,9 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
     addresses.map((address) => [address]),
   );
 
+  console.log(JSON.stringify(results))
+  console.log(JSON.stringify(addresses))
+
   return useMemo(
     () =>
       addresses.reduce<{ [address: string]: CurrencyAmount }>((memo, address, i) => {
@@ -56,6 +59,8 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(accountAddress, tokens);
   const containsETH: boolean = useMemo(() => currencies?.some((currency) => currency === ETHER) ?? false, [currencies]);
   const ethBalance = useETHBalances(containsETH ? [account] : []);
+
+  console.log(JSON.stringify({containsETH, tokenBalances, ethBalance}, null, 2))
 
   return useMemo(
     () =>

@@ -1,8 +1,8 @@
 import { Address, useAccount } from "wagmi";
 import { BridgeTx } from "../../../hooks/useBridgeCallback";
-import { tryParseAmount } from "../../../hooks/useWrapCallback";
-import { deserializeBridgeableToken } from "../../../utils/bridge";
 import { useAppSelector } from "../../hooks";
+import { NATIVE_TOKEN_ADDRESS } from "../../../constants/addresses";
+import { parseUnits } from "viem";
 
 export function useBridgeState() {
   return useAppSelector((state) => state.bridge);
@@ -10,37 +10,23 @@ export function useBridgeState() {
 
 // From the current bridging Inputs, we get the bridge trade details
 export function useDerivedBridgeInfo() {
-  const { sourceChain, destinationChain, selectedCurrency, sourceAmount, bridgeableTokens, bridgeFees } =
+  const { sourceChain, destinationChain, selectedCurrency, sourceAmount, bridgeableTokens } =
     useBridgeState();
 
   const { address } = useAccount();
 
   if (!bridgeableTokens) return;
 
-  // const sourceToken = Object.values(bridgeableTokens)
-  //   .map((token) => deserializeBridgeableToken(token[sourceChain]))
-  //   .find((token) => token !== undefined);
-
-  const sourceToken = deserializeBridgeableToken(selectedCurrency);
-
-  const destinationToken = Object.values(bridgeableTokens)
-    .map((token) => deserializeBridgeableToken(token[destinationChain]))
-    .find((token) => token !== undefined);
-
-  // adjust sourceamount by multiplying first then convert it to bigint
-  const parsedAmount = sourceAmount
-    ? BigInt(tryParseAmount((sourceAmount as `${number}`) ?? 0, sourceToken)?.raw.toString() ?? "0")
-    : 0n;
+  const parsedAmount = parseUnits(sourceAmount as `${number}`, selectedCurrency.decimals).toString();
 
   const bridgeTx: BridgeTx = {
-    srcToken: sourceToken,
-    destToken: destinationToken,
+    srcToken: NATIVE_TOKEN_ADDRESS, // TODO: fix me
+    destToken: NATIVE_TOKEN_ADDRESS,
     srcChain: sourceChain,
     destChain: destinationChain,
     amount: parsedAmount,
     srcAddr: address ?? ("" as Address),
     destAddr: address ?? ("" as Address),
-    feeAmount: bridgeFees ?? "0",
   };
 
   return bridgeTx;

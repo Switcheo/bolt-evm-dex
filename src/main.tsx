@@ -6,7 +6,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Chain, createConfig, WagmiConfig } from "wagmi";
-import { bsc, mainnet, polygon, sepolia } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import BaseLayout from "./components/layouts/BaseLayout";
 import AddLiquidity from "./pages/AddLiquidity";
 import Bridge from "./pages/Bridge";
@@ -26,30 +26,29 @@ import Updaters from "./Updaters";
 const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
 
-export const boltchain = {
-  id: 42_070,
-  name: "Boltchain",
-  network: "boltchain",
+export const pivotal = {
+  id: 16481,
+  name: "Pivotal Sepolia",
+  network: "Pivotal Sepolia",
   nativeCurrency: {
     decimals: 18,
     name: "Ethereum",
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://rpc.devnet.boltchain.com"] },
-    default: { http: ["https://rpc.devnet.boltchain.com"] },
+    public: { http: ["https://sepolia.pivotalprotocol.com"] },
+    default: { http: ["https://sepolia.pivotalprotocol.com"] },
   },
   blockExplorers: {
-    etherscan: { name: "Blockscout", url: "https://explorer.devnet.boltchain.com" },
-    default: { name: "Blockscout", url: "https://explorer.devnet.boltchain.com" },
+    default: { name: "Blockscout", url: "https://sepolia.pivotalscan.xyz" },
   },
 } as const satisfies Chain;
 
-const chains = [boltchain, mainnet, polygon, bsc, sepolia];
+const chains = [pivotal, sepolia];
 
 const wagmiConfig = createConfig(
   getDefaultConfig({
-    appName: "Boltswap",
+    appName: "Pivotal Swap",
     alchemyId,
     walletConnectProjectId,
     chains,

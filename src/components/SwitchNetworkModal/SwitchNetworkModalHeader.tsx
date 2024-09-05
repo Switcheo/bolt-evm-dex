@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Text } from "rebass";
 import styled from "styled-components";
 import { ReactComponent as WarningLogo } from "../../assets/svg/warning-popup.svg";
-import { getChainNameFromBridgingId } from "../../constants/chains";
+import { getChainNameFromId } from "../../constants/chains";
 import { ButtonPrimary } from "../Button";
 import { AutoColumn } from "../Column";
 import { RowBetween } from "../Row";
@@ -14,7 +14,7 @@ const ModalWrapper = styled.div`
 
 const SwitchNetworkModalHeader = ({ chainId, onConfirm }: { chainId: number; onConfirm: () => void }) => {
   const chainIdName = useMemo(() => {
-    return getChainNameFromBridgingId(chainId);
+    return getChainNameFromId(chainId);
   }, [chainId]);
 
   return (

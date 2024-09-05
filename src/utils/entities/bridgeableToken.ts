@@ -1,9 +1,9 @@
-import { SupportedBridgingChainId, SupportedChainId } from "../../constants/chains";
+import { SupportedChainId } from "../../constants/chains";
 import { Token } from "./token";
 import { validateAndParseAddress } from "./utils";
 
 export class BridgeableToken extends Token {
-  public readonly bridgeChainId: SupportedBridgingChainId | 4;
+  public readonly bridgeChainId: SupportedChainId;
   public readonly bridgeAddress: string; // essentially the lockProxy address
   public readonly bridgeId: string;
   public readonly tokenCreator: string;
@@ -11,7 +11,7 @@ export class BridgeableToken extends Token {
   public readonly carbonTokenId: string;
 
   public constructor(
-    bridgeChainId: SupportedBridgingChainId | 4,
+    bridgeChainId: SupportedChainId,
     bridgeAddress: string,
     bridgeId: string,
     tokenCreator: string,

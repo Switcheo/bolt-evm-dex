@@ -10,6 +10,7 @@ import IUniswapV2PairABI from "./pair";
 import UNISWAP_V2_PAIR_ABI from "./uniswap-pair";
 import UNISWAP_V2_ROUTER_ABI from "./uniswap-router";
 import wethABI from "./weth";
+import { BRIDGE_PROXY_ABI } from "./bridge-proxy";
 
 const ERC20_INTERFACE = new Interface(ERC20ABI);
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
@@ -26,4 +27,5 @@ export {
   UNISWAP_V2_PAIR_ABI,
   BRIDGE_ENTRANCE_ABI,
   LOCK_PROXY_ABI,
+  BRIDGE_PROXY_ABI,
 };

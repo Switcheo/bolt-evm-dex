@@ -2,7 +2,6 @@ import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { formatUnits, isAddress } from "viem";
-import { getChainNameFromBridgingId, SupportedBridgingChainId } from "../../constants/chains";
 import { DEFAULT_CARBON_TOKEN_DECIMALS } from "../../constants/utils";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { TYPE } from "../../theme";
@@ -11,6 +10,7 @@ import { AutoColumn } from "../Column";
 import CurrencyLogo from "../CurrencyLogo";
 import { RowBetween, RowFixed } from "../Row";
 import { TruncatedText } from "./styleds";
+import { getChainNameFromId, SupportedChainId } from "../../constants/chains";
 
 export default function BridgeModalHeader({
   bridgeTx,
@@ -38,7 +38,7 @@ export default function BridgeModalHeader({
               {bridgeTx.srcToken?.name}
             </Text>
             <Text fontSize={12} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
-              {getChainNameFromBridgingId(bridgeTx.srcToken?.bridgeChainId as SupportedBridgingChainId)}
+              {getChainNameFromId(bridgeTx.srcToken?.bridgeChainId as SupportedChainId)}
             </Text>
           </AutoColumn>
         </RowFixed>
@@ -59,7 +59,7 @@ export default function BridgeModalHeader({
               {bridgeTx.destToken?.name}
             </Text>
             <Text fontSize={12} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
-              {getChainNameFromBridgingId(bridgeTx.destToken?.bridgeChainId as SupportedBridgingChainId)}
+              {getChainNameFromId(bridgeTx.destToken?.bridgeChainId as SupportedChainId)}
             </Text>
           </AutoColumn>
         </RowFixed>

@@ -19,17 +19,8 @@ export function getEtherscanLink(
     case SupportedChainId.MAINNET:
       prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;
       break;
-    case SupportedChainId.BSC:
-      prefix = `https://bscscan.com`;
-      break;
-    case SupportedChainId.POLYGON:
-      prefix = `https://polygonscan.com`;
-      break;
-    case SupportedChainId.CARBON:
-      prefix = `https://scan.carbon.network`;
-      break;
-    case SupportedChainId.BOLTCHAIN:
-      prefix = `https://explorer.devnet.boltchain.com`;
+    case SupportedChainId.PIVOTAL_SEPOLIA:
+      prefix = `http://sepolia.pivotalscan.xyz`;
       break;
     default:
       prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;
@@ -38,7 +29,7 @@ export function getEtherscanLink(
 
   switch (type) {
     case "transaction": {
-      return chainId === SupportedChainId.CARBON ? `${prefix}/transaction/${data}` : `${prefix}/tx/${data}`;
+      return `${prefix}/tx/${data}`;
     }
     case "token": {
       return `${prefix}/token/${data}`;

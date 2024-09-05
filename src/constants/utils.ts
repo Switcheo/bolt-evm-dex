@@ -22,9 +22,7 @@ export const ONE_BIPS = new Percent("1", "10000");
 
 export const INIT_CODE_HASH_MAP: HashMap = {
   [SupportedChainId.MAINNET]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
-  [SupportedChainId.BOLTCHAIN]: "0x44143914e8635a0469aba189b8de6b2de637056633de24e05952c535e6eefae6",
-  // [SupportedChainId.POLYGON]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
-  // [SupportedChainId.BSC]: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+  [SupportedChainId.PIVOTAL_SEPOLIA]: "0x44143914e8635a0469aba189b8de6b2de637056633de24e05952c535e6eefae6",
 };
 
 export const BIPS_BASE = BigInt(10000);

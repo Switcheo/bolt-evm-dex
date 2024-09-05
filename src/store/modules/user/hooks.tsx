@@ -1,11 +1,8 @@
-import { flatMap } from "lodash";
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Address } from "viem";
 import { useNetwork } from "wagmi";
 import { SupportedChainId } from "../../../constants/chains";
-import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from "../../../constants/tokens";
-import { useAllTokens } from "../../../hooks/Tokens";
 import { Pair } from "../../../utils/entities/pair";
 import { Token } from "../../../utils/entities/token";
 import { useAppDispatch, useAppSelector } from "../../hooks";
@@ -179,35 +176,6 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
   const chainId = useNetwork().chain?.id;
-  const tokens = useAllTokens();
-
-  // pinned pairs
-  const pinnedPairs = useMemo(() => (chainId ? PINNED_PAIRS[chainId as SupportedChainId] ?? [] : []), [chainId]);
-
-  // pairs for every token against every base
-  const generatedPairs: [Token, Token][] = useMemo(
-    () =>
-      chainId
-        ? flatMap(Object.keys(tokens), (tokenAddress) => {
-            const token = tokens[tokenAddress];
-            // for each token on the current chain,
-            return (
-              // loop though all bases on the current chain
-              (BASES_TO_TRACK_LIQUIDITY_FOR[chainId as SupportedChainId] ?? [])
-                // to construct pairs of the given token with each base
-                .map((base) => {
-                  if (base.address === token.address) {
-                    return null;
-                  } else {
-                    return [base, token];
-                  }
-                })
-                .filter((p): p is [Token, Token] => p !== null)
-            );
-          })
-        : [],
-    [tokens, chainId],
-  );
 
   // pairs saved by users
   const savedSerializedPairs = useAppSelector((state) => state.user.pairs);
@@ -223,8 +191,8 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   }, [savedSerializedPairs, chainId]).filter(([tokenA, tokenB]) => tokenA && tokenB) as [Token, Token][];
 
   const combinedList = useMemo(
-    () => userPairs.concat(generatedPairs).concat(pinnedPairs),
-    [generatedPairs, pinnedPairs, userPairs],
+    () => userPairs,
+    [userPairs],
   );
 
   return useMemo(() => {

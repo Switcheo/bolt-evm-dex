@@ -1,5 +1,4 @@
 import { BRIDGEABLE_WRAPPED_DENOMS, WRAPPER_MAPPINGS } from "../constants/bridge";
-import { convertToSupportedBridgingChainId, getOfficialChainIdFromBridgingChainId } from "../constants/chains";
 import { TokenResponse } from "../store/modules/bridge/services/types";
 import { BridgeableToken } from "./entities/bridgeableToken";
 
@@ -7,7 +6,7 @@ export function getBridgeableTokens(tokenResponse: TokenResponse) {
   const bridgeableDenoms = BRIDGEABLE_WRAPPED_DENOMS;
   const tokens = tokenResponse?.tokens;
 
-  const tokensMap: Record<string, { [chainId: number]: BridgeableToken }> = {};
+  const tokensMap: Record<string, { [chainId: number]: BridgeableToken }> = {}
 
   if (!tokens) return;
 
@@ -20,10 +19,8 @@ export function getBridgeableTokens(tokenResponse: TokenResponse) {
     if (!wrappedToken || !sourceToken) return;
 
     // Convert to supported chain id. If not supported, check if its switcheo chain id 4
-    const wrappedTokenChain =
-      convertToSupportedBridgingChainId(wrappedToken.chain_id) ?? (wrappedToken.chain_id === "4" ? 4 : null);
-    const sourceTokenChain =
-      convertToSupportedBridgingChainId(sourceToken.chain_id) ?? (sourceToken.chain_id === "4" ? 4 : null);
+    const wrappedTokenChain = parseInt(wrappedToken.chain_id)
+    const sourceTokenChain = parseInt(sourceToken.chain_id)
 
     // If either token chain is not found, return. Need to have both tokens to add to the bridgeTokenResult
     if (!wrappedTokenChain || !sourceTokenChain || sourceTokenChain.toString() !== "4") return;
@@ -37,7 +34,7 @@ export function getBridgeableTokens(tokenResponse: TokenResponse) {
           sourceToken.creator,
           sourceToken.denom,
           sourceToken.id,
-          getOfficialChainIdFromBridgingChainId(sourceTokenChain),
+          sourceTokenChain,
           add0x(sourceToken.token_address),
           Number(sourceToken.decimals),
           sourceToken.symbol,
@@ -53,7 +50,7 @@ export function getBridgeableTokens(tokenResponse: TokenResponse) {
       wrappedToken.creator,
       wrappedToken.denom,
       wrappedToken.id,
-      getOfficialChainIdFromBridgingChainId(wrappedTokenChain),
+      wrappedTokenChain,
       add0x(wrappedToken.token_address),
       Number(wrappedToken.decimals),
       wrappedToken.symbol,

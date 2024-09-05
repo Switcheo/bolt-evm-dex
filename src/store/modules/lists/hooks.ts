@@ -39,10 +39,8 @@ export type TokenAddressMap = Readonly<{
  */
 const EMPTY_LIST: TokenAddressMap = {
   [SupportedChainId.MAINNET]: {},
-  [SupportedChainId.BOLTCHAIN]: {},
-  [SupportedChainId.BSC]: {},
-  [SupportedChainId.POLYGON]: {},
-  [SupportedChainId.CARBON]: {},
+  [SupportedChainId.SEPOLIA]: {},
+  [SupportedChainId.PIVOTAL_SEPOLIA]: {},
 };
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
@@ -108,10 +106,8 @@ export function useAllLists(): {
 function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
   return {
     [SupportedChainId.MAINNET]: { ...map1[SupportedChainId.MAINNET], ...map2[SupportedChainId.MAINNET] },
-    [SupportedChainId.BOLTCHAIN]: { ...map1[SupportedChainId.BOLTCHAIN], ...map2[SupportedChainId.BOLTCHAIN] },
-    [SupportedChainId.BSC]: { ...map1[SupportedChainId.BSC], ...map2[SupportedChainId.BSC] },
-    [SupportedChainId.POLYGON]: { ...map1[SupportedChainId.POLYGON], ...map2[SupportedChainId.POLYGON] },
-    [SupportedChainId.CARBON]: { ...map1[SupportedChainId.CARBON], ...map2[SupportedChainId.CARBON] },
+    [SupportedChainId.SEPOLIA]: { ...map1[SupportedChainId.SEPOLIA], ...map2[SupportedChainId.SEPOLIA] },
+    [SupportedChainId.PIVOTAL_SEPOLIA]: { ...map1[SupportedChainId.PIVOTAL_SEPOLIA], ...map2[SupportedChainId.PIVOTAL_SEPOLIA] },
   };
 }
 

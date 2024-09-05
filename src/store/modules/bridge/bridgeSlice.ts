@@ -1,13 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SupportedBridgingChainId } from "../../../constants/chains";
+import { SupportedChainId } from "../../../constants/chains";
 import { getBridgeableTokens, serializeBridgeableTokensMap, SerializedBridgeableToken } from "../../../utils/bridge";
 import { fetchHydrogenFees, fetchTokens } from "./services/api";
 import { FeeResponse, TokenResponse } from "./services/types";
 
+interface CurrencyI {
+  chainId?: SupportedChainId,
+  address?: string,
+  decimals: number,
+  symbol?: string,
+  name?: string
+}
+
 interface BridgeState {
-  sourceChain: SupportedBridgingChainId;
-  destinationChain: SupportedBridgingChainId;
-  selectedCurrency: SerializedBridgeableToken | null;
+  sourceChain: SupportedChainId;
+  destinationChain: SupportedChainId;
+  selectedCurrency: CurrencyI;
   sourceAmount: string;
   bridgeableTokens: Record<string, { [chainId: number]: SerializedBridgeableToken }> | undefined;
   status: "idle" | "pending" | "fulfilled" | "rejected";
@@ -16,9 +24,13 @@ interface BridgeState {
 }
 
 const initialState: BridgeState = {
-  sourceChain: SupportedBridgingChainId.MAINNET,
-  destinationChain: SupportedBridgingChainId.POLYGON,
-  selectedCurrency: null,
+  sourceChain: SupportedChainId.SEPOLIA,
+  destinationChain: SupportedChainId.PIVOTAL_SEPOLIA,
+  selectedCurrency: {
+    decimals: 18,
+    name: "Ether",
+    symbol: "ETH",
+  },
   sourceAmount: "",
   bridgeableTokens: {} as Record<string, { [chainId: number]: SerializedBridgeableToken }>,
   status: "idle",
@@ -30,21 +42,21 @@ const bridgeSlice = createSlice({
   name: "bridge",
   initialState,
   reducers: {
-    setSourceChain: (state, action: PayloadAction<SupportedBridgingChainId>) => {
+    setSourceChain: (state, action: PayloadAction<SupportedChainId>) => {
       // If sourceChain is the same as destinationChain, then swap the two
       if (state.destinationChain === action.payload) {
         state.destinationChain = state.sourceChain;
       }
       state.sourceChain = action.payload;
     },
-    setDestinationChain: (state, action: PayloadAction<SupportedBridgingChainId>) => {
+    setDestinationChain: (state, action: PayloadAction<SupportedChainId>) => {
       // If destinationChain is the same as sourceChain, then swap the two
       if (state.sourceChain === action.payload) {
         state.sourceChain = state.destinationChain;
       }
       state.destinationChain = action.payload;
     },
-    setSelectedCurrency: (state, action: PayloadAction<SerializedBridgeableToken | null>) => {
+    setSelectedCurrency: (state, action: PayloadAction<CurrencyI>) => {
       state.selectedCurrency = action.payload;
     },
     setSourceAmount: (state, action: PayloadAction<string>) => {

@@ -2,7 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createContext, useContext, useMemo, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { getChainInfo } from "../../constants/chainInfo";
-import { getBridgingChainIdFromName, getOfficialChainIdFromBridgingChainId } from "../../constants/chains";
+import { getChainIdFromName } from "../../constants/chains";
 import { TYPE } from "../../theme";
 import { ButtonDropdownLight } from "../Button";
 
@@ -152,9 +152,8 @@ interface ButtonProps {
 const Button = ({ children, onClick }: ButtonProps) => {
   const { close } = useContext(MenusContext);
 
-  const bridgingChainId = getBridgingChainIdFromName(children as string);
-  const officialChainId = getOfficialChainIdFromBridgingChainId(bridgingChainId);
-  const chainInfo = getChainInfo(officialChainId);
+  const bridgingChainId = getChainIdFromName(children as string);
+  const chainInfo = getChainInfo(bridgingChainId);
 
   return (
     <MenuItem

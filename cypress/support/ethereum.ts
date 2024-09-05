@@ -14,10 +14,10 @@ const TEST_PRIVATE_KEY = "0xe580410d7c37d26c6ad1a837bbae46bc27f9066a466fb3a66e77
 
 // address of the above key
 const TEST_ADDRESS_NEVER_USE = new Wallet(TEST_PRIVATE_KEY).address;
-const CHAIN_ID = SupportedChainId.BOLTCHAIN;
+const CHAIN_ID = SupportedChainId.PIVOTAL_SEPOLIA;
 const HEXLIFIED_CHAIN_ID = `0x${CHAIN_ID.toString(16)}`;
 
-const provider = new JsonRpcProvider("https://rpc.devnet.boltchain.com", 42070);
+const provider = new JsonRpcProvider("https://sepolia.pivotalprotocol.com", 42070);
 const signer = new Wallet(TEST_PRIVATE_KEY, provider);
 export const injected = new (class extends Eip1193Bridge {
   chainId = CHAIN_ID;

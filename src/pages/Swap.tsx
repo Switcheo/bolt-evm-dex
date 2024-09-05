@@ -272,7 +272,7 @@ export default function Swap() {
   );
 
   const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(SupportedChainId.BOLTCHAIN);
+    switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
   }, [switchNetwork]);
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT);
@@ -407,9 +407,9 @@ export default function Swap() {
               <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
                 Connect Wallet
               </ConnectKitLightButton>
-            ) : chainId !== SupportedChainId.BOLTCHAIN ? (
-              <ButtonError $error={chainId !== SupportedChainId.BOLTCHAIN} onClick={handleChangeNetwork}>
-                Please switch to the Boltchain Network.
+            ) : chainId !== SupportedChainId.PIVOTAL_SEPOLIA ? (
+              <ButtonError $error={chainId !== SupportedChainId.PIVOTAL_SEPOLIA} onClick={handleChangeNetwork}>
+                Please switch to the Pivotal Network.
               </ButtonError>
             ) : showWrap ? (
               <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>

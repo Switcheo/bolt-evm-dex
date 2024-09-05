@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
-import BridgeInputPanel from "../components/BridgeInputPanel";
+import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
 import { AutoColumn } from "../components/Column";
@@ -12,14 +12,7 @@ import { Dots } from "../components/ConfirmBridgeModal/styleds";
 import Menus from "../components/Menu";
 import SwitchNetworkModal from "../components/SwitchNetworkModal";
 import { getChainInfo } from "../constants/chainInfo";
-import {
-  BridgingChainIdToNameRecord,
-  convertToSupportedBridgingChainId,
-  getChainNameFromBridgingId,
-  getOfficialChainIdFromBridgingChainId,
-  SupportedBridgingChainId,
-  SupportedChainId,
-} from "../constants/chains";
+import { BRIDGING_CHAIN_IDS, getChainNameFromId, SupportedChainId } from "../constants/chains";
 import { useCurrencyBalance } from "../hooks/balances/useCurrencyBalance";
 import { ApprovalState, useApproveCallback } from "../hooks/useApproveCallback";
 import { BridgeTx, useBridgeCallback } from "../hooks/useBridgeCallback";
@@ -32,11 +25,11 @@ import {
   setSourceChain,
 } from "../store/modules/bridge/bridgeSlice";
 import { useDerivedBridgeInfo } from "../store/modules/bridge/hooks";
-import { fetchHydrogenFees, fetchTokens } from "../store/modules/bridge/services/api";
+import { fetchTokens } from "../store/modules/bridge/services/api";
 import { TYPE } from "../theme";
-import { deserializeBridgeableToken, serializeBridgeableToken } from "../utils/bridge";
-import { BridgeableToken } from "../utils/entities/bridgeableToken";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
+import { Currency } from "../utils/entities/currency";
+import { Token } from "../utils/entities/token";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -127,7 +120,11 @@ const Bridge = () => {
   // Get states
   const sourceChain = useAppSelector((state) => state.bridge.sourceChain);
   const destChain = useAppSelector((state) => state.bridge.destinationChain);
-  const selectedCurrency = useAppSelector((state) => state.bridge.selectedCurrency);
+  const curr = useAppSelector((state) => state.bridge.selectedCurrency);
+  const selectedCurrency =
+    curr.chainId && curr.address ?
+    new Token(curr.chainId, curr.address, curr.decimals, curr.symbol, curr.name) :
+    Currency.ETHER
   const selectedCurrencyAmount = useAppSelector((state) => state.bridge.sourceAmount);
   const pendingBridgeTx = useDerivedBridgeInfo();
 
@@ -156,22 +153,23 @@ const Bridge = () => {
 
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
 
-  const selectedCurrencyBalance = useCurrencyBalance(
-    address ?? undefined,
-    deserializeBridgeableToken(selectedCurrency) ?? undefined,
-  );
+  const selectedCurrencyBalance = useCurrencyBalance(address, selectedCurrency);
 
   // get the max amounts user can add
   const maxAmounts = maxAmountSpend(selectedCurrencyBalance);
-  const parsedAmount = tryParseAmount(selectedCurrencyAmount, deserializeBridgeableToken(selectedCurrency));
+  const parsedAmount = tryParseAmount(selectedCurrencyAmount, selectedCurrency);
 
   const atMaxAmountInput = Boolean(maxAmounts?.equalTo(parsedAmount ?? "0"));
 
   // check whether the user has approved the router on the tokens
   const [approvalBridge, approveBridgeCallback] = useApproveCallback(
     selectedCurrencyBalance,
-    getChainInfo(chain?.id ?? SupportedChainId.MAINNET).bridgeInfo.bridgeEntranceAddr,
+    getChainInfo(chain?.id ?? SupportedChainId.SEPOLIA).bridgeInfo.bridgeProxy,
   );
+
+  const selectCurrency = (curr: Currency) => {
+    dispatch(setSelectedCurrency(JSON.parse(JSON.stringify(curr))));
+  }
 
   // Handlers
   const handleUserInputChange = useCallback(
@@ -184,14 +182,6 @@ const Bridge = () => {
   const handleMaxInput = useCallback(() => {
     dispatch(setSourceAmount(maxAmounts?.toExact() ?? ""));
   }, [dispatch, maxAmounts]);
-
-  const handleCurrencySelect = useCallback(
-    (inputCurrency: BridgeableToken) => {
-      dispatch(setSelectedCurrency(serializeBridgeableToken(inputCurrency)));
-      dispatch(fetchHydrogenFees(pendingBridgeTx?.destToken?.tokenDenom ?? ""));
-    },
-    [dispatch, pendingBridgeTx?.destToken?.tokenDenom],
-  );
 
   const handleConfirmDismiss = useCallback(() => {
     setBridgeState({
@@ -219,11 +209,11 @@ const Bridge = () => {
 
   const handleSwitchNetwork = useCallback(() => {
     if (switchNetwork) {
-      switchNetwork(getOfficialChainIdFromBridgingChainId(sourceChain));
+      switchNetwork(sourceChain);
     }
 
     setShowSwitchNetworkModal(false);
-    dispatch(setSelectedCurrency(null));
+    dispatch(setSelectedCurrency({ decimals: 18, symbol: "ETH", name: "Ether" }));
     dispatch(setSourceAmount(""));
   }, [dispatch, sourceChain, switchNetwork]);
 
@@ -262,18 +252,10 @@ const Bridge = () => {
   }, [bridgeCallback, pendingBridgeTx, showConfirm, bridgeErrorMessage, bridgeToConfirm]);
 
   useEffect(() => {
-    if (chain?.id && sourceChain && getOfficialChainIdFromBridgingChainId(sourceChain) !== chain?.id) {
+    if (chain?.id && sourceChain && sourceChain !== chain?.id) {
       setShowSwitchNetworkModal(true);
     }
   }, [sourceChain, chain?.id]);
-
-  // Fetch fees whenever the destination chain changes
-  useEffect(() => {
-    if (!pendingBridgeTx?.destToken?.tokenDenom) {
-      return;
-    }
-    dispatch(fetchHydrogenFees(pendingBridgeTx?.destToken?.tokenDenom ?? ""));
-  }, [dispatch, pendingBridgeTx?.destToken?.tokenDenom]);
 
   return (
     <BridgeBody>
@@ -298,7 +280,7 @@ const Bridge = () => {
         />
         <AutoColumn gap="md">
           <BridgeHeader>
-            <ActiveText>BoltBridge</ActiveText>
+            <ActiveText>Pivotal Bridge</ActiveText>
           </BridgeHeader>
 
           <BridgeTokenContainer>
@@ -309,37 +291,27 @@ const Bridge = () => {
                 </TYPE.body>
 
                 <BridgeTokenLogoContainer>
-                  <ChainLogo chain={getOfficialChainIdFromBridgingChainId(sourceChain)} />
+                  <ChainLogo style={{ height: "75px", width: "75px" }} chain={sourceChain} />
                 </BridgeTokenLogoContainer>
 
                 <Menus.Menu>
-                  <Menus.Toggle id={1}>{getChainNameFromBridgingId(sourceChain)}</Menus.Toggle>
+                  <Menus.Toggle id={1}>{getChainNameFromId(sourceChain)}</Menus.Toggle>
 
                   <Menus.List id={1}>
-                    {Object.keys(BridgingChainIdToNameRecord).map((chainId) => (
+                    {Object.entries(BRIDGING_CHAIN_IDS).map(([chainId, chainName]) => (
                       <Menus.Button
-                        key={`src-${chainId}`}
+                        key={`dest-${chainId}`}
                         onClick={() => {
                           dispatch(
-                            setSourceChain(
-                              convertToSupportedBridgingChainId(chainId) ?? SupportedBridgingChainId.MAINNET,
-                            ),
+                            setSourceChain(parseInt(chainId, 10)),
                           );
                         }}
                       >
-                        {getChainNameFromBridgingId(
-                          convertToSupportedBridgingChainId(chainId) ?? SupportedBridgingChainId.MAINNET,
-                        )}
+                        {chainName}
                       </Menus.Button>
                     ))}
                   </Menus.List>
                 </Menus.Menu>
-
-                {!address && (
-                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="12px" $borderRadius="16px" width="100%">
-                    Connect Wallet
-                  </ConnectKitLightButton>
-                )}
               </BridgeCardContainer>
 
               <BridgeArrow>
@@ -361,57 +333,47 @@ const Bridge = () => {
                 </TYPE.body>
 
                 <BridgeTokenLogoContainer>
-                  <ChainLogo chain={getOfficialChainIdFromBridgingChainId(destChain)} />
+                  <ChainLogo style={{ height: "75px", width: "75px" }} chain={destChain} />
                 </BridgeTokenLogoContainer>
 
                 <Menus.Menu>
-                  <Menus.Toggle id={2}>{getChainNameFromBridgingId(destChain)}</Menus.Toggle>
+                  <Menus.Toggle id={2}>{getChainNameFromId(destChain)}</Menus.Toggle>
 
                   <Menus.List id={2}>
-                    {Object.keys(BridgingChainIdToNameRecord).map((chainId) => (
+                    {Object.entries(BRIDGING_CHAIN_IDS).map(([chainId, chainName]) => (
                       <Menus.Button
                         key={`dest-${chainId}`}
                         onClick={() => {
                           dispatch(
-                            setDestinationChain(
-                              convertToSupportedBridgingChainId(chainId) ?? SupportedBridgingChainId.MAINNET,
-                            ),
+                            setDestinationChain(parseInt(chainId, 10)),
                           );
                         }}
                       >
-                        {getChainNameFromBridgingId(
-                          convertToSupportedBridgingChainId(chainId) ?? SupportedBridgingChainId.MAINNET,
-                        )}
+                        {chainName}
                       </Menus.Button>
                     ))}
                   </Menus.List>
                 </Menus.Menu>
-
-                {!address && (
-                  <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="12px" $borderRadius="16px" width="100%">
-                    Connect Wallet
-                  </ConnectKitLightButton>
-                )}
               </BridgeCardContainer>
             </Menus>
           </BridgeTokenContainer>
 
-          <BridgeInputPanel
-            label={"Amount"}
+          <CurrencyInputPanel
             value={selectedCurrencyAmount.toString()}
-            showMaxButton={!atMaxAmountInput}
-            onMax={handleMaxInput}
-            id={"bridge-input-panel"}
             onUserInput={handleUserInputChange}
-            onCurrencySelect={handleCurrencySelect}
-            currency={deserializeBridgeableToken(selectedCurrency)}
+            onMax={handleMaxInput}
+            onCurrencySelect={selectCurrency}
+            showMaxButton={!atMaxAmountInput}
+            currency={selectedCurrency}
+            id="bridge-input-panel"
+            showCommonBases
           />
 
           {!address ? (
             <ConnectKitLightButton style={{ marginTop: "1rem" }} padding="18px" $borderRadius="20px" width="100%">
               Connect Wallet
             </ConnectKitLightButton>
-          ) : getOfficialChainIdFromBridgingChainId(sourceChain) !== chain?.id ? (
+          ) : sourceChain !== chain?.id ? (
             <ButtonError style={{ marginTop: "1rem" }} $error={true} onClick={handleSwitchNetwork}>
               Please switch your Wallet network to the source network
             </ButtonError>
