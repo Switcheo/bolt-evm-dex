@@ -9,7 +9,7 @@ import { AutoRow, RowBetween, RowFixed } from "../Row";
 import { SwapCallbackError } from "./styleds";
 
 export default function BridgeModalFooter({
-  bridgeTx,
+  // bridgeTx,
   onConfirm,
   // allowedSlippage,
   bridgeErrorMessage,
@@ -27,7 +27,7 @@ export default function BridgeModalFooter({
     <>
       <AutoColumn gap="sm">
         <RowBetween align="center">
-          <RowFixed>
+          {/* <RowFixed>
             <Text fontWeight={400} fontSize={14} color={theme?.text2}>
               Estimated Total Fees
             </Text>
@@ -45,8 +45,8 @@ export default function BridgeModalFooter({
               paddingLeft: "10px",
             }}
           >
-            {bridgeTx.destToken}
-          </Text>
+            // TODO
+          </Text> */}
         </RowBetween>
         <RowBetween>
           <RowFixed>
