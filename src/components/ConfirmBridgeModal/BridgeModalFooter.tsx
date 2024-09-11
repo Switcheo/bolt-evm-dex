@@ -1,7 +1,6 @@
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
-import { useAppSelector } from "../../store/hooks";
 import { TYPE } from "../../theme";
 import { ButtonError } from "../Button";
 import { AutoColumn } from "../Column";
@@ -23,7 +22,6 @@ export default function BridgeModalFooter({
   disabledConfirm: boolean;
 }) {
   const theme = useTheme();
-  const withdrawFee = useAppSelector((state) => state.bridge.bridgeFees);
 
   return (
     <>
@@ -47,8 +45,7 @@ export default function BridgeModalFooter({
               paddingLeft: "10px",
             }}
           >
-            {(BigInt(withdrawFee ?? "0") / BigInt(10) ** BigInt(bridgeTx.destToken?.decimals ?? 8)).toString(10)}{" "}
-            {bridgeTx.destToken?.symbol} ~$0.08
+            {bridgeTx.destToken}
           </Text>
         </RowBetween>
         <RowBetween>
