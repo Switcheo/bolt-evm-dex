@@ -1,13 +1,12 @@
 import { Address } from "viem";
-import { getNetwork, getPublicClient, getWalletClient, prepareWriteContract } from "wagmi/actions";
-import { BRIDGE_PROXY_ABI } from "../constants/abis";
-import { NATIVE_TOKEN_ADDRESS } from "../constants/addresses";
+import { getNetwork, getPublicClient, getWalletClient, prepareSendTransaction } from "wagmi/actions";
 import { getChainInfo } from "../constants/chainInfo";
 import {
   getChainNameFromId,
   SupportedChainId,
 } from "../constants/chains";
 import { useTransactionAdder } from "../store/modules/transactions/hooks";
+import { Currency } from "../utils/entities/currency";
 
 export enum BridgeCallbackState {
   INVALID,
@@ -16,11 +15,12 @@ export enum BridgeCallbackState {
 }
 
 export interface BridgeTx {
-  srcToken: string;
-  destToken: string;
+  srcToken: Currency | undefined;
+  destToken: Currency | undefined;
   srcChain: SupportedChainId;
   destChain: SupportedChainId;
-  amount: string;
+  feeAmount: string;
+  amount: bigint;
   srcAddr: Address;
   destAddr: Address;
 }
@@ -60,33 +60,22 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
     if (!walletClient) return;
     const chainInfo = getChainInfo(srcChain);
 
-    const nonce = await publicClient.getTransactionCount({ address: srcAddr });
-
-    const ethAmount = srcToken === NATIVE_TOKEN_ADDRESS ? BigInt(amount) : BigInt(0);
+    const ethAmount = BigInt(amount);
 
     // Prepare the config for the bridging
-    const { request } = await prepareWriteContract({
-      address: chainInfo.bridgeInfo.bridgeProxy as Address,
-      abi: BRIDGE_PROXY_ABI,
-      args: [
-        "200000",
-        ""
-      ],
-      functionName: "bridgeETH",
+    const result = await prepareSendTransaction({
+      to: chainInfo.bridgeInfo.bridgeProxy,
       value: ethAmount,
-      nonce,
-      gas: BigInt(getEvmGasLimit(srcChain)),
     });
-    const hash = await walletClient.writeContract(request);
+    const hash = await walletClient.sendTransaction(result);
 
     const transactionReceipt = await publicClient.waitForTransactionReceipt({
       hash,
+      timeout: 30_000,
     });
 
     addTransaction(transactionReceipt, {
-      summary: `Bridge ${srcToken} (${getChainNameFromId(srcChain)}) to ${
-        destToken
-      } (${getChainNameFromId(destChain)})`,
+      summary: `Bridge ${srcToken.symbol} (${getChainNameFromId(srcChain)}) to ${destToken.symbol} (${getChainNameFromId(destChain)})`,
     });
 
     return hash;

@@ -50,4 +50,4 @@ export const BASE_HYDROGEN_API_URL = "https://hydrogen-api.carbon.network/";
 export const HYDROGEN_FEES_API_URL = "fee_quote";
 export const HYDROGEN_BRIDGE_RELAY_API_URL = "relays";
 
-export const DEFAULT_CARBON_TOKEN_DECIMALS = 8;
+export const ETH_DECIMALS = 18;

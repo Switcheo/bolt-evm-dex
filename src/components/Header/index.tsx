@@ -299,18 +299,18 @@ const Header = () => {
           <StyledNavLink id={`pool-nav-link`} to={"/pool"}>
             Pool
           </StyledNavLink>
-          <StyledNavLink id={`mint-nav-link`} to={"/mint"}>
+          {/* <StyledNavLink id={`mint-nav-link`} to={"/mint"}>
             Mint
-          </StyledNavLink>
+          </StyledNavLink> */}
           <StyledNavLink id={`issue-nav-link`} to={"/issue"}>
             Issue
           </StyledNavLink>
           <StyledNavLink id={`bridge-nav-link`} to={"/bridge"}>
             Bridge
           </StyledNavLink>
-          <StyledNavLink id={`bridge-history-nav-link`} to={"/bridge-history"}>
+          {/* <StyledNavLink id={`bridge-history-nav-link`} to={"/bridge-history"}>
             Bridge History
-          </StyledNavLink>
+          </StyledNavLink> */}
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
@@ -347,18 +347,18 @@ const Header = () => {
           <StyledNavLink id={`pool-nav-link`} to={"/pool"} onClick={() => setIsOpen(false)}>
             Pool
           </StyledNavLink>
-          <StyledNavLink id={`mint-nav-link`} to={"/mint"} onClick={() => setIsOpen(false)}>
+          {/* <StyledNavLink id={`mint-nav-link`} to={"/mint"} onClick={() => setIsOpen(false)}>
             Mint
-          </StyledNavLink>
+          </StyledNavLink> */}
           <StyledNavLink id={`issue-nav-link`} to={"/issue"} onClick={() => setIsOpen(false)}>
             Issue
           </StyledNavLink>
           <StyledNavLink id={`bridge-nav-link`} to={"/bridge"} onClick={() => setIsOpen(false)}>
             Bridge
           </StyledNavLink>
-          <StyledNavLink id={`bridge-history-nav-link`} to={"/bridge-history"} onClick={() => setIsOpen(false)}>
+          {/* <StyledNavLink id={`bridge-history-nav-link`} to={"/bridge-history"} onClick={() => setIsOpen(false)}>
             Bridge History
-          </StyledNavLink>
+          </StyledNavLink> */}
         </MobileMenu>
       </MobileMenuOverlay>
     </HeaderFrame>

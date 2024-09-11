@@ -49,7 +49,7 @@ const CHAIN_INFO: Record<SupportedChainId, ChainInfo> = {
     color: "#0e0e10",
     backgroundColor: "#0e0e10",
     bridgeInfo: {
-      bridgeProxy: "0x00",
+      bridgeProxy: "0x788De2B0Dd35808a05eAFf7aAf5578B21E0dd9A7"
     },
   },
   [SupportedChainId.PIVOTAL_SEPOLIA]: {
@@ -65,7 +65,7 @@ const CHAIN_INFO: Record<SupportedChainId, ChainInfo> = {
     color: "#f0b90b",
     backgroundColor: "#f0b90b",
     bridgeInfo: {
-      bridgeProxy: "0x788De2B0Dd35808a05eAFf7aAf5578B21E0dd9A7"
+      bridgeProxy: "0x00",
     },
   },
 

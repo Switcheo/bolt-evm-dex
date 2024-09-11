@@ -1,12 +1,11 @@
-import "./polyfills";
-import "inter-ui";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import "inter-ui";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Chain, createConfig, WagmiConfig } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { sepolia as baseSepolia } from "wagmi/chains";
 import BaseLayout from "./components/layouts/BaseLayout";
 import AddLiquidity from "./pages/AddLiquidity";
 import Bridge from "./pages/Bridge";
@@ -19,6 +18,7 @@ import PoolFinder from "./pages/PoolFinder";
 import RedirectToSwap from "./pages/RedirectToSwap";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 import Swap from "./pages/Swap";
+import "./polyfills";
 import store from "./store";
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
 import Updaters from "./Updaters";
@@ -43,6 +43,9 @@ export const pivotal = {
     default: { name: "Blockscout", url: "https://sepolia.pivotalscan.xyz" },
   },
 } as const satisfies Chain;
+export const sepolia = {
+  ...baseSepolia,
+}
 
 const chains = [pivotal, sepolia];
 

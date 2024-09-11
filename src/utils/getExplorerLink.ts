@@ -5,6 +5,7 @@ const ETHERSCAN_PREFIXES: { [key: number]: string } = {
   3: "ropsten.",
   4: "rinkeby.",
   5: "goerli.",
+  11155111: "sepolia.",
   42: "kovan.",
 };
 
@@ -16,12 +17,11 @@ export function getEtherscanLink(
   let prefix = "";
 
   switch (chainId) {
-    case SupportedChainId.MAINNET:
-      prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;
-      break;
     case SupportedChainId.PIVOTAL_SEPOLIA:
       prefix = `http://sepolia.pivotalscan.xyz`;
       break;
+    case SupportedChainId.SEPOLIA:
+    case SupportedChainId.MAINNET:
     default:
       prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;
       break;

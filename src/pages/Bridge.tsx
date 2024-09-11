@@ -221,6 +221,7 @@ const Bridge = () => {
     if (!bridgeCallback) {
       return;
     }
+
     setBridgeState({
       attemptingTxn: true,
       bridgeToConfirm: pendingBridgeTx,

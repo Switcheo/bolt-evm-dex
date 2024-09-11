@@ -1,8 +1,8 @@
+import { parseUnits } from "viem";
 import { Address, useAccount } from "wagmi";
 import { BridgeTx } from "../../../hooks/useBridgeCallback";
+import { Currency } from "../../../utils/entities/currency";
 import { useAppSelector } from "../../hooks";
-import { NATIVE_TOKEN_ADDRESS } from "../../../constants/addresses";
-import { parseUnits } from "viem";
 
 export function useBridgeState() {
   return useAppSelector((state) => state.bridge);
@@ -17,13 +17,14 @@ export function useDerivedBridgeInfo() {
 
   if (!bridgeableTokens) return;
 
-  const parsedAmount = parseUnits(sourceAmount as `${number}`, selectedCurrency.decimals).toString();
+  const parsedAmount = parseUnits(sourceAmount as `${number}`, selectedCurrency.decimals);
 
   const bridgeTx: BridgeTx = {
-    srcToken: NATIVE_TOKEN_ADDRESS, // TODO: fix me
-    destToken: NATIVE_TOKEN_ADDRESS,
+    srcToken: Currency.ETHER,
+    destToken: Currency.ETHER,
     srcChain: sourceChain,
     destChain: destinationChain,
+    feeAmount: "0",
     amount: parsedAmount,
     srcAddr: address ?? ("" as Address),
     destAddr: address ?? ("" as Address),
