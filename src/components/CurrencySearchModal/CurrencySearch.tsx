@@ -5,7 +5,6 @@ import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { getAddress, isAddress } from "viem";
-import { useNetwork } from "wagmi";
 import { useAllTokens, useFoundOnInactiveList, useIsUserAddedToken, useToken } from "../../hooks/Tokens";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useOnClickOutside } from "../../hooks/useOnOutsideClick";
@@ -98,7 +97,6 @@ export function CurrencySearch({
   showImportView,
   setImportToken,
 }: CurrencySearchProps) {
-  const chainId = useNetwork().chain?.id;
   const theme = useTheme();
 
   // refs for fixed size lists

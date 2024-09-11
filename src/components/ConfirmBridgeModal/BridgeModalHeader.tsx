@@ -2,7 +2,6 @@ import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { useTheme } from "styled-components";
 import { formatUnits, isAddress } from "viem";
-import { DEFAULT_CARBON_TOKEN_DECIMALS } from "../../constants/utils";
 import { BridgeTx } from "../../hooks/useBridgeCallback";
 import { TYPE } from "../../theme";
 import { shortenString } from "../../utils/format";
@@ -10,7 +9,8 @@ import { AutoColumn } from "../Column";
 import CurrencyLogo from "../CurrencyLogo";
 import { RowBetween, RowFixed } from "../Row";
 import { TruncatedText } from "./styleds";
-import { getChainNameFromId, SupportedChainId } from "../../constants/chains";
+import { getChainNameFromId } from "../../constants/chains";
+import { Currency } from "../../utils/entities/currency";
 
 export default function BridgeModalHeader({
   bridgeTx,
@@ -27,18 +27,18 @@ export default function BridgeModalHeader({
     <AutoColumn gap={"md"} style={{ marginTop: "20px" }}>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
-          <CurrencyLogo currency={bridgeTx.srcToken} size={"24px"} style={{ marginRight: "12px" }} />
+          <CurrencyLogo currency={Currency.ETHER} size={"24px"} style={{ marginRight: "12px" }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
-            {formatUnits(bridgeTx.amount, bridgeTx.srcToken?.decimals ?? DEFAULT_CARBON_TOKEN_DECIMALS)}
+            {formatUnits(BigInt(bridgeTx.amount), 18)}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
           <AutoColumn justify="flex-end">
             <Text fontSize={16} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
-              {bridgeTx.srcToken?.name}
+              {bridgeTx.srcToken}
             </Text>
             <Text fontSize={12} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
-              {getChainNameFromId(bridgeTx.srcToken?.bridgeChainId as SupportedChainId)}
+              {getChainNameFromId(bridgeTx.srcChain)}
             </Text>
           </AutoColumn>
         </RowFixed>
@@ -48,18 +48,18 @@ export default function BridgeModalHeader({
       </RowFixed>
       <RowBetween align="flex-end">
         <RowFixed gap={"0px"}>
-          <CurrencyLogo currency={bridgeTx.destToken} size={"24px"} style={{ marginRight: "12px" }} />
+          <CurrencyLogo currency={Currency.ETHER} size={"24px"} style={{ marginRight: "12px" }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme?.primary1}>
-            {formatUnits(bridgeTx.amount, bridgeTx.destToken?.decimals ?? DEFAULT_CARBON_TOKEN_DECIMALS)}
+            {formatUnits(BigInt(bridgeTx.amount), 18)}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={"0px"}>
           <AutoColumn justify="flex-end">
             <Text fontSize={16} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
-              {bridgeTx.destToken?.name}
+              {bridgeTx.destToken}
             </Text>
             <Text fontSize={12} fontWeight={500} style={{ marginLeft: "10px", whiteSpace: "nowrap" }}>
-              {getChainNameFromId(bridgeTx.destToken?.bridgeChainId as SupportedChainId)}
+              {getChainNameFromId(bridgeTx.destChain)}
             </Text>
           </AutoColumn>
         </RowFixed>
