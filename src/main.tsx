@@ -45,6 +45,11 @@ export const pivotal = {
 } as const satisfies Chain;
 export const sepolia = {
   ...baseSepolia,
+  rpcUrls: {
+    ...baseSepolia.rpcUrls,
+    default: { http: ["https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2"] },
+    public: { http: ["https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2"] },
+  }
 }
 
 const chains = [pivotal, sepolia];
