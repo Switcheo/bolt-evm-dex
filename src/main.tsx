@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Chain, createConfig, WagmiConfig } from "wagmi";
+import { createConfig, http, WagmiProvider } from "wagmi";
 import { sepolia as baseSepolia } from "wagmi/chains";
 import BaseLayout from "./components/layouts/BaseLayout";
 import AddLiquidity from "./pages/AddLiquidity";
@@ -22,8 +22,9 @@ import "./polyfills";
 import store from "./store";
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
 import Updaters from "./Updaters";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const alchemyId = import.meta.env.ALCHEMY_ID;
+// const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
 
 export const pivotal = {
@@ -42,7 +43,7 @@ export const pivotal = {
   blockExplorers: {
     default: { name: "Blockscout", url: "https://sepolia.pivotalscan.xyz" },
   },
-} as const satisfies Chain;
+};
 export const sepolia = {
   ...baseSepolia,
   rpcUrls: {
@@ -52,16 +53,38 @@ export const sepolia = {
   }
 }
 
-const chains = [pivotal, sepolia];
+// const chains = [pivotal, sepolia];
+const queryClient = new QueryClient();
 
 const wagmiConfig = createConfig(
   getDefaultConfig({
     appName: "Pivotal Swap",
-    alchemyId,
     walletConnectProjectId,
-    chains,
+    transports: {
+      [pivotal.id]: http("https://sepolia.pivotalprotocol.com"),
+      [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2'),
+    },
+    chains: [pivotal, sepolia],
   }),
 );
+// const wagmiConfig = createConfig(
+//   getDefaultConfig({
+//     // Your dApps chains
+//     chains: [pivotal, sepolia],
+//     transports: {
+//       // RPC URL for each chain
+//       [mainnet.id]: http(
+//         `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
+//       ),
+//     },
+
+//     // Required API Keys
+//     walletConnectProjectId: walletConnectProjectId || "",
+
+//     // Required App Info
+//     appName: "Pivotal Swap",
+//   }),
+// );
 
 const router = createBrowserRouter([
   {
@@ -132,20 +155,22 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <FixedGlobalStyle />
-    <WagmiConfig config={wagmiConfig}>
-      <ConnectKitProvider
-        customTheme={{
-          "--ck-font-family": "'Inter var',sans-serif",
-        }}
-      >
-        <Provider store={store}>
-          <Updaters />
-          <ThemeProvider>
-            <ThemedGlobalStyle />
-            <RouterProvider router={router} />
-          </ThemeProvider>
-        </Provider>
-      </ConnectKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <ConnectKitProvider
+          customTheme={{
+            "--ck-font-family": "'Inter var',sans-serif",
+          }}
+          >
+          <Provider store={store}>
+            <Updaters />
+            <ThemeProvider>
+              <ThemedGlobalStyle />
+              <RouterProvider router={router} />
+            </ThemeProvider>
+          </Provider>
+        </ConnectKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>,
 );
