@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { PAIR_INTERFACE } from "../../constants/abis";
 import { PairState } from "../../pages/PoolFinder";
 import { useMultipleContractSingleData } from "../../store/modules/multicall/hooks";
@@ -9,7 +9,7 @@ import { Pair } from "../../utils/entities/pair";
 import { wrappedCurrency } from "../../utils/wrappedCurrency";
 
 export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
 
   const tokens = useMemo(

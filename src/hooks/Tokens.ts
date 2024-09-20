@@ -1,8 +1,8 @@
 import { parseBytes32String } from "@ethersproject/strings";
 import { arrayify } from "ethers/lib/utils";
 import { useMemo } from "react";
-import { getAddress, isAddress } from "viem";
-import { Address, useNetwork } from "wagmi";
+import { Address, getAddress, isAddress } from "viem";
+import { useAccount } from "wagmi";
 import { isSupportedChain, SupportedChainId } from "../constants/chains";
 import {
   TokenAddressMap,
@@ -21,7 +21,7 @@ import { useBytes32TokenContract, useTokenContract } from "./useContract";
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const userAddedTokens = useUserAddedTokens();
 
@@ -83,7 +83,7 @@ function parseStringOrBytes32(str: string | undefined, bytes32: string | undefin
 // null if loading
 // otherwise returns the token
 export function useToken(tokenAddress?: string): Token | undefined | null {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const tokens = useAllTokens();
 
@@ -175,7 +175,7 @@ export function useAllInactiveTokens(): { [address: string]: Token } {
 
 // used to detect extra search results
 export function useFoundOnInactiveList(searchQuery: string): Token[] | undefined {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const inactiveTokens = useAllInactiveTokens();
 

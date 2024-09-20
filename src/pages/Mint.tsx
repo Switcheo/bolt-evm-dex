@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import styled from "styled-components";
 import { isAddress } from "viem";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
@@ -33,7 +33,7 @@ export default function Mint() {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { switchNetwork } = useSwitchNetwork();
 
   const processMessages = useCallback(

@@ -2,7 +2,7 @@ import { CSSProperties, MutableRefObject, useCallback, useMemo } from "react";
 import { FixedSizeList } from "react-window";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import TokenListLogo from "../../assets/svg/tokenlist.svg";
 import { useCurrencyBalance } from "../../hooks/balances/useCurrencyBalance";
 import { useAllInactiveTokens, useIsUserAddedToken } from "../../hooks/Tokens";
@@ -189,7 +189,8 @@ export default function CurrencyList({
     return formatted;
   }, [breakIndex, currencies, showETH]);
 
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount()
+  const chainId = chain?.id;
   const theme = useTheme();
 
   const inactiveTokens: {

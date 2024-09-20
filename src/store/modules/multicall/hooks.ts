@@ -2,7 +2,7 @@ import { FunctionFragment, Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
 import { useEffect, useMemo } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useBlockNumber } from "../application/hooks";
 import {
@@ -49,7 +49,7 @@ export const NEVER_RELOAD: ListenerOptions = {
 
 // the lowest level call for subscribing to contract data
 function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions): CallResult[] {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const callResults = useAppSelector((state) => state.multicall.callResults);
   const dispatch = useAppDispatch();

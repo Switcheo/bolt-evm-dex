@@ -2,7 +2,7 @@ import JSBI from "jsbi";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
@@ -147,8 +147,7 @@ const Bridge = () => {
 
   const [showSwitchNetworkModal, setShowSwitchNetworkModal] = useState(false);
 
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
   const { switchNetwork, isLoading, isError } = useSwitchNetwork();
 
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);

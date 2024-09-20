@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { getEthersProvider } from "../../../utils/evm";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useAddPopup, useBlockNumber } from "../application/hooks";
@@ -7,7 +7,7 @@ import { checkedTransaction, finalizeTransaction } from "./transactionsSlice";
 import { shouldCheck } from "./utils";
 
 export default function Updater(): null {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const provider = getEthersProvider({ chainId });
 

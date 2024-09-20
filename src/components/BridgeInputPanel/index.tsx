@@ -1,7 +1,8 @@
 import { darken } from "polished";
 import { useCallback, useState } from "react";
 import styled, { useTheme } from "styled-components";
-import { Address, useAccount, useBalance, useNetwork } from "wagmi";
+import {  useAccount, useBalance } from "wagmi";
+import { type Address } from "viem";
 import { ReactComponent as DropDown } from "../../assets/images/dropdown.svg";
 import { TYPE } from "../../theme";
 import { BridgeableToken } from "../../utils/entities/bridgeableToken";
@@ -134,8 +135,8 @@ const BridgeInputPanel = ({
   onMax,
 }: BridgeInputPanelProps) => {
   const theme = useTheme();
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
+
   const {
     data: selectedCurrencyBalance,
     isError,
@@ -144,7 +145,7 @@ const BridgeInputPanel = ({
     address,
     chainId: chain?.id,
     token: currency?.address as Address,
-    watch: true,
+    // watch: true,
   });
 
   // State

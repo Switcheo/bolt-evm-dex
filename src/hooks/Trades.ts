@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from "../constants/utils";
 import { PairState } from "../pages/PoolFinder";
 import { useUserSingleHopOnly } from "../store/modules/user/hooks";
@@ -14,7 +14,8 @@ import { usePairs } from "./pairs/usePairs";
 import { useUnsupportedTokens } from "./Tokens";
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
 
   const [tokenA, tokenB] = chainId
     ? [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)]
@@ -111,7 +112,7 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
 
 export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?: Currency): boolean {
   const unsupportedTokens: { [address: string]: Token } = useUnsupportedTokens();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
 
   const tokenIn = wrappedCurrency(currencyIn, chainId);

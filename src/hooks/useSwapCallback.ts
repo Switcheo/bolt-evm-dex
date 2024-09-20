@@ -3,8 +3,8 @@ import { Contract } from "@ethersproject/contracts";
 import { TransactionResponse } from "@ethersproject/providers";
 import JSBI from "jsbi";
 import { useMemo } from "react";
-import { getAddress, isAddress } from "viem";
-import { Address, useAccount, useNetwork } from "wagmi";
+import { Address, getAddress, isAddress } from "viem";
+import { useAccount } from "wagmi";
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from "../constants/utils";
 import { useTransactionAdder } from "../store/modules/transactions/hooks";
 import { TradeType } from "../utils/entities/constants";
@@ -52,8 +52,7 @@ function useSwapCallArguments(
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
   const chainId = chain?.id;
   const provider = getEthersProvider({ chainId });
   const contract: Contract | null = useRouterContract();
@@ -101,8 +100,7 @@ export function useSwapCallback(
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
   const chainId = chain?.id;
 
   const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName);

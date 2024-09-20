@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useUnsupportedTokens } from "../../hooks/Tokens";
 import { CloseIcon, ExternalLink, TYPE } from "../../theme";
 import { Currency } from "../../utils/entities/currency";
@@ -46,7 +46,7 @@ export default function UnsupportedCurrencyFooter({
   show: boolean;
   currencies: (Currency | undefined)[];
 }) {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const [showDetails, setShowDetails] = useState(false);
 

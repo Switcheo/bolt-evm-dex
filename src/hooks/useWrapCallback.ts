@@ -1,7 +1,7 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useMemo } from "react";
 import { parseUnits, TransactionReceipt } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { prepareWriteContract, waitForTransaction, writeContract } from "wagmi/actions";
 import { wethABI } from "../constants/abis";
 import { WETH_ADDRESSES } from "../constants/addresses";
@@ -112,8 +112,8 @@ export default function useWrapCallback(
   outputCurrency: Currency | undefined,
   typedValue: string | undefined,
 ): { wrapType: WrapType; execute?: undefined | (() => Promise<void>); inputError?: string } {
-  const { address } = useAccount();
-  const chainId = useNetwork()?.chain?.id;
+  const { address, chain } = useAccount();
+  const chainId = chain?.id;
 
   const balance = useCurrencyBalance(address ?? undefined, inputCurrency);
   // we can always parse the amount typed as the input currency, since wrapping is 1:1

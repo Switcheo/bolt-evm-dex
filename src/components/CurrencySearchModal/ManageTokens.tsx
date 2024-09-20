@@ -1,7 +1,7 @@
 import { ChangeEvent, RefObject, useCallback, useMemo, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { isAddress } from "viem";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { CurrencyModalView } from ".";
 import { useToken } from "../../hooks/Tokens";
 import { useRemoveUserAddedToken, useUserAddedTokens } from "../../store/modules/user/hooks";
@@ -41,7 +41,7 @@ export default function ManageTokens({
   setModalView: (view: CurrencyModalView) => void;
   setImportToken: (token: Token) => void;
 }) {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
 
   const [searchQuery, setSearchQuery] = useState<string>("");

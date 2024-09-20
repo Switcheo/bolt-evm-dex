@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { addPopup, PopupContent, removePopup } from "./applicationSlice";
 
 export function useBlockNumber(): number | undefined {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
 
   return useAppSelector((state) => state.application.blockNumber[chainId ?? -1]);

@@ -1,7 +1,8 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
 import { useCallback, useMemo } from "react";
-import { Address, useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
+import { Address } from "viem";
 import { V2_ROUTER_ADDRESSES } from "../constants/addresses";
 import { SupportedChainId } from "../constants/chains";
 import { Field } from "../store/modules/swap/swapSlice";
@@ -102,7 +103,8 @@ export function useApproveCallback(
 
 // wraps useApproveCallback in the context of a swap
 export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) {
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
   const amountToApprove = useMemo(
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
     [trade, allowedSlippage],

@@ -1,7 +1,7 @@
 import { AlertTriangle, ArrowUpCircle } from "react-feather";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import Circle from "../../assets/images/blue-loader.svg";
 import { SupportedChainId } from "../../constants/chains";
 import { ExternalLink } from "../../theme";
@@ -170,7 +170,7 @@ export default function TransactionConfirmationModal({
   pendingText,
   content,
 }: ConfirmationModalProps) {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
 
   if (!chainId) return null;

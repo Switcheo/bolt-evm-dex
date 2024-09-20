@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 import { CheckCircle } from "react-feather";
 import styled, { useTheme } from "styled-components";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { SupportedChainId } from "../../constants/chains";
 import { useIsTokenActive, useIsUserAddedToken } from "../../hooks/Tokens";
 import { useCombinedInactiveList } from "../../store/modules/lists/hooks";
@@ -54,7 +54,8 @@ export default function ImportRow({
   setImportToken: (token: Token) => void;
 }) {
   // gloabls
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
   const theme = useTheme();
 
   // check if token comes from list

@@ -1,7 +1,7 @@
 import { Contract } from "@ethersproject/contracts";
 import { useMemo } from "react";
 import { Address } from "viem";
-import { useAccount, useNetwork, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import {
   ENS_PUBLIC_RESOLVER_ABI,
   ENS_REGISTRAR_ABI,
@@ -43,7 +43,7 @@ export function useTokenContract(tokenAddress?: Address, withSignerIfPossible?: 
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contract | null {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id as SupportedChainId;
   let address: string | undefined;
   if (chainId) {
@@ -61,13 +61,13 @@ export function useENSResolverContract(address: string | undefined, withSignerIf
 }
 
 export function useMulticallContract(): Contract | null {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id as SupportedChainId;
   return useContract(chainId && MULTICALL_ADDRESSES[chainId], MULTICALL_ABI, false);
 }
 
 export function useRouterContract(): Contract | null {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id as SupportedChainId;
   return useContract(chainId && V2_ROUTER_ADDRESSES[chainId], UNISWAP_V2_ROUTER_ABI);
 }

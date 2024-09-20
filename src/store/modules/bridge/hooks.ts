@@ -1,5 +1,5 @@
-import { parseUnits } from "viem";
-import { Address, useAccount } from "wagmi";
+import { Address, parseUnits } from "viem";
+import { useAccount } from "wagmi";
 import { BridgeTx } from "../../../hooks/useBridgeCallback";
 import { Currency } from "../../../utils/entities/currency";
 import { useAppSelector } from "../../hooks";

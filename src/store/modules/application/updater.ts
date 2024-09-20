@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNetwork, usePublicClient } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { useDebounce } from "../../../hooks/useDebounce";
 import useIsWindowVisible from "../../../hooks/useIsWindowVisible";
 import { useAppDispatch } from "../../hooks";
@@ -7,7 +7,7 @@ import { updateBlockNumber } from "./applicationSlice";
 
 export default function Updater(): null {
   const publicClient = usePublicClient();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const dispatch = useAppDispatch();
 

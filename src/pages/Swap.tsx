@@ -4,7 +4,7 @@ import { ArrowDown } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -89,8 +89,8 @@ export default function Swap() {
       return !(token.address in defaultTokens);
     });
 
-  const { address } = useAccount();
-  const chainId = useNetwork().chain?.id;
+  const { address, chain } = useAccount();
+  const chainId = chain?.id;
   const { switchNetwork } = useSwitchNetwork();
   const theme = useTheme();
 

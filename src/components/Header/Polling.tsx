@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { useBlockNumber, useNetwork } from "wagmi";
+import { useAccount, useBlockNumber } from "wagmi";
 import { TYPE } from "../../theme";
 import { ExternalLink } from "../../theme/components";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
@@ -67,7 +67,7 @@ const Spinner = styled.div`
 `;
 
 export default function Polling() {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   const { data, isError, isLoading } = useBlockNumber({
     chainId: chain?.id,

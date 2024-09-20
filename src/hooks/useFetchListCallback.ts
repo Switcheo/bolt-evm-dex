@@ -1,7 +1,7 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { TokenList } from "@uniswap/token-lists";
 import { useCallback } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useAppDispatch } from "../store/hooks";
 import { fetchTokenList } from "../store/modules/lists/actions";
 import { getEthersProvider } from "../utils/evm";
@@ -9,7 +9,7 @@ import getTokenList from "../utils/getTokenList";
 import resolveENSContentHash from "../utils/resolveENSContentHash";
 
 export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const provider = getEthersProvider({ chainId });
 

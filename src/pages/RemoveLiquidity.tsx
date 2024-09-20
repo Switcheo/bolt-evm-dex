@@ -7,7 +7,7 @@ import { ArrowDown, Plus } from "react-feather";
 import { useNavigate, useParams } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useNetwork, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { signTypedData } from "wagmi/actions";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import { BlueCard, LightCard } from "../components/Card";
@@ -97,8 +97,8 @@ export default function RemoveLiquidity() {
   const navigate = useNavigate();
 
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined];
-  const { address } = useAccount();
-  const chainId = useNetwork()?.chain?.id;
+  const { address, chain } = useAccount();
+  const chainId = chain?.id;
 
   const provider = getEthersProvider({ chainId });
   const publicClient = usePublicClient();

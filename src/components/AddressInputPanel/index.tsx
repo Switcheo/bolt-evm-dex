@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import styled, { useTheme } from "styled-components";
 import { isAddress } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { ExternalLink, TYPE } from "../../theme";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
 import { AutoColumn } from "../Column";
@@ -104,8 +104,7 @@ export default function AddressInputPanel({
   onChange: (value: string) => void;
 }) {
   const theme = useTheme();
-  const { address, isConnecting } = useAccount();
-  const { chain } = useNetwork();
+  const { address, isConnecting, chain } = useAccount();
 
   const handleInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Address } from "viem";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { SupportedChainId } from "../../../constants/chains";
 import { Pair } from "../../../utils/entities/pair";
 import { Token } from "../../../utils/entities/token";
@@ -123,7 +123,7 @@ export function useRemoveUserAddedToken(): (chainId: number, address: string) =>
 }
 
 export function useUserAddedTokens(): Token[] {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const serializedTokensMap = useAppSelector(({ user: { tokens } }) => tokens);
 
@@ -175,7 +175,8 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
  * Returns all the pairs of tokens that are tracked by the user for the current chain ID.
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount()
+  const chainId = chain?.id;
 
   // pairs saved by users
   const savedSerializedPairs = useAppSelector((state) => state.user.pairs);
