@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import styled from "styled-components";
 import { isAddress } from "viem";
-import { useAccount, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
@@ -34,8 +34,8 @@ export default function Mint() {
   const [showModal, setShowModal] = useState(false);
 
   const { chain } = useAccount();
-  const { switchNetwork } = useSwitchNetwork();
-
+  // const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
   const processMessages = useCallback(
     (event: { data: string }) => {
       let response;
@@ -92,8 +92,9 @@ export default function Mint() {
   }, [typed, sendJsonMessage]);
 
   const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
-  }, [switchNetwork]);
+    // switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
+    switchChain?.({ chainId: SupportedChainId.PIVOTAL_SEPOLIA });
+  }, [switchChain]);
 
   const handleModalDismiss = useCallback(() => {
     setSuccessMessage(null);

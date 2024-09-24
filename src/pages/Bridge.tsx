@@ -2,7 +2,7 @@ import JSBI from "jsbi";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
-import { useAccount, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
@@ -148,8 +148,8 @@ const Bridge = () => {
   const [showSwitchNetworkModal, setShowSwitchNetworkModal] = useState(false);
 
   const { address, chain } = useAccount();
-  const { switchNetwork, isLoading, isError } = useSwitchNetwork();
-
+  // const { switchNetwork, isLoading, isError } = useSwitchNetwork();
+  const { switchChain, isError, isPending} = useSwitchChain();
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
 
   const selectedCurrencyBalance = useCurrencyBalance(address, selectedCurrency);
@@ -207,14 +207,14 @@ const Bridge = () => {
   }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
 
   const handleSwitchNetwork = useCallback(() => {
-    if (switchNetwork) {
-      switchNetwork(sourceChain);
+    if (switchChain) {
+      switchChain({ chainId: sourceChain });
     }
 
     setShowSwitchNetworkModal(false);
     dispatch(setSelectedCurrency({ decimals: 18, symbol: "ETH", name: "Ether" }));
     dispatch(setSourceAmount(""));
-  }, [dispatch, sourceChain, switchNetwork]);
+  }, [dispatch, sourceChain, switchChain]);
 
   const handleBridge = useCallback(async () => {
     if (!bridgeCallback) {
@@ -393,7 +393,7 @@ const Bridge = () => {
             <ButtonError
               style={{ marginTop: "1rem" }}
               disabled={
-                isLoading ||
+                isPending ||
                 isError ||
                 JSBI.lessThan(maxAmounts?.raw ?? JSBI.BigInt(0), parsedAmount?.raw ?? JSBI.BigInt(0)) ||
                 !parsedAmount ||

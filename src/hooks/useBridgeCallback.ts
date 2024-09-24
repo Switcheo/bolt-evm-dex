@@ -1,5 +1,5 @@
-import { Address } from "viem";
-import { getNetwork, getPublicClient, getWalletClient, prepareSendTransaction } from "wagmi/actions";
+import { Address, parseEther } from "viem";
+import { getAccount, getPublicClient, getWalletClient } from "wagmi/actions";
 import { getChainInfo } from "../constants/chainInfo";
 import {
   getChainNameFromId,
@@ -95,32 +95,44 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
   }
 
   const bridgeCallback = async () => {
-    const publicClient = await getPublicClient();
-    const chainId = await getNetwork();
+    const publicClient = getPublicClient(config);
+    // const chainId = await getNetwork();
+    const { chainId } = getAccount(config);
     const walletClient = await getWalletClient(config,{ 
-      chainId: chainId.chain?.id 
+      chainId: chainId 
     });
 
     if (!walletClient) return;
+    const [address] = await walletClient.getAddresses();
     const chainInfo = getChainInfo(srcChain);
 
-    const ethAmount = BigInt(amount);
+    const ethAmount = parseEther(String(amount));
 
     // Prepare the config for the bridging
-    const result = await prepareSendTransaction({
-      to: chainInfo.bridgeInfo.bridgeProxy,
+    // const result = await estimateGas(config, {
+    //   to: `0x${chainInfo.bridgeInfo.bridgeProxy.replace(/^0x/, '')}`,
+    //   value: ethAmount,
+    // })
+    // const result = await prepareSendTransaction({
+    //   to: chainInfo.bridgeInfo.bridgeProxy,
+    //   value: ethAmount,
+    // });
+    const hash = await walletClient.sendTransaction({
+      address,
+      to: `0x${chainInfo.bridgeInfo.bridgeProxy.replace(/^0x/, '')}`,
       value: ethAmount,
-    });
-    const hash = await walletClient.sendTransaction(result);
+  });
 
-    const transactionReceipt = await publicClient.waitForTransactionReceipt({
+    const transactionReceipt = await publicClient?.waitForTransactionReceipt({
       hash,
       timeout: 30_000,
     });
 
-    addTransaction(transactionReceipt, {
-      summary: `Bridge ${srcToken.symbol} (${getChainNameFromId(srcChain)}) to ${destToken.symbol} (${getChainNameFromId(destChain)})`,
-    });
+    if (transactionReceipt) {
+      addTransaction(transactionReceipt, {
+        summary: `Bridge ${srcToken.symbol} (${getChainNameFromId(srcChain)}) to ${destToken.symbol} (${getChainNameFromId(destChain)})`,
+      });
+    }
 
     return hash;
   };
