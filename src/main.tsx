@@ -66,7 +66,7 @@ const queryClient = new QueryClient();
 const wagmiConfig = createConfig(
   getDefaultConfig({
     appName: "Pivotal Swap",
-    walletConnectProjectId,
+    walletConnectProjectId: walletConnectProjectId,
     transports: {
       [pivotal.id]: http("https://sepolia.pivotalprotocol.com"),
       [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2'),
