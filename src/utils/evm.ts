@@ -84,7 +84,7 @@ export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
   const publicClient = getPublicClient(config,{
     chainId: chainId
   });
-  // console.log(publicClient);
+
   return publicClientToProvider(publicClient);
 }
 

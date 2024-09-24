@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createConfig, http, WagmiProvider } from "wagmi";
+import { metaMask, coinbaseWallet, walletConnect, injected } from 'wagmi/connectors';
 import { sepolia as baseSepolia } from "wagmi/chains";
 import BaseLayout from "./components/layouts/BaseLayout";
 import AddLiquidity from "./pages/AddLiquidity";
@@ -67,6 +68,12 @@ const wagmiConfig = createConfig(
   getDefaultConfig({
     appName: "Pivotal Swap",
     walletConnectProjectId: walletConnectProjectId,
+    // connectors: [
+    //   metaMask(),
+      // coinbaseWallet(),
+    //   injected(),
+    //   walletConnect({ projectId: walletConnectProjectId }),
+    // ],
     transports: {
       [pivotal.id]: http("https://sepolia.pivotalprotocol.com"),
       [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2'),
