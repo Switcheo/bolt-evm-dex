@@ -26,7 +26,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // const alchemyId = import.meta.env.ALCHEMY_ID;
 const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
-
+console.log(walletConnectProjectId);
 export const pivotal = {
   id: 16481,
   name: "Pivotal Sepolia",
@@ -55,7 +55,14 @@ export const sepolia = {
 
 // const chains = [pivotal, sepolia];
 const queryClient = new QueryClient();
-
+// const wagmiConfig = createConfig(
+//   getDefaultConfig({
+//     appName: "Pivotal Swap",
+//     alchemyId,
+//     walletConnectProjectId,
+//     chains,
+//   }),
+// );
 const wagmiConfig = createConfig(
   getDefaultConfig({
     appName: "Pivotal Swap",
@@ -67,6 +74,7 @@ const wagmiConfig = createConfig(
     chains: [pivotal, sepolia],
   }),
 );
+console.log(wagmiConfig);
 // const wagmiConfig = createConfig(
 //   getDefaultConfig({
 //     // Your dApps chains
