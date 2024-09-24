@@ -81,7 +81,10 @@ export function walletClientToSigner(walletClient: WalletClient) {
 /** Action to convert a viem Public Client to an ethers.js Provider. */
 export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
   // const publicClient = getPublicClient({ chainId });
-  const publicClient = getPublicClient(config);
+  const publicClient = getPublicClient(config,{
+    chainId: chainId
+  });
+  console.log(publicClient);
   return publicClientToProvider(publicClient);
 }
 

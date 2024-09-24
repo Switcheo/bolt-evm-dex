@@ -95,9 +95,11 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
   }
 
   const bridgeCallback = async () => {
-    const publicClient = getPublicClient(config);
-    // const chainId = await getNetwork();
     const { chainId } = getAccount(config);
+    const publicClient = getPublicClient(config, {
+      chainId: chainId
+    });
+    // const chainId = await getNetwork();
     const walletClient = await getWalletClient(config,{ 
       chainId: chainId 
     });
