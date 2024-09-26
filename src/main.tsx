@@ -56,24 +56,17 @@ export const sepolia = {
 
 // const chains = [pivotal, sepolia];
 const queryClient = new QueryClient();
-// const wagmiConfig = createConfig(
-//   getDefaultConfig({
-//     appName: "Pivotal Swap",
-//     alchemyId,
-//     walletConnectProjectId,
-//     chains,
-//   }),
-// );
+
 const wagmiConfig = createConfig(
   getDefaultConfig({
     appName: "Pivotal Swap",
     walletConnectProjectId: walletConnectProjectId,
-    // connectors: [
-    //   metaMask(),
-      // coinbaseWallet(),
+    connectors: [
+      metaMask(),
+    //   coinbaseWallet(),
     //   injected(),
-    //   walletConnect({ projectId: walletConnectProjectId }),
-    // ],
+      walletConnect({ projectId: walletConnectProjectId }),
+    ],
     transports: {
       [pivotal.id]: http("https://sepolia.pivotalprotocol.com"),
       [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2'),
@@ -81,25 +74,6 @@ const wagmiConfig = createConfig(
     chains: [pivotal, sepolia],
   }),
 );
-console.log(wagmiConfig);
-// const wagmiConfig = createConfig(
-//   getDefaultConfig({
-//     // Your dApps chains
-//     chains: [pivotal, sepolia],
-//     transports: {
-//       // RPC URL for each chain
-//       [mainnet.id]: http(
-//         `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
-//       ),
-//     },
-
-//     // Required API Keys
-//     walletConnectProjectId: walletConnectProjectId || "",
-
-//     // Required App Info
-//     appName: "Pivotal Swap",
-//   }),
-// );
 
 const router = createBrowserRouter([
   {
