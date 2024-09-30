@@ -22,6 +22,7 @@ export function colors(): Colors {
     // backgrounds / greys
     rootBg: "#16142A",
     glassBg: "linear-gradient(to right, rgba(51,51,51, 0.35), rgba(0,0,0, 0.35))",
+    glassRedBg: "linear-gradient(to right, rgba(255,0,0, 0.35), rgba(153,0,0, 0.35))",
     white10: "rgba(255,255,255,0.1)",
     white25: "rgba(255,255,255,0.25)",
     grey10: "rgba(242,242,242,0.1)",

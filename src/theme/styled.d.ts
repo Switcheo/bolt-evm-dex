@@ -18,6 +18,7 @@ export interface Colors {
   // backgrounds / greys
   rootBg: Color;
   glassBg: Color;
+  glassRedBg: Color;
   white10: Color;
   white25: Color;
   grey50: Color;
