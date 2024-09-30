@@ -1,4 +1,4 @@
-import boltchainLogo from "../assets/svg/bridge-assets-list/bolt-logo.svg";
+import pivotalchainLogo from "../assets/svg/bridge-assets-list/pivotal-logo-.svg";
 import bscLogo from "../assets/svg/bridge-assets-list/bsc-logo.svg";
 import ethereumLogo from "../assets/svg/bridge-assets-list/ethereum-logo.svg";
 import polygonLogo from "../assets/svg/bridge-assets-list/polygon-logo.svg";
@@ -48,7 +48,7 @@ const CHAIN_INFO: Record<SupportedChainId, ChainInfo> = {
   [SupportedChainId.BOLTCHAIN]: {
     explorer: "https://blockscout.bolt.switcheo.network",
     infoLink: "https://www.bolt.global",
-    logoUrl: boltchainLogo,
+    logoUrl: pivotalchainLogo,
     label: "Boltchain",
     nativeCurrency: {
       name: "BOLT",
