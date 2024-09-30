@@ -36,6 +36,8 @@ export const Wrapper = styled.div`
   padding: 1rem;
   background: ${({ theme }) => theme.bg1};
   border-radius: 30px;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
 `;
 
 export const Wrapper2 = styled.div`
@@ -44,14 +46,14 @@ export const Wrapper2 = styled.div`
   margin-top: 20px;
   background: ${({ theme }) => theme.bg1};
   border-radius: 30px;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
 `;
 
 const BridgeBody = styled.div`
   position: relative;
   max-width: 620px;
   width: 100%;
-  // box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-  //   0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
   margin-top: auto;
   margin-bottom: auto;
