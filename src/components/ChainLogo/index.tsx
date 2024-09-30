@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { ReactComponent as BoltchainLogo } from "../../assets/svg/bridge-assets-list/bolt-logo.svg";
+import { ReactComponent as PivotalchainLogo } from "../../assets/svg/bridge-assets-list/pivotal-logo.svg";
 import { ReactComponent as EthereumLogo } from "../../assets/svg/bridge-assets-list/ethereum-logo.svg";
 import { SupportedChainId } from "../../constants/chains";
 
@@ -17,7 +17,7 @@ const ChainLogo = (props: Props) => {
       case SupportedChainId.SEPOLIA:
         return <EthereumLogo style={style} />;
       default:
-        return <BoltchainLogo style={style} />;
+        return <PivotalchainLogo style={style} />;
     }
   };
 

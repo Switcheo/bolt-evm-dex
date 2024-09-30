@@ -1,4 +1,4 @@
-import boltchainLogo from "../assets/svg/bridge-assets-list/bolt-logo.svg";
+import pivotalchainLogo from "../assets/svg/bridge-assets-list/pivotal-logo.svg";
 import ethereumLogo from "../assets/svg/bridge-assets-list/ethereum-logo.svg";
 import { SupportedChainId } from "./chains";
 
@@ -55,7 +55,7 @@ const CHAIN_INFO: Record<SupportedChainId, ChainInfo> = {
   [SupportedChainId.PIVOTAL_SEPOLIA]: {
     explorer: "https://sepolia.pivotalscan.xyz",
     infoLink: "https://pivotalprotocol.com",
-    logoUrl: boltchainLogo,
+    logoUrl: pivotalchainLogo,
     label: "Pivotal Sepolia",
     nativeCurrency: {
       name: "ETH",
