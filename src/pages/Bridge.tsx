@@ -34,19 +34,27 @@ import { Token } from "../utils/entities/token";
 export const Wrapper = styled.div`
   position: relative;
   padding: 1rem;
+  background: ${({ theme }) => theme.bg1};
+  border-radius: 30px;
+`;
+
+export const Wrapper2 = styled.div`
+  position: relative;
+  padding: 20px;
+  margin-top: 20px;
+  background: ${({ theme }) => theme.bg1};
+  border-radius: 30px;
 `;
 
 const BridgeBody = styled.div`
   position: relative;
   max-width: 620px;
-  // margin: 0 5rem;
   width: 100%;
-  background: ${({ theme }) => theme.bg1};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
+  // box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+  //   0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 30px;
-  /* padding: 1rem; */
-  margin-top: -50px;
+  margin-top: auto;
+  margin-bottom: auto;
   gap: 1rem;
 `;
 
@@ -98,6 +106,24 @@ const ActiveText = styled.div`
   font-weight: 500;
   font-size: 24px;
 `;
+
+const DialogHeader = styled.div`
+  display: flex;
+  padding-top: 1rem;
+  border-radius: 1rem;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0;
+  gap: 0.5rem;
+`;
+
+const DialogBody = styled.div`
+  padding: 0 1.5rem
+`;
+
+const DialogATag = styled.div`
+  color:  ${({ theme }) => theme?.text2};
+`
 
 export const ArrowWrapper = styled.div<{ $clickable: boolean }>`
   padding: 2px;
@@ -169,6 +195,13 @@ const Bridge = () => {
 
   const selectCurrency = (curr: Currency) => {
     dispatch(setSelectedCurrency(JSON.parse(JSON.stringify(curr))));
+  }
+
+  // testnet faucet links
+  const testnetFaucentLinks = {
+    "Google Cloud": "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
+    "Alchemy": "https://www.alchemy.com/faucets/ethereum-sepolia",
+    "Infura": "https://www.infura.io/faucet/sepolia",
   }
 
   // Handlers
@@ -415,6 +448,26 @@ const Bridge = () => {
           )}
         </AutoColumn>
       </Wrapper>
+      <Wrapper2>
+        <DialogHeader>
+          <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>
+            Acquire Sepolia ETH to test on Pivotal via any of these testnet faucets:
+          </TYPE.body>
+        </DialogHeader>
+        <DialogBody>
+          <ul>
+            {Object.entries(testnetFaucentLinks).map(([testnet, link]) => (
+              <li key={testnet}>
+                <DialogATag as="a" href={link} target="_blank" rel="noopener noreferrer">
+                  <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>
+                    {testnet}
+                  </TYPE.body>
+                </DialogATag>
+              </li>
+            ))}
+          </ul>
+        </DialogBody>
+      </Wrapper2>
     </BridgeBody>
   );
 };
