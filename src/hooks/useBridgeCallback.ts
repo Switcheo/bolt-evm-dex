@@ -28,7 +28,7 @@ export interface BridgeTx {
   destAddr: Address;
 }
 
-const walletConnectProjectId = import.meta.env.WALLET_CONNECT_PROJECT_ID;
+const walletConnectProjectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID;
 const pivotal = {
   id: 16481,
   name: "Pivotal Sepolia",
