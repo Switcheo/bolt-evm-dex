@@ -6,49 +6,7 @@ import { isAddress, type HttpTransport } from "viem";
 import { UNISWAP_V2_ROUTER_ABI } from "../constants/abis";
 import { V2_ROUTER_ADDRESSES } from "../constants/addresses";
 import { SupportedChainId } from "../constants/chains";
-import { sepolia as baseSepolia } from "wagmi/chains";
-import { getDefaultConfig } from "connectkit";
-import { createConfig, http } from "wagmi";
-
-
-const walletConnectProjectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID;
-const pivotal = {
-  id: 16481,
-  name: "Pivotal Sepolia",
-  network: "Pivotal Sepolia",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ethereum",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    public: { http: ["https://sepolia.pivotalprotocol.com"] },
-    default: { http: ["https://sepolia.pivotalprotocol.com"] },
-  },
-  blockExplorers: {
-    default: { name: "Blockscout", url: "https://sepolia.pivotalscan.xyz" },
-  },
-};
-const sepolia = {
-  ...baseSepolia,
-  rpcUrls: {
-    ...baseSepolia.rpcUrls,
-    default: { http: ["https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2"] },
-    public: { http: ["https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2"] },
-  }
-}
-
-const config = createConfig(
-  getDefaultConfig({
-    appName: "Pivotal Swap",
-    walletConnectProjectId,
-    transports: {
-      [pivotal.id]: http("https://sepolia.pivotalprotocol.com"),
-      [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/7y0_VO9hXrNuU0iroPAPEnhFkDX13XY2'),
-    },
-    chains: [pivotal, sepolia],
-  }),
-);
+import { wagmiConfig } from "../config";
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -81,7 +39,7 @@ export function walletClientToSigner(walletClient: WalletClient) {
 /** Action to convert a viem Public Client to an ethers.js Provider. */
 export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
   // const publicClient = getPublicClient({ chainId });
-  const publicClient = getPublicClient(config,{
+  const publicClient = getPublicClient(wagmiConfig,{
     chainId: chainId
   });
 
@@ -90,7 +48,7 @@ export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
 
 /** Action to convert a viem Wallet Client to an ethers.js Signer. */
 export async function getEthersSigner({ chainId }: { chainId?: number } = {}) {
-  const walletClient = await getWalletClient(config, { 
+  const walletClient = await getWalletClient(wagmiConfig, { 
     chainId: chainId 
   });
   if (!walletClient) return undefined;
