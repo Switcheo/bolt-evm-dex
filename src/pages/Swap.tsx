@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useAccount, useSwitchChain } from "wagmi";
+// import { switchChain } from '@wagmi/core'
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -46,6 +47,7 @@ import { Trade } from "../utils/entities/trade";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { computeTradePriceBreakdown, warningSeverity } from "../utils/prices";
 import AppBody from "./AppBody";
+import { wagmiConfig } from "../config";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -272,10 +274,10 @@ export default function Swap() {
     [onCurrencySelection],
   );
 
-  const handleChangeNetwork = useCallback(() => {
-    // switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
-    switchChain?.({ chainId: SupportedChainId.PIVOTAL_SEPOLIA });
-  }, [switchChain]);
+  // const handleChangeNetwork = useCallback(() => {
+  //   // switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
+  //   switchChain?.(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
+  // }, [switchChain]);
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT);
 
@@ -410,7 +412,8 @@ export default function Swap() {
                 Connect Wallet
               </ConnectKitLightButton>
             ) : chainId !== SupportedChainId.PIVOTAL_SEPOLIA ? (
-              <ButtonError $error={chainId !== SupportedChainId.PIVOTAL_SEPOLIA} onClick={handleChangeNetwork}>
+              // <ButtonError $error={chainId !== SupportedChainId.PIVOTAL_SEPOLIA} onClick={handleChangeNetwork}>
+              <ButtonError $error={chainId !== SupportedChainId.PIVOTAL_SEPOLIA} onClick={() => switchChain({ chainId: SupportedChainId.PIVOTAL_SEPOLIA})}>
                 Please switch to the Pivotal Network.
               </ButtonError>
             ) : showWrap ? (

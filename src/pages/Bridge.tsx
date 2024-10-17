@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
 import { useAccount, useSwitchChain } from "wagmi";
+import { switchChain as coreSwitchChain } from '@wagmi/core'
 import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
@@ -30,6 +31,7 @@ import { TYPE } from "../theme";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { Currency } from "../utils/entities/currency";
 import { Token } from "../utils/entities/token";
+import { wagmiConfig } from "../config";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -207,9 +209,9 @@ const Bridge = () => {
   }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
 
   const handleSwitchNetwork = useCallback(() => {
-    if (switchChain) {
-      switchChain({ chainId: sourceChain });
-    }
+    // if (switchChain) {
+    coreSwitchChain(wagmiConfig ,{ chainId: sourceChain });
+    // }
 
     setShowSwitchNetworkModal(false);
     dispatch(setSelectedCurrency({ decimals: 18, symbol: "ETH", name: "Ether" }));
