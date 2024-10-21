@@ -440,7 +440,6 @@ export default function Swap() {
                 Connect Wallet
               </ConnectKitLightButton>
             ) : chainId !== SupportedChainId.PIVOTAL_SEPOLIA ? (
-              // <ButtonError $error={chainId !== SupportedChainId.PIVOTAL_SEPOLIA} onClick={handleChangeNetwork}>
               <ButtonError $error={chainId !== SupportedChainId.PIVOTAL_SEPOLIA} onClick={handleChangeNetwork}>
                 Please switch to the Pivotal Network.
               </ButtonError>

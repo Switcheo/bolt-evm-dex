@@ -145,7 +145,6 @@ const BridgeInputPanel = ({
     address,
     chainId: chain?.id,
     token: currency?.address as Address,
-    // watch: true,
   });
 
   // State

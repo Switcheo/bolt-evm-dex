@@ -68,16 +68,7 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
     const chainInfo = getChainInfo(srcChain);
 
     const ethAmount = parseEther(String(amount));
-
-    // Prepare the config for the bridging
-    // const result = await estimateGas(config, {
-    //   to: `0x${chainInfo.bridgeInfo.bridgeProxy.replace(/^0x/, '')}`,
-    //   value: ethAmount,
-    // })
-    // const result = await prepareSendTransaction({
-    //   to: chainInfo.bridgeInfo.bridgeProxy,
-    //   value: ethAmount,
-    // });
+    
     const hash = await walletClient.sendTransaction({
       address,
       to: `0x${chainInfo.bridgeInfo.bridgeProxy.replace(/^0x/, '')}`,

@@ -36,7 +36,6 @@ export default function Mint() {
   const [showModal, setShowModal] = useState(false);
 
   const { chain } = useAccount();
-  // const { switchNetwork } = useSwitchNetwork();
   const { switchChain } = useSwitchChain();
   const processMessages = useCallback(
     (event: { data: string }) => {
