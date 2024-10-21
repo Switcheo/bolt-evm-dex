@@ -1,6 +1,6 @@
 import { AddressZero } from "@ethersproject/constants";
 import { Contract } from "@ethersproject/contracts";
-import { getPublicClient, getWalletClient, type PublicClient, type WalletClient } from "@wagmi/core";
+import { getPublicClient, getWalletClient } from "@wagmi/core";
 import { providers } from "ethers";
 import { isAddress, type HttpTransport } from "viem";
 import { UNISWAP_V2_ROUTER_ABI } from "../constants/abis";
@@ -8,7 +8,7 @@ import { V2_ROUTER_ADDRESSES } from "../constants/addresses";
 import { SupportedChainId } from "../constants/chains";
 import { wagmiConfig } from "../config";
 
-export function publicClientToProvider(publicClient: PublicClient) {
+export function publicClientToProvider(publicClient: ReturnType<typeof getPublicClient>) {
   const { chain, transport } = publicClient;
   const network = {
     chainId: chain.id,
@@ -24,7 +24,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
   return new providers.JsonRpcProvider(transport.url, network);
 }
 
-export function walletClientToSigner(walletClient: WalletClient) {
+export function walletClientToSigner(walletClient: ReturnType<typeof getWalletClient>) {
   const { account, chain, transport } = walletClient;
   const network = {
     chainId: chain.id,
@@ -56,7 +56,7 @@ export async function getEthersSigner({ chainId }: { chainId?: number } = {}) {
 }
 
 // account is optional
-export function getProviderOrSigner(walletClient: WalletClient, publicClient: PublicClient, account?: string) {
+export function getProviderOrSigner(walletClient: ReturnType<typeof getWalletClient>, publicClient: ReturnType<typeof getPublicClient>, account?: string) {
   return account ? walletClientToSigner(walletClient) : publicClientToProvider(publicClient);
 }
 
@@ -64,8 +64,8 @@ export function getProviderOrSigner(walletClient: WalletClient, publicClient: Pu
 export function getContract(
   contractAddress: string,
   ABI: any,
-  walletClient: WalletClient,
-  publicClient: PublicClient,
+  walletClient: ReturnType<typeof getWalletClient>,
+  publicClient: ReturnType<typeof getPublicClient>,
   account?: string,
 ): Contract {
   if (!isAddress(contractAddress) || contractAddress === AddressZero) {
@@ -76,8 +76,8 @@ export function getContract(
 }
 
 export function getRouterContract(
-  walletClient: WalletClient,
-  publicClient: PublicClient,
+  walletClient: ReturnType<typeof getWalletClient>,
+  publicClient: ReturnType<typeof getPublicClient>,
   account?: string,
   chainId?: number,
 ): Contract {
