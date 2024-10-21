@@ -42,6 +42,7 @@ import { calculateGasMargin, calculateSlippageAmount } from "../utils/prices";
 import { wrappedCurrency } from "../utils/wrappedCurrency";
 import AppBody from "./AppBody";
 import { ClickableText } from "./Swap";
+import { wagmiConfig } from "../config";
 
 const Wrapper = styled.div`
   position: relative;
@@ -208,7 +209,7 @@ export default function RemoveLiquidity() {
     //   message,
     // });
 
-    signTypedData({
+    signTypedData(wagmiConfig, {
       address,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

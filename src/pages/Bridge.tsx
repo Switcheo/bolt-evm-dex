@@ -244,7 +244,7 @@ const Bridge = () => {
 
   const handleSwitchNetwork = useCallback(async () => {
     try {
-      await switchNetwork(SupportedChainId.PIVOTAL_SEPOLIA)
+      await switchNetwork(sourceChain);
     } catch (error) {
       console.error("Error during network switch or transaction: ", error);
     }
