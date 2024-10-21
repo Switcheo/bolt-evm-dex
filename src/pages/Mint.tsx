@@ -2,8 +2,8 @@ import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import styled from "styled-components";
 import { isAddress } from "viem";
-import { useAccount } from "wagmi";
-import { switchChain } from '@wagmi/core'
+import { useAccount, useSwitchChain } from "wagmi";
+import { switchChain as coreSwitchChain } from '@wagmi/core'
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
@@ -11,7 +11,7 @@ import SuccessMintModal from "../components/SuccessMintModal";
 import { SupportedChainId } from "../constants/chains";
 import { WSS_FAUCET_URL } from "../constants/utils";
 import AppBody from "./AppBody";
-import { wagmiConfig } from "../config";
+import { pivotal, wagmiConfig } from "../config";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -37,7 +37,7 @@ export default function Mint() {
 
   const { chain } = useAccount();
   // const { switchNetwork } = useSwitchNetwork();
-  // const { switchChain } = useSwitchChain();
+  const { switchChain } = useSwitchChain();
   const processMessages = useCallback(
     (event: { data: string }) => {
       let response;
@@ -93,9 +93,32 @@ export default function Mint() {
     });
   }, [typed, sendJsonMessage]);
 
-  const handleChangeNetwork = useCallback(() => {
-    // switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
-    switchChain?.(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
+  const handleChangeNetwork = useCallback(async () => {
+    try {
+      await coreSwitchChain(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
+    } catch (error) {
+      if ((error as { code: number }).code === 4902) {
+        // Chain not added, so add it manually
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params:[
+              {
+                chainId: '0x4061', // Hexadecimal for 16481 (Pivotal Sepolia)
+                chainName: pivotal.name,
+                rpcUrls: pivotal.rpcUrls.public.http,
+                nativeCurrency: pivotal.nativeCurrency,
+                blockExplorerUrls: [pivotal.blockExplorers.default.url],
+              }
+            ],
+          });
+        } catch (addError) {
+          console.error("Failed to add network: ", addError);
+        }
+      } else {
+        console.error("Failed to switch network: ", error);
+      }
+    }
   }, [switchChain]);
 
   const handleModalDismiss = useCallback(() => {

@@ -31,7 +31,7 @@ import { TYPE } from "../theme";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { Currency } from "../utils/entities/currency";
 import { Token } from "../utils/entities/token";
-import { wagmiConfig } from "../config";
+import { pivotal, wagmiConfig } from "../config";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -208,10 +208,36 @@ const Bridge = () => {
     });
   }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
 
-  const handleSwitchNetwork = useCallback(() => {
+  const handleSwitchNetwork = useCallback(async () => {
     // if (switchChain) {
-    coreSwitchChain(wagmiConfig ,{ chainId: sourceChain });
+    // coreSwitchChain(wagmiConfig ,{ chainId: sourceChain });
     // }
+    try {
+      await coreSwitchChain(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
+      console.log("chain swapped");
+    } catch (error) {
+      if ((error as { code: number }).code === 4902) {
+        // Chain not added, so add it manually
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params:[
+              {
+                chainId: '0x4061', // Hexadecimal for 16481 (Pivotal Sepolia)
+                chainName: pivotal.name,
+                rpcUrls: pivotal.rpcUrls.public.http,
+                nativeCurrency: pivotal.nativeCurrency,
+                blockExplorerUrls: [pivotal.blockExplorers.default.url],
+              }
+            ],
+          });
+        } catch (addError) {
+          console.error("Failed to add network: ", addError);
+        }
+      } else {
+        console.error("Failed to switch network: ", error);
+      }
+    }
 
     setShowSwitchNetworkModal(false);
     dispatch(setSelectedCurrency({ decimals: 18, symbol: "ETH", name: "Ether" }));
