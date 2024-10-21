@@ -3,7 +3,6 @@ import useWebSocket from "react-use-websocket";
 import styled from "styled-components";
 import { isAddress } from "viem";
 import { useAccount, useSwitchChain } from "wagmi";
-import { switchChain as coreSwitchChain } from '@wagmi/core'
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
@@ -11,7 +10,6 @@ import SuccessMintModal from "../components/SuccessMintModal";
 import { SupportedChainId } from "../constants/chains";
 import { WSS_FAUCET_URL } from "../constants/utils";
 import AppBody from "./AppBody";
-import { pivotal, wagmiConfig } from "../config";
 import switchNetwork from "../utils/switchNetwork";
 
 export const Wrapper = styled.div`

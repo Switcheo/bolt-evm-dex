@@ -292,6 +292,12 @@ const Issue = () => {
         args: [],
       });
 
+      if (!publicClient) {
+        setDeployError("Public client is not available");
+        setCompiling(false);
+        return;
+      }
+      
       const transactionReceipt = await publicClient.waitForTransactionReceipt({ hash });
 
       addTransaction(transactionReceipt, {
