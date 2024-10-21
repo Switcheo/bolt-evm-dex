@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
 import { useAccount, useSwitchChain } from "wagmi";
-import { switchChain as coreSwitchChain } from '@wagmi/core'
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -53,7 +52,7 @@ import { Trade } from "../utils/entities/trade";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { computeTradePriceBreakdown, warningSeverity } from "../utils/prices";
 import AppBody from "./AppBody";
-import { pivotal, wagmiConfig } from "../config";
+import switchNetwork from "../utils/switchNetwork";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -281,29 +280,9 @@ export default function Swap() {
 
   const handleChangeNetwork = useCallback(async () => {
     try {
-      await coreSwitchChain(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
+      await switchNetwork(SupportedChainId.PIVOTAL_SEPOLIA);
     } catch (error) {
-      if ((error as { code: number }).code === 4902) {
-        // Chain not added, so add it manually
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params:[
-              {
-                chainId: '0x4061', // Hexadecimal for 16481 (Pivotal Sepolia)
-                chainName: pivotal.name,
-                rpcUrls: pivotal.rpcUrls.public.http,
-                nativeCurrency: pivotal.nativeCurrency,
-                blockExplorerUrls: [pivotal.blockExplorers.default.url],
-              }
-            ],
-          });
-        } catch (addError) {
-          console.error("Failed to add network: ", addError);
-        }
-      } else {
-        console.error("Failed to switch network: ", error);
-      }
+      console.error("Error during network switch or transaction: ", error);
     }
   }, [switchChain]);
 
