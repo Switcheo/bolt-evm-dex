@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useMulticallContract } from "../../../hooks/useContract";
 import { useDebounce } from "../../../hooks/useDebounce";
 import chunkArray from "../../../utils/chunkArray";
@@ -20,7 +20,7 @@ export default function Updater(): null {
   // wait for listeners to settle before triggering updates
   const debouncedListeners = useDebounce(state.callListeners, 100);
   const latestBlockNumber = useBlockNumber();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
   const multicallContract = useMulticallContract();
   const cancellations = useRef<{ blockNumber: number; cancellations: (() => void)[] }>();

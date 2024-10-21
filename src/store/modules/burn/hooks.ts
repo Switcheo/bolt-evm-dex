@@ -1,7 +1,7 @@
 import JSBI from "jsbi";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { AppDispatch, AppState } from "../..";
 import { useTokenBalances } from "../../../hooks/balances/useTokenBalances";
 import { usePair } from "../../../hooks/pairs/usePair";
@@ -33,8 +33,8 @@ export function useDerivedBurnInfo(
   };
   error?: string;
 } {
-  const { address } = useAccount();
-  const chainId = useNetwork().chain?.id;
+  const { address, chain } = useAccount();
+  const chainId = chain?.id;
 
   const { independentField, typedValue } = useBurnState();
 

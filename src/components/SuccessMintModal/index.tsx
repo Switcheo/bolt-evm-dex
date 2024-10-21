@@ -1,7 +1,7 @@
 import { ArrowUpCircle } from "react-feather";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { getWalletClient } from "wagmi/actions";
 import { BOLT_ERC20_ADDRESS } from "../../constants/addresses";
 import { CloseIcon, ExternalLink, LinkStyledButton, TYPE } from "../../theme";
@@ -10,6 +10,7 @@ import { ButtonPrimary } from "../Button";
 import { AutoColumn, ColumnCenter } from "../Column";
 import Modal from "../Modal";
 import { RowBetween } from "../Row";
+import { wagmiConfig } from "../../config";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -30,10 +31,11 @@ interface SuccessMintModalProps {
 
 function SuccessMintModal({ isOpen, onDismiss, message }: SuccessMintModalProps) {
   const theme = useTheme();
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
 
   const handleAddBolt = async () => {
-    const walletClient = await getWalletClient();
+    const walletClient = await getWalletClient(wagmiConfig);
     await walletClient?.watchAsset({
       type: "ERC20",
       options: {

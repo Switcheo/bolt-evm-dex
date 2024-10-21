@@ -2,7 +2,7 @@ import JSBI from "jsbi";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import styled, { css, useTheme } from "styled-components";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import CurrencyInputPanel from "../components/CurrencyInputPanel";
 import { ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import ChainLogo from "../components/ChainLogo";
@@ -30,6 +30,7 @@ import { TYPE } from "../theme";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { Currency } from "../utils/entities/currency";
 import { Token } from "../utils/entities/token";
+import switchNetwork from "../utils/switchNetwork";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -175,10 +176,9 @@ const Bridge = () => {
 
   const [showSwitchNetworkModal, setShowSwitchNetworkModal] = useState(false);
 
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork, isLoading, isError } = useSwitchNetwork();
-
+  const { address, chain } = useAccount();
+  // const { switchNetwork, isLoading, isError } = useSwitchNetwork();
+  const { switchChain, isError, isPending} = useSwitchChain();
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
 
   const selectedCurrencyBalance = useCurrencyBalance(address, selectedCurrency);
@@ -242,15 +242,17 @@ const Bridge = () => {
     });
   }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
 
-  const handleSwitchNetwork = useCallback(() => {
-    if (switchNetwork) {
-      switchNetwork(sourceChain);
+  const handleSwitchNetwork = useCallback(async () => {
+    try {
+      await switchNetwork(SupportedChainId.PIVOTAL_SEPOLIA)
+    } catch (error) {
+      console.error("Error during network switch or transaction: ", error);
     }
 
     setShowSwitchNetworkModal(false);
     dispatch(setSelectedCurrency({ decimals: 18, symbol: "ETH", name: "Ether" }));
     dispatch(setSourceAmount(""));
-  }, [dispatch, sourceChain, switchNetwork]);
+  }, [dispatch, sourceChain, switchChain]);
 
   const handleBridge = useCallback(async () => {
     if (!bridgeCallback) {
@@ -429,7 +431,7 @@ const Bridge = () => {
             <ButtonError
               style={{ marginTop: "1rem" }}
               disabled={
-                isLoading ||
+                isPending ||
                 isError ||
                 JSBI.lessThan(maxAmounts?.raw ?? JSBI.BigInt(0), parsedAmount?.raw ?? JSBI.BigInt(0)) ||
                 !parsedAmount ||

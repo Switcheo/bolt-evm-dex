@@ -1,7 +1,7 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useCallback, useMemo } from "react";
 import { TransactionReceipt } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { hasProperty } from "../../../utils/validateTypes";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { addTransaction, TransactionDetails } from "./transactionsSlice";
@@ -15,8 +15,7 @@ export function useTransactionAdder(): (
     claim?: { recipient: string };
   },
 ) => void {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
   const chainId = chain?.id;
   const dispatch = useAppDispatch();
 
@@ -54,7 +53,7 @@ export function useTransactionAdder(): (
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const chainId = chain?.id;
 
   const state = useAppSelector((state) => state.transactions);

@@ -6,6 +6,7 @@ import { isAddress, type HttpTransport } from "viem";
 import { UNISWAP_V2_ROUTER_ABI } from "../constants/abis";
 import { V2_ROUTER_ADDRESSES } from "../constants/addresses";
 import { SupportedChainId } from "../constants/chains";
+import { wagmiConfig } from "../config";
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -37,13 +38,19 @@ export function walletClientToSigner(walletClient: WalletClient) {
 
 /** Action to convert a viem Public Client to an ethers.js Provider. */
 export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
-  const publicClient = getPublicClient({ chainId });
+  // const publicClient = getPublicClient({ chainId });
+  const publicClient = getPublicClient(wagmiConfig,{
+    chainId: chainId
+  });
+
   return publicClientToProvider(publicClient);
 }
 
 /** Action to convert a viem Wallet Client to an ethers.js Signer. */
 export async function getEthersSigner({ chainId }: { chainId?: number } = {}) {
-  const walletClient = await getWalletClient({ chainId });
+  const walletClient = await getWalletClient(wagmiConfig, { 
+    chainId: chainId 
+  });
   if (!walletClient) return undefined;
   return walletClientToSigner(walletClient);
 }

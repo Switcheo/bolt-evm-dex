@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle } from "react-feather";
 import styled, { useTheme } from "styled-components";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { TYPE } from "../../theme";
 import { ExternalLink } from "../../theme/components";
 import { getEtherscanLink } from "../../utils/getExplorerLink";
@@ -20,7 +20,8 @@ export default function TransactionPopup({
   success?: boolean;
   summary?: string;
 }) {
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
 
   const theme = useTheme();
 

@@ -2,7 +2,7 @@ import { transparentize } from "polished";
 import { useState } from "react";
 import { AlertTriangle, ArrowLeft } from "react-feather";
 import styled, { useTheme } from "styled-components";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { SupportedChainId } from "../../constants/chains";
 import { useCombinedInactiveList } from "../../store/modules/lists/hooks";
 import { useAddUserToken } from "../../store/modules/user/hooks";
@@ -48,8 +48,8 @@ interface ImportProps {
 
 export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }: ImportProps) {
   const theme = useTheme();
-
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
 
   const [confirmed, setConfirmed] = useState(false);
 

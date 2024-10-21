@@ -1,6 +1,6 @@
 import JSBI from "jsbi";
 import { useCallback, useMemo } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useCurrencyBalances } from "../../../hooks/balances/useCurrencyBalance";
 import { usePair } from "../../../hooks/pairs/usePair";
 import { useTotalSupply } from "../../../hooks/Tokens";
@@ -63,8 +63,7 @@ export function useDerivedMintInfo(
   poolTokenPercentage?: Percent;
   error?: string;
 } {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
   const chainId = chain?.id;
 
   const { independentField, typedValue, otherTypedValue } = useMintState();

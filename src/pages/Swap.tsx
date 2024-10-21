@@ -1,10 +1,16 @@
 import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 import { ArrowDown } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { useTheme } from "styled-components";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonConfirmed, ButtonError, ButtonPrimary, ConnectKitLightButton } from "../components/Button";
 import Card, { GreyCard } from "../components/Card";
@@ -46,6 +52,7 @@ import { Trade } from "../utils/entities/trade";
 import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { computeTradePriceBreakdown, warningSeverity } from "../utils/prices";
 import AppBody from "./AppBody";
+import switchNetwork from "../utils/switchNetwork";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -89,9 +96,9 @@ export default function Swap() {
       return !(token.address in defaultTokens);
     });
 
-  const { address } = useAccount();
-  const chainId = useNetwork().chain?.id;
-  const { switchNetwork } = useSwitchNetwork();
+  const { address, chain } = useAccount();
+  const chainId = chain?.id;
+  const { switchChain } = useSwitchChain();
   const theme = useTheme();
 
   // for expert mode
@@ -271,9 +278,13 @@ export default function Swap() {
     [onCurrencySelection],
   );
 
-  const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
-  }, [switchNetwork]);
+  const handleChangeNetwork = useCallback(async () => {
+    try {
+      await switchNetwork(SupportedChainId.PIVOTAL_SEPOLIA);
+    } catch (error) {
+      console.error("Error during network switch or transaction: ", error);
+    }
+  }, [switchChain]);
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT);
 

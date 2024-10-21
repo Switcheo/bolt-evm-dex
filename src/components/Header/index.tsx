@@ -4,7 +4,7 @@ import { Menu, X } from "react-feather";
 import { NavLink } from "react-router-dom";
 import { Text } from "rebass";
 import styled, { DefaultTheme } from "styled-components";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import Logo from "../../assets/branding/horizontal-logo-white.svg";
 import { useOnClickOutside } from "../../hooks/useOnOutsideClick";
 import { ConnectKitLightButton } from "../Button";
@@ -269,8 +269,7 @@ const NETWORK_LABELS: { [key: number]: string } = {
 };
 
 const Header = () => {
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { address, isConnected, chain } = useAccount();
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading, isError } = useBalance({

@@ -2,7 +2,8 @@ import { useCallback, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import styled from "styled-components";
 import { isAddress } from "viem";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
+import { switchChain as coreSwitchChain } from '@wagmi/core'
 import AddressInputPanel from "../components/AddressInputPanel";
 import { ButtonError, ConnectKitLightButton } from "../components/Button";
 import { AutoColumn, ColumnCenter } from "../components/Column";
@@ -10,6 +11,8 @@ import SuccessMintModal from "../components/SuccessMintModal";
 import { SupportedChainId } from "../constants/chains";
 import { WSS_FAUCET_URL } from "../constants/utils";
 import AppBody from "./AppBody";
+import { pivotal, wagmiConfig } from "../config";
+import switchNetwork from "../utils/switchNetwork";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -33,9 +36,8 @@ export default function Mint() {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-
+  const { chain } = useAccount();
+  const { switchChain } = useSwitchChain();
   const processMessages = useCallback(
     (event: { data: string }) => {
       let response;
@@ -91,9 +93,13 @@ export default function Mint() {
     });
   }, [typed, sendJsonMessage]);
 
-  const handleChangeNetwork = useCallback(() => {
-    switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
-  }, [switchNetwork]);
+  const handleChangeNetwork = useCallback(async () => {
+    try {
+      await switchNetwork(SupportedChainId.PIVOTAL_SEPOLIA);
+    } catch (error) {
+      console.error("Error during network switch or transaction: ", error);
+    }
+  }, [switchChain]);
 
   const handleModalDismiss = useCallback(() => {
     setSuccessMessage(null);

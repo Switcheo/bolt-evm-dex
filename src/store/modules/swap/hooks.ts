@@ -1,7 +1,7 @@
 import { ParsedQs } from "qs";
 import { useCallback, useEffect, useState } from "react";
 import { getAddress, isAddress, parseUnits } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useCurrencyBalances } from "../../../hooks/balances/useCurrencyBalance";
 import { useCurrency } from "../../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../../hooks/Trades";
@@ -267,7 +267,8 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
 export function useDefaultsFromURLSearch():
   | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
   | undefined {
-  const chainId = useNetwork().chain?.id;
+  const { chain } = useAccount();
+  const chainId = chain?.id;
   const dispatch = useAppDispatch();
   const parsedQs = useParsedQueryString();
   const [result, setResult] = useState<

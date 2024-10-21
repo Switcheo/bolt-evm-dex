@@ -1,8 +1,9 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useMemo } from "react";
 import { parseUnits, TransactionReceipt } from "viem";
-import { useAccount, useNetwork } from "wagmi";
-import { prepareWriteContract, waitForTransaction, writeContract } from "wagmi/actions";
+import { useAccount } from "wagmi";
+import { simulateContract, writeContract } from "wagmi/actions";
+import { waitForTransactionReceipt } from '@wagmi/core'
 import { wethABI } from "../constants/abis";
 import { WETH_ADDRESSES } from "../constants/addresses";
 import { WETH_TOKENS } from "../constants/tokens";
@@ -12,6 +13,7 @@ import { CurrencyAmount } from "../utils/entities/fractions/currencyAmount";
 import { TokenAmount } from "../utils/entities/fractions/tokenAmount";
 import { currencyEquals, Token } from "../utils/entities/token";
 import { useCurrencyBalance } from "./balances/useCurrencyBalance";
+import { wagmiConfig } from "../config";
 
 export enum WrapType {
   NOT_APPLICABLE,
@@ -64,18 +66,18 @@ interface WrapCallbackArgs {
 }
 
 const wrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
-  const data = await prepareWriteContract({
+  const { request } = await simulateContract(wagmiConfig , {
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
     functionName: "deposit",
     value: BigInt(inputAmount.raw.toString()),
-  });
-  const { hash } = await writeContract(data.request);
+  })
+  const hash = await writeContract(wagmiConfig ,request);
 
-  const transactionReceipt = await waitForTransaction({
-    hash,
+  const transactionReceipt = await waitForTransactionReceipt(wagmiConfig, {
     chainId,
-  });
+    hash
+  })
 
   addTransaction(transactionReceipt, {
     summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH`,
@@ -83,18 +85,18 @@ const wrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackA
 };
 
 const unwrapEther = async ({ inputAmount, chainId, addTransaction }: WrapCallbackArgs) => {
-  const data = await prepareWriteContract({
+  const { request } = await simulateContract(wagmiConfig, {
     address: WETH_ADDRESSES[chainId],
     abi: wethABI,
     functionName: "withdraw",
     args: [BigInt(inputAmount.raw.toString())],
-  });
-  const { hash } = await writeContract(data.request);
+  })
+  const hash = await writeContract(wagmiConfig, request);
 
-  const transactionReceipt = await waitForTransaction({
-    hash,
+  const transactionReceipt = await waitForTransactionReceipt(wagmiConfig, {
     chainId,
-  });
+    hash
+  })
 
   addTransaction(transactionReceipt, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` });
 };
@@ -112,8 +114,8 @@ export default function useWrapCallback(
   outputCurrency: Currency | undefined,
   typedValue: string | undefined,
 ): { wrapType: WrapType; execute?: undefined | (() => Promise<void>); inputError?: string } {
-  const { address } = useAccount();
-  const chainId = useNetwork()?.chain?.id;
+  const { address, chain } = useAccount();
+  const chainId = chain?.id;
 
   const balance = useCurrencyBalance(address ?? undefined, inputCurrency);
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
