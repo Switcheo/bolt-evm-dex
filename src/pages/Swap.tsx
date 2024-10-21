@@ -99,7 +99,6 @@ export default function Swap() {
 
   const { address, chain } = useAccount();
   const chainId = chain?.id;
-  // const { switchNetwork } = useSwitchNetwork();
   const { switchChain } = useSwitchChain();
   const theme = useTheme();
 
@@ -279,12 +278,6 @@ export default function Swap() {
     (outputCurrency: Currency) => onCurrencySelection(Field.OUTPUT, outputCurrency),
     [onCurrencySelection],
   );
-
-  // const handleChangeNetwork = useCallback(() => {
-  //   // switchNetwork?.(SupportedChainId.PIVOTAL_SEPOLIA);
-  //   // switchChain?.(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
-  //   coreSwitchChain(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
-  // }, [switchChain]);
 
   const handleChangeNetwork = useCallback(async () => {
     try {

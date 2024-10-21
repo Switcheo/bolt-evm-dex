@@ -209,12 +209,8 @@ const Bridge = () => {
   }, [attemptingTxn, showConfirm, bridgeErrorMessage, bridgeToConfirm, txHash]);
 
   const handleSwitchNetwork = useCallback(async () => {
-    // if (switchChain) {
-    // coreSwitchChain(wagmiConfig ,{ chainId: sourceChain });
-    // }
     try {
       await coreSwitchChain(wagmiConfig, { chainId: SupportedChainId.PIVOTAL_SEPOLIA });
-      console.log("chain swapped");
     } catch (error) {
       if ((error as { code: number }).code === 4902) {
         // Chain not added, so add it manually
