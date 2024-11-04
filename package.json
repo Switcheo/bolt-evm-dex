@@ -13,6 +13,7 @@
     "cypress:run": "cypress run --e2e --browser firefox"
   },
   "dependencies": {
+    "@eth-optimism/sdk": "^3.3.2",
     "@ethersproject/abi": "^5.7.0",
     "@openzeppelin/wizard": "^0.3.0",
     "@popperjs/core": "^2.11.8",
@@ -61,7 +62,7 @@
     "toformat": "^2.0.0",
     "ua-parser-js": "^1.0.35",
     "use-debounce": "^9.0.4",
-    "viem": "2.x",
+    "viem": "^2.21.38",
     "vite-plugin-svgr": "^3.2.0",
     "wagmi": "^2.12.12",
     "wcag-contrast": "^3.0.0"
