@@ -31,6 +31,7 @@ import { maxAmountSpend } from "../utils/maxAmountSpend";
 import { Currency } from "../utils/entities/currency";
 import { Token } from "../utils/entities/token";
 import switchNetwork from "../utils/switchNetwork";
+import { useWithdrawCallback } from "../hooks/useBridgeWithdrawCallback";
 
 export const Wrapper = styled.div`
   position: relative;
@@ -180,6 +181,7 @@ const Bridge = () => {
   // const { switchNetwork, isLoading, isError } = useSwitchNetwork();
   const { switchChain, isError, isPending} = useSwitchChain();
   const { callback: bridgeCallback } = useBridgeCallback(pendingBridgeTx);
+  const { callback: withdrawCallback } = useWithdrawCallback(pendingBridgeTx);
 
   const selectedCurrencyBalance = useCurrencyBalance(address, selectedCurrency);
 
@@ -200,7 +202,7 @@ const Bridge = () => {
   }
 
   // testnet faucet links
-  const testnetFaucentLinks = {
+  const testnetFaucetLinks = {
     "Google Cloud": "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
     "Alchemy": "https://www.alchemy.com/faucets/ethereum-sepolia",
     "Infura": "https://www.infura.io/faucet/sepolia",
@@ -255,7 +257,15 @@ const Bridge = () => {
   }, [dispatch, sourceChain, switchChain]);
 
   const handleBridge = useCallback(async () => {
-    if (!bridgeCallback) {
+    const callback = 
+      sourceChain === SupportedChainId.PIVOTAL_SEPOLIA && destChain === SupportedChainId.SEPOLIA
+        ? withdrawCallback
+        : sourceChain === SupportedChainId.SEPOLIA && destChain === SupportedChainId.PIVOTAL_SEPOLIA
+        ? bridgeCallback
+        : null;
+
+    if (!callback) {
+      console.warn("No valid callback for the specified network combination");
       return;
     }
 
@@ -267,7 +277,7 @@ const Bridge = () => {
       txHash: undefined,
     });
     try {
-      const hash = await bridgeCallback();
+      const hash = await callback();
 
       setBridgeState({
         attemptingTxn: false,
@@ -287,7 +297,7 @@ const Bridge = () => {
         });
       }
     }
-  }, [bridgeCallback, pendingBridgeTx, showConfirm, bridgeErrorMessage, bridgeToConfirm]);
+  }, [bridgeCallback, withdrawCallback, pendingBridgeTx, showConfirm, bridgeErrorMessage, bridgeToConfirm]);
 
   useEffect(() => {
     if (chain?.id && sourceChain && sourceChain !== chain?.id) {
@@ -460,7 +470,7 @@ const Bridge = () => {
         </DialogHeader>
         <DialogBody>
           <ul>
-            {Object.entries(testnetFaucentLinks).map(([testnet, link]) => (
+            {Object.entries(testnetFaucetLinks).map(([testnet, link]) => (
               <li key={testnet}>
                 <DialogATag as="a" href={link} target="_blank" rel="noopener noreferrer">
                   <TYPE.body color={theme?.text2} fontWeight={500} fontSize={14}>

@@ -58,7 +58,6 @@ export const useBridgeCallback = (bridgeTx: BridgeTx | undefined) => {
     const publicClient = getPublicClient(wagmiConfig, {
       chainId: chainId
     });
-    // const chainId = await getNetwork();
     const walletClient = await getWalletClient(wagmiConfig,{ 
       chainId: chainId 
     });

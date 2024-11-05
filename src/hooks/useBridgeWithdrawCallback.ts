@@ -7,8 +7,8 @@ import {
 } from "../constants/chains";
 import { getAccount, getPublicClient, getWalletClient } from "wagmi/actions";
 import { wagmiConfig } from "../config";
-import { getChainInfo } from "../constants/chainInfo";
 import { CrossChainMessenger, MessageStatus } from "@eth-optimism/sdk"; // Import CrossChainMessenger
+import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 
 export enum BridgeCallbackState {
   INVALID,
@@ -52,23 +52,27 @@ export const useWithdrawCallback = (withdrawTx: BridgeTx | undefined) => {
     const { chainId } = getAccount(wagmiConfig);
     const publicClient = getPublicClient(wagmiConfig, { chainId });
     const walletClient = await getWalletClient(wagmiConfig, { chainId });
+    const ethAmount = parseEther(amount.toString());
 
     if (!walletClient) return;
-    const [address] = await walletClient.getAddresses();
-    const chainInfo = getChainInfo(destChain);
+    // const [address] = await walletClient.getAddresses();
+    // const chainInfo = getChainInfo(destChain);
+
+    // Convert `walletClient` to an `ethers` Signer
+    const provider = new Web3Provider(walletClient as unknown as ExternalProvider);
+    const signer = provider.getSigner();
+
 
     // Initialize the CrossChainMessenger
-    // TODO: What wallets are these l1 and l2 signers?
     const messenger = new CrossChainMessenger({
-      l1ChainId: srcChain, // L1 chain ID
-      l2ChainId: destChain, // L2 chain ID
-      l1SignerOrProvider: walletClient, // L1 Signer for transactions
-      l2SignerOrProvider: walletClient, // L2 Signer for transactions
+      l1ChainId: destChain, // L1 chain ID
+      l2ChainId: srcChain, // L2 chain ID 
+      l1SignerOrProvider: signer, // L1 Signer for transactions
+      l2SignerOrProvider: signer, // L2 Signer for transactions
     });
 
     // Step 1: Start the withdrawal on L2
-    // TODO: What tokens are these to specify?
-    const withdrawal = await messenger.withdrawERC20(destToken.address, amount.toString());
+    const withdrawal = await messenger.withdrawERC20(srcAddr, destAddr, ethAmount.toString());
 
     // Step 2: Wait for the withdrawal to be ready to prove
     await messenger.waitForMessageStatus(withdrawal.hash, MessageStatus.READY_TO_PROVE);
@@ -85,13 +89,9 @@ export const useWithdrawCallback = (withdrawTx: BridgeTx | undefined) => {
     // Step 6: Wait for the message to be relayed
     await messenger.waitForMessageStatus(withdrawal.hash, MessageStatus.RELAYED);
 
-    // Optional: Check balance on L1 after the transaction is complete
-    // const l1Balance = await l1ERC20.balanceOf(address);
-    // console.log(`New L1 balance: ${l1Balance.toString()}`);
-
     // Step 7: Add transaction receipt to state
     const transactionReceipt = await publicClient?.waitForTransactionReceipt({
-      hash: withdrawal.hash,
+      hash: withdrawal.hash as `0x${string}`,
       timeout: 30_000,
     });
 
