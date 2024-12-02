@@ -45,11 +45,11 @@ jobs:
             aws configure set preview.cloudfront true
             aws configure set region ap-southeast-1
             if [ "${CIRCLE_BRANCH}" = "staging" ]; then
-              aws s3 sync build s3://bolt-dex-ui/staging/ --delete
-              aws cloudfront create-invalidation --distribution-id="E1OAHUIJRF4E9W" --paths=/*
+              aws s3 sync build s3://pivotal-dex-ui/staging/ --delete
+              aws cloudfront create-invalidation --distribution-id="E8J2HST51PN2S" --paths=/*
             elif [ "${CIRCLE_BRANCH}" = "master" ]; then
-              aws s3 sync build s3://bolt-dex-ui/master/ --delete
-              aws cloudfront create-invalidation --distribution-id="E3MU3FAXMP8SBQ" --paths=/*
+              aws s3 sync build s3://pivotal-dex-ui/master/ --delete
+              aws cloudfront create-invalidation --distribution-id="E1EWTOU9JD4FI1" --paths=/*
             else
               echo "Not master or staging branch, dry run only"
             fi
